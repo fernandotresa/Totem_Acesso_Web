@@ -1,0 +1,53 @@
+
+<ion-header>
+
+    <ion-navbar text-center no-border-bottom color="primary">
+        <ion-title> Selecionar area </ion-title>
+    </ion-navbar>
+    
+    <ion-toolbar no-border-top color="primary">
+        <ion-searchbar color="primary"
+                       [(ngModel)]="searchTerm"
+                       (ionInput)="setFilteredItems()"
+                       placeholder= "Digite aqui para selecionar">
+        </ion-searchbar>
+      </ion-toolbar>
+
+      
+</ion-header>
+
+
+<ion-content padding>
+
+    <ion-refresher (ionRefresh)="doRefresh($event)">
+        <ion-refresher-content pullingIcon="arrow-dropdown" pullingText="Atualizando..." 
+            refreshingSpinner="circles">
+        </ion-refresher-content>
+    </ion-refresher>
+
+    <ion-list>
+
+        <ion-item-sliding *ngFor="let area of (allAreas | async)?.success let i = index"  #item>    
+                      
+            <ion-item>
+                            
+                <ion-title> {{ area.nome_area_acesso }} </ion-title>
+                <p> Lotaçao atual: {{ area.lotacao_area_acesso }}</p>
+              
+          </ion-item>
+
+          <ion-item-options side="right" >
+
+              <button ion-button color="secondary" (click)="selectArea(area)" icon-start>
+                <ion-icon name="star" color="light"></ion-icon>  Selecionar
+              </button> 
+
+              
+      
+          </ion-item-options>
+
+        </ion-item-sliding>
+
+  </ion-list>
+
+</ion-content>

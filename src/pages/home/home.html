@@ -1,0 +1,95 @@
+<ion-header>
+
+  <ion-navbar no-border-bottom color="light">  
+
+    <ion-row>   
+      <ion-col>
+          <img width="300px" height="100px" src="assets/imgs/logo.png"/>               
+        </ion-col>
+            
+        <ion-col>            
+            <h1 text-right class="header-conter">  {{counter}} </h1>
+        </ion-col>
+      
+
+    </ion-row>
+    
+</ion-navbar>  
+
+</ion-header>
+
+<ion-content>
+
+        <ion-toolbar no-border-top>
+
+                <ion-searchbar
+                    [(ngModel)]="searchTerm"
+                    (ionInput)="setFilteredItems()"
+                    placeholder= "Inserir ticket">
+                </ion-searchbar>
+            
+            </ion-toolbar>
+
+    <ion-grid>
+        <ion-row>
+              <ion-col>
+
+                    <h3 text-right class="title">  {{title}} </h3>
+
+                    <div class="box-message">
+
+
+                    </div>
+
+              </ion-col>
+        </ion-row>  
+    </ion-grid>
+
+</ion-content>
+
+  
+
+<ion-footer>
+    <ion-toolbar>
+      
+      <ion-grid>
+
+        <ion-row justify-content-start>
+
+            <ion-col align-self-start>
+
+                <button ion-button color="primary" outline icon-only (click)="showSettings()">
+                  
+                    <ion-icon name='settings'></ion-icon>
+                </button>
+  
+            </ion-col>
+            <ion-col align-self-start>
+  
+                <button ion-button color="primary" outline icon-only (click)="decrementCounter()">
+                    <ion-icon name='remove-circle'></ion-icon>
+                </button>
+  
+            </ion-col>
+  
+            <ion-col align-self-start col-4>
+  
+                <button ion-button color="primary" outline icon-only>
+                    <ion-icon name='close'></ion-icon>
+                </button>  
+  
+            </ion-col>            
+
+            <ion-col align-self-end col-4>
+                <img width="300px"  height="100px" src="assets/imgs/logo3a.png"/>
+              </ion-col>
+
+            
+
+        </ion-row>  
+        
+
+        </ion-grid>                                                                                 
+
+    </ion-toolbar>
+  </ion-footer>

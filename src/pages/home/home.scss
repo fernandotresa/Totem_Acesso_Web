@@ -1,0 +1,37 @@
+page-home {
+
+    .clearfix {
+        overflow: auto;        
+    }
+
+    .title{
+        display: flex !important;
+        justify-content: center !important;
+        align-items: center !important;
+        height: 100%;
+    }
+
+    .subtitle{
+        display: flex !important;
+        justify-content: center !important;
+        align-items: center !important;
+        height: 100%;
+        font-family: 'Arial' ;
+        font-weight: bold;
+    }
+
+    .header-conter{
+        display: flex !important;
+        justify-content: flex-end !important;
+        
+        height: 100%;
+        font-family: 'Arial' ;
+        font-weight: bold;
+    }
+
+    .box-message {
+        color: green
+    }
+    
+
+}
