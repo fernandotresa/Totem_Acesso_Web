@@ -42,6 +42,7 @@ export class SettingsPage {
   selectArea(area: any){
     let self = this
     console.log('Area selecionada:',area.id_area_acesso)
+    
     this.db.clearConfigs().then(function(){
 
       self.db.addConfigArea(area).then(function(){

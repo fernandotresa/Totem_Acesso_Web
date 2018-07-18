@@ -9,6 +9,9 @@ page-home {
         justify-content: center !important;
         align-items: center !important;
         height: 100%;
+        font-family: 'Arial' ;
+        font-weight: bold;
+        font-size: 46pt;
     }
 
     .subtitle{
@@ -20,17 +23,94 @@ page-home {
         font-weight: bold;
     }
 
-    .header-conter{
+    .titleHistory{
+        color: white;
         display: flex !important;
-        justify-content: flex-end !important;
-        
-        height: 100%;
+        justify-content: center !important;
+        align-items: center !important;
         font-family: 'Arial' ;
         font-weight: bold;
+        font-size: 32pt;
+        margin-bottom: 20px;
+    }
+
+    .header-conter {
+        display: flex !important;
+        justify-content: flex-end !important;        
+        height: 100%;
+        font-family: 'Arial';
+        font-weight: bold;
+        font-size: 36pt;
     }
 
     .box-message {
-        color: green
+        margin-top: 20px;
+        background-color: green;
+        width: 100%;
+        height: 200px;
+    }
+    
+    .box-message-red {
+        margin-top: 20px;
+        background-color: red;
+        width: 100%;
+        height: 200px;
+    }
+
+    .box-message-gray {        
+        background-color: rgb(220,220,220);
+        width: 100%;
+        height: 300px;        
+    }
+        
+    .box-header-gray {
+        background-color: gray;
+    }
+
+    .box-header-green {  
+        margin-top: 20px;      
+        background-color: darkgreen;        
+        width: 100%;
+        height: 80px;   
+        display: flex !important;
+        justify-content: center !important;
+        align-items: center !important;    
+
+    }
+
+    .box-header-text {
+        color: black;
+        display: flex !important;
+        justify-content: center !important;
+        align-items: center !important;        
+        font-family: 'Arial';        
+        font-size: 20pt;
+    }
+
+    .box-header-ticket-status {
+        color: white;
+        display: flex !important;
+        justify-content: center !important;
+        align-items: center !important;
+        font-family: 'Arial';
+        font-weight: bold;
+        font-size: 20pt;
+    }
+
+    .ticket-type-font {
+        margin-top: 40px;
+        display: flex !important;
+        justify-content: center !important;
+        align-items: center !important;
+        color: white;
+    }
+
+    .ticket-type-msg {        
+        margin-top: 20px;
+        display: flex !important;
+        justify-content: center !important;
+        align-items: center !important;
+        color: white;
     }
     
 
