@@ -7,6 +7,7 @@ import { UiUtilsProvider } from '../../providers/ui-utils/ui-utils'
 import { Observable } from 'rxjs/Observable';
 import { FormControl } from '@angular/forms';
 import 'rxjs/add/operator/debounceTime';
+import moment from 'moment';
 
 @Component({
   selector: 'page-home',
@@ -25,28 +26,33 @@ export class HomePage {
   title: string = this.dataInfo.isLoading
   message1: string = this.dataInfo.isLoading
   message2: string = this.dataInfo.isLoading
-  history: string = this.dataInfo.history
-  historyText1: string = this.dataInfo.historyUntilDay
-  historyText2: string = this.dataInfo.accessPoints
-  counter: string = this.dataInfo.isLoading
+      
   areaId: string = '1'
   updatedInfo: Boolean = false
   updating: Boolean = false
 
+  counter: string = this.dataInfo.isLoading
   statusTicket: string = this.dataInfo.ticketOk
   statusTicketStart: string = this.dataInfo.fakeTime1  
   statusTicketAccess: string = this.dataInfo.fakeAccessPoints
+
+  statusTicketUsedOn: string = this.dataInfo.fakeAccessPointsUsed  
+
+  history: string = this.dataInfo.history
+  historyText1: string = this.dataInfo.historyUntilDay
+  historyText2: string = this.dataInfo.accessPoints
+  historyText3: string = this.dataInfo.usedDay
 
   searchControl: FormControl;
   searchTerm: string = '';
   searching: any = false;  
   
-  constructor(public navCtrl: NavController,
-    public uiUtils: UiUtilsProvider, 
+  constructor(
     public dataInfo: DataInfoProvider,
+    public navCtrl: NavController,
+    public uiUtils: UiUtilsProvider,     
     public db: DatabaseProvider,
-    public navParams: NavParams,
-    
+    public navParams: NavParams,  
     public http: HttpdProvider) { 
 
       this.searchControl = new FormControl();
@@ -58,9 +64,11 @@ export class HomePage {
         if(! self.updating && self.areaId)
             self.updateInfo(); 
       
-      }, 3000);
+      }, 3000);            
+  }
 
-      
+  showHistory(){
+    this.changeTicketType(this.dataInfo.searchTicket)
   }
 
   ionViewDidLoad() {
@@ -74,8 +82,7 @@ export class HomePage {
     if(this.updatedInfo)
         this.updateInfo()
     else   
-      this.loadConfig()        
-
+      this.loadConfig()                
   }
 
   loadConfig(){       
@@ -117,12 +124,31 @@ export class HomePage {
 
   setFilteredItems(){
 
-    if(this.searchTerm.length == 8){
+    this.http.checkTicket(this.searchTerm).subscribe(data => {      
+      this.checkTicket(data)
+    })      
+  }
 
-      this.http.checkTicket(this.searchTerm).subscribe(data => {
-        console.log(data)
-      })
-    }        
+  checkTicket(ticket){
+    console.log(ticket)
+
+    if(ticket.type == 0){
+      this.ticketAlreadyUsed(ticket)
+    }
+  }
+
+  ticketAlreadyUsed(ticket){
+
+    this.statusTicket = this.dataInfo.already
+    this.idTypeBackgrond = this.dataInfo.backgroundIdSearchNotOk
+
+    ticket.success.forEach(element => {
+      console.log(element)
+
+      this.statusTicketUsedOn = element.nome_ponto_acesso
+      this.statusTicketStart = moment(element.data_log_utilizacao).format("L");
+      
+    });
   }
 
   showSettings(){
@@ -145,6 +171,7 @@ export class HomePage {
 
   changeTicketType(idType: string){
     console.log('idType', idType)
+
     this.idTypeBackgrond = this.dataInfo.backgroundIdGreen
 
     if(idType === this.dataInfo.exemptedId){
@@ -179,14 +206,25 @@ export class HomePage {
       this.message2 = this.dataInfo.ticketNotSoldedMsg 
       this.idTypeBackgrond = this.dataInfo.backgroundIdRed
     } 
-    else if(idType === this.dataInfo.searchTicketOkId){
-     
-      this.idTypeBackgrond = this.dataInfo.backgroundIdSearch
-    }
-    
+
+    else if(idType === this.dataInfo.searchTicketOkId){      
+      this.statusTicket = this.dataInfo.ticketOk
+      this.idTypeBackgrond = this.dataInfo.backgroundIdSearchOk
+    }        
+
+
     else if(idType === this.dataInfo.searchTicketNotOkId){
+
+      this.statusTicket = this.dataInfo.already
+      this.idTypeBackgrond = this.dataInfo.backgroundIdSearchNotOk
+
+      console.log(this.statusTicketUsedOn)
+    } 
+    else if(idType === this.dataInfo.searchTicket){
+
       this.statusTicket = this.dataInfo.already
       this.idTypeBackgrond = this.dataInfo.backgroundIdSearch
+
     } 
     
     else {
@@ -199,7 +237,6 @@ export class HomePage {
     /*setTimeout(function(){ 
       self.idTypeBackgrond = self.dataInfo.backgroundIdNone
      }, 3000);*/
-
   }
 
 }

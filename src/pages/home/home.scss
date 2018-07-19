@@ -66,7 +66,16 @@ page-home {
         display: flex !important;
         justify-content: center !important;
         align-items: center !important;    
+    }
 
+    .box-header-red {  
+        margin-top: 20px;      
+        background-color: red;        
+        width: 100%;
+        height: 80px;   
+        display: flex !important;
+        justify-content: center !important;
+        align-items: center !important;    
     }
 
     .box-header-text {
@@ -80,6 +89,7 @@ page-home {
 
     .box-header-ticket-status {
         color: white;
+        
         display: flex !important;
         justify-content: center !important;
         align-items: center !important;
