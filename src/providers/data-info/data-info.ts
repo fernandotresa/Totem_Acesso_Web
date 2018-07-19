@@ -17,9 +17,7 @@ export class DataInfoProvider {
   ticketOldId: string =  "4"
   ticketNotRegisteredId: string =  "5"
   ticketNotSoleddId: string =  "6"
-
   searchTicketOkId: string =  "7"
-
   searchTicketNotOkId: string =  "8"
 
   exempted: string = "ISENTO"
@@ -32,12 +30,19 @@ export class DataInfoProvider {
   ticketNotRegistered: string = "Ingresso não cadastrado"
   ticketNotRegisteredMsg: string = "Não existe esse número no estoque"
   ticketNotSolded: string = "Não vendido"
-  ticketNotSoldedMsg: string = "Ingresso consta no estoque mas não foi vendido"
-
+  ticketNotSoldedMsg: string = "Ingresso consta mas não foi vendido"
+  ticketOk: "Ingresso válido"  
+  isLoading: "Carregando"
+  history: "Histórico do ingresso"
+  historyUntilDay: "Até dia"
+  historyUsedDay: "Usado dia"
+  accessPoints: "Acesso aos pontos"
 
   welcomeMsg: string = "Seja bem vindo!"
   pleaseWait: string = "Favor aguarde"
   atention: string = "Atenção"    
+
+  sinceThey: string = "Atenção"   
 
   sucess: string = "Sucesso"
   erro: string = "Erro"
@@ -52,6 +57,9 @@ export class DataInfoProvider {
   notSupported: string = "Não suportado nesta plataforma"
   syncConfigurations: string = "Sincronizando configuraçoes"
   syncDatabase: string = "Sincronizando banco de dados"
+
+  fakeTime1: string = '22/06/2018 - 23:59'
+  fakeAccessPoints: string = 'Principal, Festa, Chapelaria'
 
   constructor() {
         

@@ -22,18 +22,20 @@ export class HomePage {
   
   idTypeBackgrond: number = this.dataInfo.backgroundIdSearch;
 
-  title: string = 'Carregando'
-  message1: string = 'Carregando'
-  message2: string = 'Carregando'
-  history: string = 'Histórico do ingresso'
-  counter: string = 'Carregando'
+  title: string = this.dataInfo.isLoading
+  message1: string = this.dataInfo.isLoading
+  message2: string = this.dataInfo.isLoading
+  history: string = this.dataInfo.history
+  historyText1: string = this.dataInfo.historyUntilDay
+  historyText2: string = this.dataInfo.accessPoints
+  counter: string = this.dataInfo.isLoading
   areaId: string = '1'
   updatedInfo: Boolean = false
   updating: Boolean = false
 
-  statusTicket: string = 'Ingresso válido'
-  statusTicketStart: string = '22/06/2018 - 23:59'  
-  statusTicketAccess: string = 'Principal, Festa, Chapelaria'
+  statusTicket: string = this.dataInfo.ticketOk
+  statusTicketStart: string = this.dataInfo.fakeTime1  
+  statusTicketAccess: string = this.dataInfo.fakeAccessPoints
 
   searchControl: FormControl;
   searchTerm: string = '';
@@ -183,7 +185,7 @@ export class HomePage {
     }
     
     else if(idType === this.dataInfo.searchTicketNotOkId){
-     
+      this.statusTicket = this.dataInfo.already
       this.idTypeBackgrond = this.dataInfo.backgroundIdSearch
     } 
     
