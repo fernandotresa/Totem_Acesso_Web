@@ -18,8 +18,7 @@ export class HomePage {
 
   configs: Observable<any>;
   areaInfo: Observable<any>;
-  ticket: Observable<any>;
-  
+  ticket: Observable<any>;  
   
   idTypeBackgrond: number = this.dataInfo.backgroundIdSearch;
 
@@ -68,11 +67,19 @@ export class HomePage {
   }
 
   showHistory(){
-    this.changeTicketType(this.dataInfo.searchTicket)
+
+    if(this.idTypeBackgrond !== this.dataInfo.backgroundIdSearch){
+      this.statusTicket = this.dataInfo.already
+      this.idTypeBackgrond = this.dataInfo.backgroundIdSearch
+
+    } else {
+
+      this.idTypeBackgrond = this.dataInfo.backgroundIdNone
+    }
+   
   }
 
   ionViewDidLoad() {
-    console.log('ionViewDidLoad AdminPage');   
 
     this.updatedInfo = this.navParams.get('updatedInfo')
 
@@ -81,6 +88,7 @@ export class HomePage {
       
     if(this.updatedInfo)
         this.updateInfo()
+
     else   
       this.loadConfig()                
   }
@@ -124,17 +132,41 @@ export class HomePage {
 
   setFilteredItems(){
 
-    this.http.checkTicket(this.searchTerm).subscribe(data => {      
-      this.checkTicket(data)
-    })      
+    if(this.searchTerm.length > 0){
+
+      this.http.checkTicket(this.searchTerm).subscribe(data => {      
+        this.checkTicket(data)
+      })       
+           
+    }    
   }
 
-  checkTicket(ticket){
-    console.log(ticket)
+  checkTicket(ticket){    
 
-    if(ticket.type == 0){
+    if(ticket.success.length > 0){
       this.ticketAlreadyUsed(ticket)
+
+    } else {
+      this.checkTicketContinue()
     }
+  }
+
+  checkTicketContinue(){    
+
+    this.http.checkTicketContinue(this.searchTerm).subscribe(data => {            
+      this.checkTicketContinueCallback(data)     
+    })  
+  }
+
+  checkTicketContinueCallback(ticket){    
+
+    if(ticket.success.length == 0){
+      this.ticketNotExist()
+
+    } else {
+      this.ticketCheckValidity(ticket)
+    }
+
   }
 
   ticketAlreadyUsed(ticket){
@@ -143,13 +175,63 @@ export class HomePage {
     this.idTypeBackgrond = this.dataInfo.backgroundIdSearchNotOk
 
     ticket.success.forEach(element => {
-      console.log(element)
 
       this.statusTicketUsedOn = element.nome_ponto_acesso
-      this.statusTicketStart = moment(element.data_log_utilizacao).format("L");
-      
+      this.statusTicketStart = moment(element.data_log_utilizacao).format("L");      
     });
   }
+
+  ticketNotExist(){
+
+    this.message1 = this.dataInfo.ticketNotRegistered      
+    this.message2 = this.dataInfo.ticketNotRegisteredMsg
+    this.idTypeBackgrond = this.dataInfo.backgroundIdRed
+  }
+
+  ticketCheckValidity(ticket){    
+        
+    ticket.success.forEach(element => {      
+      
+      if(element.mesmo_dia_validade == 1){          
+        this.ticketValiditySameDay(element)          
+      }
+
+    });           
+  }
+
+  ticketValiditySameDay(ticket){
+
+    let now = moment().format()    
+
+    let isSame = moment(ticket.data_log_venda).isSame(now, 'day')
+    this.history = this.dataInfo.ticketRead + this.searchTerm
+    this.statusTicketStart = moment(ticket.data_log_venda).format("L")
+
+    if(this.idTypeBackgrond === this.dataInfo.backgroundIdSearch){                
+
+      if(isSame){
+
+        this.statusTicket = this.dataInfo.ticketOk
+        this.idTypeBackgrond = this.dataInfo.backgroundIdSearchOk
+  
+      } else {
+  
+        this.statusTicket = this.dataInfo.searchTicketNotOkId
+        this.idTypeBackgrond = this.dataInfo.backgroundIdRed
+      }
+
+    } else {
+      this.useTicket(ticket)
+    }
+
+    
+  }
+
+  useTicket(ticket){
+
+    console.log('Utilizando ticket: ', ticket)
+  }
+
 
   showSettings(){
     this.updating = true
@@ -169,74 +251,6 @@ export class HomePage {
     })      
   }
 
-  changeTicketType(idType: string){
-    console.log('idType', idType)
-
-    this.idTypeBackgrond = this.dataInfo.backgroundIdGreen
-
-    if(idType === this.dataInfo.exemptedId){
-      this.message1 = this.dataInfo.exempted      
-      this.message2 = this.dataInfo.welcomeMsg
-
-    } else if(idType === this.dataInfo.halfId){
-      this.message1 = this.dataInfo.half      
-      this.message2 = this.dataInfo.welcomeMsg
-    }
-    else if(idType === this.dataInfo.fullId){
-      this.message1 = this.dataInfo.full      
-      this.message2 = this.dataInfo.welcomeMsg
-    }
-    else if(idType === this.dataInfo.alreadyId){
-      this.message1 = this.dataInfo.already      
-      this.message2 = this.dataInfo.alreadyMsg
-      this.idTypeBackgrond = this.dataInfo.backgroundIdRed
-    }
-    else if(idType === this.dataInfo.ticketOldId){
-      this.message1 = this.dataInfo.ticketOld      
-      this.message2 = this.dataInfo.ticketOldMsg
-      this.idTypeBackgrond = this.dataInfo.backgroundIdRed
-    }
-    else if(idType === this.dataInfo.ticketNotRegisteredId){
-      this.message1 = this.dataInfo.ticketNotRegistered      
-      this.message2 = this.dataInfo.ticketNotRegisteredMsg
-      this.idTypeBackgrond = this.dataInfo.backgroundIdRed
-    } 
-    else if(idType === this.dataInfo.ticketNotSoleddId){
-      this.message1 = this.dataInfo.ticketNotSolded      
-      this.message2 = this.dataInfo.ticketNotSoldedMsg 
-      this.idTypeBackgrond = this.dataInfo.backgroundIdRed
-    } 
-
-    else if(idType === this.dataInfo.searchTicketOkId){      
-      this.statusTicket = this.dataInfo.ticketOk
-      this.idTypeBackgrond = this.dataInfo.backgroundIdSearchOk
-    }        
-
-
-    else if(idType === this.dataInfo.searchTicketNotOkId){
-
-      this.statusTicket = this.dataInfo.already
-      this.idTypeBackgrond = this.dataInfo.backgroundIdSearchNotOk
-
-      console.log(this.statusTicketUsedOn)
-    } 
-    else if(idType === this.dataInfo.searchTicket){
-
-      this.statusTicket = this.dataInfo.already
-      this.idTypeBackgrond = this.dataInfo.backgroundIdSearch
-
-    } 
-    
-    else {
-      this.idTypeBackgrond = this.dataInfo.backgroundIdRed
-      console.log('Tipo de ticket desconhecido:', idType)
-    }
-
-    let self = this
-
-    /*setTimeout(function(){ 
-      self.idTypeBackgrond = self.dataInfo.backgroundIdNone
-     }, 3000);*/
-  }
+  
 
 }

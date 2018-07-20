@@ -40,5 +40,19 @@ export class HttpdProvider {
     return this.http.post(this.address  + "/checkTicket", myData, {headers: headers})
   }
 
+  checkTicketContinue(value_){
+    
+    let myData = JSON.stringify({id: this.idTotem, ticket: value_});
+    const headers = new HttpHeaders({'Content-Type':'application/json'});
+    return this.http.post(this.address  + "/checkTicketContinue", myData, {headers: headers})
+  }
+
+  useTicket(value_){
+    
+    let myData = JSON.stringify({id: this.idTotem, ticket: value_});
+    const headers = new HttpHeaders({'Content-Type':'application/json'});
+    return this.http.post(this.address  + "/useTicket", myData, {headers: headers})
+  }
+
  
 }

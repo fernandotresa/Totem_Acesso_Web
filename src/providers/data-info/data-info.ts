@@ -45,8 +45,10 @@ export class DataInfoProvider {
 
   welcomeMsg: string = "Seja bem vindo!"
   pleaseWait: string = "Favor aguarde"
-  atention: string = "Atenção"    
+  atention: string = "Atenção"   
 
+  ticketRead: string = "Ingresso lido: "   
+   
   usedDay: string = "Utilizado dia"   
   
   waitingTicket: string = "Aguardando leitura"
