@@ -274,7 +274,41 @@ export class HomePage {
       else if(element.infinito_validade == 1){    
         this.ticketValidityInfinite(element)
       } 
+
+      else {    
+        this.ticketValidityTime(element)
+      } 
+
     });           
+  }
+
+  ticketValidityTime(ticket){
+    
+    let tempo_validade = ticket.tempo_validade
+    this.statusTicketStart = moment(ticket.data_log_venda).format("L")    
+
+    let until =  moment(ticket.data_log_venda).hours(tempo_validade).format();
+    let now = moment().format()    
+    
+    let isAfter = moment(until).isAfter(now);
+
+    if(isAfter){
+      this.useTicket(ticket)
+
+    } else {
+      this.ticketValidityTimeNotOk(ticket)      
+
+    }    
+  }
+
+  ticketValidityTimeNotOk(ticket){
+
+    let tempo_validade = ticket.tempo_validade
+    this.idTypeBackgrond = this.dataInfo.backgroundIdRed
+    this.message1 = this.dataInfo.ticketOld
+    this.message2 = moment(ticket.data_log_venda).hours(tempo_validade).format("L");
+    
+    this.backHome()
   }
 
   ticketValiditySameDay(ticket){
