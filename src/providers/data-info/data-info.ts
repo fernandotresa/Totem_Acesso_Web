@@ -11,26 +11,12 @@ export class DataInfoProvider {
   backgroundIdSearch: number = 4
   backgroundIdSearchOk: number = 5
   backgroundIdSearchNotOk: number = 6
-  
-  exemptedId: string =  "0"
-  halfId: string =  "1"
-  fullId: string =  "2"
-  alreadyId: string =  "3"
-  ticketOldId: string =  "4"
-  ticketNotRegisteredId: string =  "5"
-  ticketNotSoleddId: string =  "6"
-  searchTicketOkId: string =  "7"
-  searchTicketNotOkId: string =  "8"
-  searchTicket: string =  "9"
-
+    
   history: string = "Histórico do ingresso"
   historyUntilDay: string = "Até dia"
   historyUsedDay: string = "Usado dia"
   accessPoints: string = "Acesso aos pontos"
 
-  exempted: string = "ISENTO"
-  half: string = "MEIA"
-  full: string = "INTEIRA"
   already: string = "Já utilizado"
   alreadyMsg: string = "10/05/2018 - 10:35 - Chapelaria"
   ticketOld: string = "Ingresso vencido"

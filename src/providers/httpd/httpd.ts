@@ -8,7 +8,7 @@ export class HttpdProvider {
   data:any = {};
   
   address : string = 'http://localhost:8085'  
-  idTotem: number = 1
+  idTotem: number = 2
   
   constructor(public http: HttpClient) {
     console.log('Hello HttpdProvider Provider');
@@ -47,9 +47,14 @@ export class HttpdProvider {
     return this.http.post(this.address  + "/checkTicketContinue", myData, {headers: headers})
   }
 
-  useTicket(value_){
+  useTicket(value_, idArea_){
     
-    let myData = JSON.stringify({id: this.idTotem, ticket: value_});
+    let myData = JSON.stringify({id: this.idTotem, 
+            idAreaAcesso: idArea_, 
+            ticket: value_});
+
+            console.log(myData)
+
     const headers = new HttpHeaders({'Content-Type':'application/json'});
     return this.http.post(this.address  + "/useTicket", myData, {headers: headers})
   }

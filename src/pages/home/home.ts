@@ -20,13 +20,14 @@ export class HomePage {
   areaInfo: Observable<any>;
   ticket: Observable<any>;  
   
-  idTypeBackgrond: number = this.dataInfo.backgroundIdSearch;
+  idTypeBackgrond: number = this.dataInfo.backgroundIdNone;
 
   title: string = this.dataInfo.isLoading
   message1: string = this.dataInfo.isLoading
   message2: string = this.dataInfo.isLoading
       
   areaId: string = '1'
+  pontoId: string = '1'
   updatedInfo: Boolean = false
   updating: Boolean = false
 
@@ -66,6 +67,20 @@ export class HomePage {
       }, 3000);            
   }
 
+  backHome(){
+    let self = this
+
+    setTimeout(function(){ 
+
+      self.idTypeBackgrond = self.dataInfo.backgroundIdNone
+      self.searchTerm = ''
+      self.searching = false
+
+      console.log(self.idTypeBackgrond)
+    
+    }, 3000);      
+  }
+
   showHistory(){
 
     if(this.idTypeBackgrond !== this.dataInfo.backgroundIdSearch){
@@ -77,6 +92,24 @@ export class HomePage {
       this.idTypeBackgrond = this.dataInfo.backgroundIdNone
     }
    
+  }
+
+  showSettings(){
+    this.updating = true
+    this.navCtrl.push("SettingsPage")
+  }
+
+  decrementCounter(){
+
+    this.updating = true
+    this.updatedInfo = false
+
+    this.http.decrementAreaCounter(this.areaId)
+    .subscribe( () => {      
+
+      this.updating = false
+      this.updatedInfo = true
+    })      
   }
 
   ionViewDidLoad() {
@@ -101,7 +134,7 @@ export class HomePage {
 
       data.forEach(element => {
 
-        let el = element.areaInfo        
+        let el = element.areaInfo    
 
         self.title = el.nome_area_acesso
         self.counter = el.lotacao_area_acesso   
@@ -132,12 +165,11 @@ export class HomePage {
 
   setFilteredItems(){
 
-    if(this.searchTerm.length > 0){
+    if(this.searchTerm.length > 0 && parseInt(this.searchTerm)){
 
       this.http.checkTicket(this.searchTerm).subscribe(data => {      
         this.checkTicket(data)
-      })       
-           
+      })                  
     }    
   }
 
@@ -189,12 +221,14 @@ export class HomePage {
   }
 
   ticketCheckValidity(ticket){    
+
+    console.log(ticket)
         
     ticket.success.forEach(element => {      
       
       if(element.mesmo_dia_validade == 1){          
         this.ticketValiditySameDay(element)          
-      }
+      } 
 
     });           
   }
@@ -207,7 +241,11 @@ export class HomePage {
     this.history = this.dataInfo.ticketRead + this.searchTerm
     this.statusTicketStart = moment(ticket.data_log_venda).format("L")
 
+    console.log('Mesmo dia?', isSame)
+
     if(this.idTypeBackgrond === this.dataInfo.backgroundIdSearch){                
+
+      console.log('this.idTypeBackgrond === this.dataInfo.backgroundIdSearch')
 
       if(isSame){
 
@@ -215,41 +253,39 @@ export class HomePage {
         this.idTypeBackgrond = this.dataInfo.backgroundIdSearchOk
   
       } else {
-  
-        this.statusTicket = this.dataInfo.searchTicketNotOkId
+          
         this.idTypeBackgrond = this.dataInfo.backgroundIdRed
+        this.message1 = this.dataInfo.ticketOld
+        this.message2 = moment(ticket.data_log_venda).format("L")
       }
 
     } else {
       this.useTicket(ticket)
     }
-
     
   }
 
   useTicket(ticket){
 
-    console.log('Utilizando ticket: ', ticket)
+    console.log('Utilizando ticket: ', ticket.id_estoque_utilizavel, this.areaId)
+    let self = this
+
+    this.http.useTicket(ticket.id_estoque_utilizavel, this.areaId).subscribe( () => {
+
+      self.statusTicket = self.dataInfo.ticketOk
+      self.idTypeBackgrond = self.dataInfo.backgroundIdGreen
+
+      self.message1 = ticket.nome_tipo_produto
+      self.message2 = self.dataInfo.welcomeMsg
+
+      self.backHome()
+      
+    })
+
   }
 
 
-  showSettings(){
-    this.updating = true
-    this.navCtrl.push("SettingsPage")
-  }
-
-  decrementCounter(){
-
-    this.updating = true
-    this.updatedInfo = false
-
-    this.http.decrementAreaCounter(this.areaId)
-    .subscribe( () => {      
-
-      this.updating = false
-      this.updatedInfo = true
-    })      
-  }
+  
 
   
 
