@@ -112,6 +112,19 @@ export class HomePage {
     })      
   }
 
+  incrementCounter(){
+
+    this.updating = true
+    this.updatedInfo = false
+
+    this.http.incrementAreaCounter(this.areaId)
+    .subscribe( () => {      
+
+      this.updating = false
+      this.updatedInfo = true
+    })      
+  }
+
   ionViewDidLoad() {
 
     this.updatedInfo = this.navParams.get('updatedInfo')
@@ -167,10 +180,36 @@ export class HomePage {
 
     if(this.searchTerm.length > 0 && parseInt(this.searchTerm)){
 
-      this.http.checkTicket(this.searchTerm).subscribe(data => {      
-        this.checkTicket(data)
+      this.http.checkTicketSold(this.searchTerm).subscribe( data => {
+        this.checkSold(data)                    
       })                  
     }    
+  } 
+
+
+  checkSold(ticket){
+
+    ticket.success.forEach(element => {
+
+      if(element.data_log_venda == undefined)
+        this.ticketNotSold()
+
+      else {
+
+        this.http.checkTicket(this.searchTerm).subscribe(data => {      
+          this.checkTicket(data)
+        }) 
+      }      
+    });   
+  }
+
+  ticketNotSold(){
+
+    this.statusTicket = this.dataInfo.ticketNotSoldedMsg
+    this.idTypeBackgrond = this.dataInfo.backgroundIdRed
+    this.message1 = this.dataInfo.ticketNotSolded
+    this.message2 = this.dataInfo.ticketNotSoldedMsg
+    this.backHome()
   }
 
   checkTicket(ticket){    
@@ -211,6 +250,8 @@ export class HomePage {
       this.statusTicketUsedOn = element.nome_ponto_acesso
       this.statusTicketStart = moment(element.data_log_utilizacao).format("L");      
     });
+
+    this.backHome()
   }
 
   ticketNotExist(){
@@ -218,11 +259,11 @@ export class HomePage {
     this.message1 = this.dataInfo.ticketNotRegistered      
     this.message2 = this.dataInfo.ticketNotRegisteredMsg
     this.idTypeBackgrond = this.dataInfo.backgroundIdRed
+
+    this.backHome()
   }
 
   ticketCheckValidity(ticket){    
-
-    console.log(ticket)
         
     ticket.success.forEach(element => {      
       
@@ -230,6 +271,9 @@ export class HomePage {
         this.ticketValiditySameDay(element)          
       } 
 
+      else if(element.infinito_validade == 1){    
+        this.ticketValidityInfinite(element)
+      } 
     });           
   }
 
@@ -239,30 +283,42 @@ export class HomePage {
 
     let isSame = moment(ticket.data_log_venda).isSame(now, 'day')
     this.history = this.dataInfo.ticketRead + this.searchTerm
-    this.statusTicketStart = moment(ticket.data_log_venda).format("L")
+    this.statusTicketStart = moment(ticket.data_log_venda).format("L")    
 
-    console.log('Mesmo dia?', isSame)
-
-    if(this.idTypeBackgrond === this.dataInfo.backgroundIdSearch){                
-
-      console.log('this.idTypeBackgrond === this.dataInfo.backgroundIdSearch')
+    if(this.idTypeBackgrond === this.dataInfo.backgroundIdSearch){                      
 
       if(isSame){
 
         this.statusTicket = this.dataInfo.ticketOk
         this.idTypeBackgrond = this.dataInfo.backgroundIdSearchOk
+        this.backHome()
   
-      } else {
-          
-        this.idTypeBackgrond = this.dataInfo.backgroundIdRed
-        this.message1 = this.dataInfo.ticketOld
-        this.message2 = moment(ticket.data_log_venda).format("L")
-      }
+      } else {          
+        this.ticketValidityNotSame(ticket)
+      }      
 
     } else {
-      this.useTicket(ticket)
-    }
+
+      if(isSame)
+        this.useTicket(ticket)
+        
+      else
+        this.ticketValidityNotSame(ticket)
+    }        
+  }
+
+  ticketValidityNotSame(ticket){
+    this.idTypeBackgrond = this.dataInfo.backgroundIdRed
+    this.message1 = this.dataInfo.ticketOld
+    this.message2 = moment(ticket.data_log_venda).format("L")
     
+    this.backHome()
+  }
+
+  ticketValidityInfinite(ticket){
+    this.history = this.dataInfo.ticketRead + this.searchTerm
+    this.statusTicketStart = moment(ticket.data_log_venda).format("L")    
+    this.useTicket(ticket)    
   }
 
   useTicket(ticket){
@@ -277,6 +333,8 @@ export class HomePage {
 
       self.message1 = ticket.nome_tipo_produto
       self.message2 = self.dataInfo.welcomeMsg
+
+      self.incrementCounter()
 
       self.backHome()
       

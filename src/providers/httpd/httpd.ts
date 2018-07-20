@@ -33,6 +33,22 @@ export class HttpdProvider {
     return this.http.post(this.address  + "/decrementAreaCounter", myData, {headers: headers})
   }
 
+  incrementAreaCounter(idArea_){
+    
+    let myData = JSON.stringify({id: this.idTotem, idArea: idArea_});
+    const headers = new HttpHeaders({'Content-Type':'application/json'});
+    return this.http.post(this.address  + "/incrementAreaCounter", myData, {headers: headers})
+  }
+
+
+  checkTicketSold(value_){
+    
+    let myData = JSON.stringify({id: this.idTotem, ticket: value_});
+    const headers = new HttpHeaders({'Content-Type':'application/json'});
+
+    return this.http.post(this.address  + "/checkTicketIsSold", myData, {headers: headers})
+  }
+
   checkTicket(value_){
     
     let myData = JSON.stringify({id: this.idTotem, ticket: value_});
