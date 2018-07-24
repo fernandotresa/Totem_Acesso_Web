@@ -176,6 +176,8 @@ export class HomePage {
     })
   }
 
+
+  
   updateInfo(){
 
     this.updating = true
@@ -197,6 +199,7 @@ export class HomePage {
   setFilteredItems(){
 
     if(this.searchTerm.length > 0 && parseInt(this.searchTerm)){
+      console.log('Procurando: ', this.searchTerm)
 
       this.http.checkTicketSold(this.searchTerm).subscribe( data => {
         this.checkSold(data)                    
