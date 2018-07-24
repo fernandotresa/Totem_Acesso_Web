@@ -12,7 +12,7 @@
 <ion-content>
 
     <ion-toolbar no-border-top>
-        <ion-searchbar
+        <ion-searchbar #searchbar
             [(ngModel)]="searchTerm"
             (ionInput)="setFilteredItems()"
             placeholder= "Inserir ticket">
@@ -68,10 +68,10 @@
                     </h4>                                        
             </div>
 
-            <div class="box-message" *ngIf="idTypeBackgrond == dataInfo.backgroundIdSearch">
+            <div class="box-message-history" *ngIf="idTypeBackgrond == dataInfo.backgroundIdSearch">
 
                 <div align="center">                    
-                    <h1 text-right class="ticket-type-font"> {{dataInfo.waitingTicket}} </h1>     
+                    <h1 text-right class="ticket-type-history"> {{dataInfo.waitingTicket}} </h1>     
                 </div>                    
 
             </div>

@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
 import { NavController, NavParams } from 'ionic-angular';
 import { HttpdProvider } from '../../providers/httpd/httpd';
 import { DatabaseProvider } from '../../providers/database/database';
@@ -6,7 +6,7 @@ import { DataInfoProvider } from '../../providers/data-info/data-info'
 import { UiUtilsProvider } from '../../providers/ui-utils/ui-utils'
 import { Observable } from 'rxjs/Observable';
 import { FormControl } from '@angular/forms';
-import 'rxjs/add/operator/debounceTime';
+import { Searchbar } from 'ionic-angular';
 import moment from 'moment';
 
 @Component({
@@ -15,6 +15,7 @@ import moment from 'moment';
 
 })
 export class HomePage {
+  @ViewChild('searchbar') searchbar:Searchbar;
 
   configs: Observable<any>;
   areaInfo: Observable<any>;
@@ -62,33 +63,46 @@ export class HomePage {
       setInterval(function(){ 
 
         if(! self.updating && self.areaId)
+
             self.updateInfo(); 
+            self.setFocus();
       
       }, 3000);            
+  }
+
+  setFocus(){
+    this.searchbar.setFocus();
   }
 
   backHome(){
     let self = this
 
     setTimeout(function(){ 
+      self.idTypeBackgrond = self.dataInfo.backgroundIdNone
+      self.searchTerm = ''
+      self.searching = false    
+    }, 3000);      
+  }
+
+  goHistory(){
+    let self = this
+
+    this.statusTicket = this.dataInfo.already
+    this.idTypeBackgrond = this.dataInfo.backgroundIdSearch
+
+    setTimeout(function(){ 
 
       self.idTypeBackgrond = self.dataInfo.backgroundIdNone
       self.searchTerm = ''
-      self.searching = false
-
-      console.log(self.idTypeBackgrond)
-    
-    }, 3000);      
+      self.searching = false    
+    }, 6000); 
   }
 
   showHistory(){
 
     if(this.idTypeBackgrond !== this.dataInfo.backgroundIdSearch){
-      this.statusTicket = this.dataInfo.already
-      this.idTypeBackgrond = this.dataInfo.backgroundIdSearch
-
+        this.goHistory()
     } else {
-
       this.idTypeBackgrond = this.dataInfo.backgroundIdNone
     }
    
@@ -128,6 +142,8 @@ export class HomePage {
   ionViewDidLoad() {
 
     this.updatedInfo = this.navParams.get('updatedInfo')
+
+    this.updating = false
 
     if(this.updatedInfo == undefined)
         this.updatedInfo = false
@@ -172,7 +188,9 @@ export class HomePage {
       Object.keys(data).map(function(personNamedIndex){
         let person = data[personNamedIndex];                
         self.counter = person[0].lotacao_area_acesso
-      });                
+      }); 
+      
+      self.updating = false
     })
   }
 

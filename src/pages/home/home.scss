@@ -40,6 +40,13 @@ page-home {
         width: 100%;
         height: 200px;
     }
+
+    .box-message-history {
+        margin-top: 100px;
+        background-color: transparent;
+        width: 100%;
+        height: 200px;
+    }
     
     .box-message-red {    
         margin-top: 100px;    
@@ -96,6 +103,15 @@ page-home {
         font-family: 'Arial';
         font-weight: bold;
         font-size: 20pt;
+    }
+
+    .ticket-type-history {
+        margin-top: 40px;
+        display: flex !important;
+        justify-content: center !important;
+        align-items: center !important;
+        color: black;
+        font-size: 40pt;
     }
 
     .ticket-type-font {
