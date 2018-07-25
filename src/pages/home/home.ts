@@ -22,6 +22,7 @@ export class HomePage {
   ticket: Observable<any>;  
   
   idTypeBackgrond: number = this.dataInfo.backgroundIdNone;
+  ticketRead: Boolean = false
 
   title: string = this.dataInfo.isLoading
   message1: string = this.dataInfo.isLoading
@@ -70,6 +71,21 @@ export class HomePage {
       }, 3000);            
   }
 
+  ionViewDidLoad() {
+
+    this.updatedInfo = this.navParams.get('updatedInfo')
+
+    this.updating = false
+
+    if(this.updatedInfo == undefined)
+        this.updatedInfo = false
+      
+    if(this.updatedInfo)
+        this.updateInfo()
+    else   
+      this.loadConfig()                
+  }
+
   setFocus(){
     this.searchbar.setFocus();
   }
@@ -81,6 +97,8 @@ export class HomePage {
       self.idTypeBackgrond = self.dataInfo.backgroundIdNone
       self.searchTerm = ''
       self.searching = false    
+      self.ticketRead = false
+      self.dataInfo.ticketRead = self.dataInfo.ticketReadDefault
     }, 3000);      
   }
 
@@ -90,12 +108,12 @@ export class HomePage {
     this.statusTicket = this.dataInfo.already
     this.idTypeBackgrond = this.dataInfo.backgroundIdSearch
 
-    setTimeout(function(){ 
+   /* setTimeout(function(){ 
 
       self.idTypeBackgrond = self.dataInfo.backgroundIdNone
       self.searchTerm = ''
       self.searching = false    
-    }, 6000); 
+    }, 6000); */
   }
 
   showHistory(){
@@ -104,8 +122,7 @@ export class HomePage {
         this.goHistory()
     } else {
       this.idTypeBackgrond = this.dataInfo.backgroundIdNone
-    }
-   
+    }   
   }
 
   showSettings(){
@@ -137,23 +154,7 @@ export class HomePage {
       this.updating = false
       this.updatedInfo = true
     })      
-  }
-
-  ionViewDidLoad() {
-
-    this.updatedInfo = this.navParams.get('updatedInfo')
-
-    this.updating = false
-
-    if(this.updatedInfo == undefined)
-        this.updatedInfo = false
-      
-    if(this.updatedInfo)
-        this.updateInfo()
-
-    else   
-      this.loadConfig()                
-  }
+  }  
 
   loadConfig(){       
     this.configs = this.db.getConfigArea()
@@ -175,8 +176,6 @@ export class HomePage {
       }                 
     })
   }
-
-
   
   updateInfo(){
 
@@ -207,13 +206,12 @@ export class HomePage {
     }    
   } 
 
-
   checkSold(ticket){
 
     ticket.success.forEach(element => {
 
       if(element.data_log_venda == undefined)
-        this.ticketNotSold()
+        this.ticketNotSold(ticket)
 
       else {
 
@@ -224,12 +222,15 @@ export class HomePage {
     });   
   }
 
-  ticketNotSold(){
+  ticketNotSold(ticket){  
+    console.log(ticket)
 
+    this.ticketRead = true
     this.statusTicket = this.dataInfo.ticketNotSoldedMsg
     this.idTypeBackgrond = this.dataInfo.backgroundIdRed
     this.message1 = this.dataInfo.ticketNotSolded
     this.message2 = this.dataInfo.ticketNotSoldedMsg
+    this.dataInfo.ticketRead = this.dataInfo.ticketRead + this.searchTerm
     this.backHome()
   }
 
@@ -253,18 +254,18 @@ export class HomePage {
   checkTicketContinueCallback(ticket){    
 
     if(ticket.success.length == 0){
-      this.ticketNotExist()
-
+      this.ticketNotExist(ticket)
     } else {
       this.ticketCheckValidity(ticket)
     }
-
   }
 
   ticketAlreadyUsed(ticket){
 
     this.statusTicket = this.dataInfo.already
     this.idTypeBackgrond = this.dataInfo.backgroundIdSearchNotOk
+    this.ticketRead = true
+    this.dataInfo.ticketRead = this.dataInfo.ticketRead + this.searchTerm
 
     ticket.success.forEach(element => {
 
@@ -275,11 +276,13 @@ export class HomePage {
     this.backHome()
   }
 
-  ticketNotExist(){
+  ticketNotExist(ticket){
 
     this.message1 = this.dataInfo.ticketNotRegistered      
     this.message2 = this.dataInfo.ticketNotRegisteredMsg
     this.idTypeBackgrond = this.dataInfo.backgroundIdRed
+    this.ticketRead = true
+    this.dataInfo.ticketRead = this.dataInfo.ticketRead + this.searchTerm
 
     this.backHome()
   }
@@ -328,6 +331,8 @@ export class HomePage {
     this.idTypeBackgrond = this.dataInfo.backgroundIdRed
     this.message1 = this.dataInfo.ticketOld
     this.message2 = moment(ticket.data_log_venda).hours(tempo_validade).format("L");
+    this.ticketRead = true
+    this.dataInfo.ticketRead = this.dataInfo.ticketRead + this.searchTerm
     
     this.backHome()
   }
@@ -346,6 +351,8 @@ export class HomePage {
 
         this.statusTicket = this.dataInfo.ticketOk
         this.idTypeBackgrond = this.dataInfo.backgroundIdSearchOk
+        this.ticketRead = true
+        
         this.backHome()
   
       } else {          
@@ -363,6 +370,8 @@ export class HomePage {
   }
 
   ticketValidityNotSame(ticket){
+    this.ticketRead = true
+    this.dataInfo.ticketRead = this.dataInfo.ticketRead + this.searchTerm
     this.idTypeBackgrond = this.dataInfo.backgroundIdRed
     this.message1 = this.dataInfo.ticketOld
     this.message2 = moment(ticket.data_log_venda).format("L")
@@ -372,13 +381,18 @@ export class HomePage {
 
   ticketValidityInfinite(ticket){
     this.history = this.dataInfo.ticketRead + this.searchTerm
-    this.statusTicketStart = moment(ticket.data_log_venda).format("L")    
+    this.statusTicketStart = moment(ticket.data_log_venda).format("L")   
+
     this.useTicket(ticket)    
   }
 
   useTicket(ticket){
 
     console.log('Utilizando ticket: ', ticket.id_estoque_utilizavel, this.areaId)
+
+    this.ticketRead = true
+    this.dataInfo.ticketRead = this.dataInfo.ticketRead + this.searchTerm
+
     let self = this
 
     this.http.useTicket(ticket.id_estoque_utilizavel, this.areaId).subscribe( () => {

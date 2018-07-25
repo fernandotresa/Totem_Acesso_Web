@@ -35,21 +35,18 @@ page-home {
     }
 
     .box-message {
-        margin-top: 100px;
         background-color: green;
         width: 100%;
         height: 200px;
     }
 
     .box-message-history {
-        margin-top: 100px;
         background-color: transparent;
         width: 100%;
         height: 200px;
     }
     
-    .box-message-red {    
-        margin-top: 100px;    
+    .box-message-red {            
         background-color: red;
         width: 100%;
         height: 200px;
@@ -106,7 +103,6 @@ page-home {
     }
 
     .ticket-type-history {
-        margin-top: 40px;
         display: flex !important;
         justify-content: center !important;
         align-items: center !important;

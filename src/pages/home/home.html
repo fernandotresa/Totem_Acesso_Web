@@ -22,15 +22,16 @@
     <ion-grid>
         <ion-row>
             <ion-col *ngIf="idTypeBackgrond == dataInfo.backgroundIdNone">
-
                 <h3 text-right class="title">  {{title}} </h3>                
-
             </ion-col>
 
-            <ion-col class="box-header-gray" *ngIf="idTypeBackgrond === dataInfo.backgroundIdSearchOk || idTypeBackgrond === dataInfo.backgroundIdSearchNotOk">                
-                    <h3 text-right class="titleHistory">  {{history}} </h3>       
+            <ion-col class="box-header-gray" *ngIf="idTypeBackgrond >= dataInfo.backgroundIdSearch">                
+                <h3 text-right class="titleHistory">  {{history}} </h3>       
+             </ion-col>
 
-                </ion-col>
+             <ion-col class="box-header-gray" *ngIf="ticketRead">                
+                <h3 text-right class="titleHistory">  {{dataInfo.ticketRead}} </h3>       
+             </ion-col>
 
         </ion-row>  
 
@@ -65,17 +66,10 @@
                
                 <h4 text-right class="box-header-text"> {{historyText3}}: 
                         <b> {{statusTicketStart}} - {{statusTicketUsedOn}} </b> 
-                    </h4>                                        
-            </div>
-
-            <div class="box-message-history" *ngIf="idTypeBackgrond == dataInfo.backgroundIdSearch">
-
-                <div align="center">                    
-                    <h1 text-right class="ticket-type-history"> {{dataInfo.waitingTicket}} </h1>     
-                </div>                    
+                 </h4>                                        
 
             </div>
-           
+
         </ion-row>
     </ion-grid>
 

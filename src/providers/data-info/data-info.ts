@@ -11,6 +11,7 @@ export class DataInfoProvider {
   backgroundIdSearch: number = 4
   backgroundIdSearchOk: number = 5
   backgroundIdSearchNotOk: number = 6
+  backgroundIdTicketRead: number = 7
     
   history: string = "Histórico do ingresso"
   historyUntilDay: string = "Até dia"
@@ -28,16 +29,15 @@ export class DataInfoProvider {
   ticketOk: string = "Ingresso válido"  
   isLoading: string =  "Carregando"
 
-
   welcomeMsg: string = "Seja bem vindo!"
   pleaseWait: string = "Favor aguarde"
   atention: string = "Atenção"   
 
+  ticketReadDefault: string = "Ingresso lido: "   
   ticketRead: string = "Ingresso lido: "   
    
   usedDay: string = "Utilizado dia"   
-  
-  waitingTicket: string = "Aguardando leitura"
+    
   sucess: string = "Sucesso"
   erro: string = "Erro"
   noConfiguration: string = "Nenhuma configuraçao disponivel"
