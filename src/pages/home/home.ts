@@ -5,7 +5,6 @@ import { DatabaseProvider } from '../../providers/database/database';
 import { DataInfoProvider } from '../../providers/data-info/data-info'
 import { UiUtilsProvider } from '../../providers/ui-utils/ui-utils'
 import { Observable } from 'rxjs/Observable';
-import { FormControl } from '@angular/forms';
 import { Searchbar } from 'ionic-angular';
 import moment from 'moment';
 
@@ -21,8 +20,12 @@ export class HomePage {
   areaInfo: Observable<any>;
   ticket: Observable<any>;  
   
+  isMultiple: Boolean = false;
   idTypeBackgrond: number = this.dataInfo.backgroundIdNone;
   ticketRead: Boolean = false
+
+  titleTicketOne: string = "Ingresso"
+  multipleColor: string = "danger"
 
   title: string = this.dataInfo.isLoading
   message1: string = this.dataInfo.isLoading
@@ -45,8 +48,8 @@ export class HomePage {
   historyText2: string = this.dataInfo.accessPoints
   historyText3: string = this.dataInfo.usedDay
 
-  searchControl: FormControl;
-  searchTerm: string = '';
+  searchTicket: string = '';
+  searchTicketEnd: string = '';
   searching: any = false;  
   
   constructor(
@@ -56,8 +59,6 @@ export class HomePage {
     public db: DatabaseProvider,
     public navParams: NavParams,  
     public http: HttpdProvider) { 
-
-      this.searchControl = new FormControl();
       
       let self = this
 
@@ -87,7 +88,9 @@ export class HomePage {
   }
 
   setFocus(){
-    this.searchbar.setFocus();
+    if(! this.isMultiple)
+      this.searchbar.setFocus();
+    
   }
 
   backHome(){
@@ -95,7 +98,8 @@ export class HomePage {
 
     setTimeout(function(){ 
       self.idTypeBackgrond = self.dataInfo.backgroundIdNone
-      self.searchTerm = ''
+      self.searchTicket = ''
+      self.searchTicketEnd = ''
       self.searching = false    
       self.ticketRead = false
       self.dataInfo.ticketRead = self.dataInfo.ticketReadDefault
@@ -195,16 +199,47 @@ export class HomePage {
     })
   }
 
+  ticketInputChanged(){
+
+    console.log('Modificado:', this.searchTicket)
+    if(this.searchTicket.length > 0){
+      this.setFilteredItems()
+    }
+  }
+
   setFilteredItems(){
 
-    if(this.searchTerm.length > 0 && parseInt(this.searchTerm)){
-      console.log('Procurando: ', this.searchTerm)
+    if(this.searchTicket.length > 0){
 
-      this.http.checkTicketSold(this.searchTerm).subscribe( data => {
-        this.checkSold(data)                    
-      })                  
+      if(! this.isMultiple)
+        this.searchOneTicket()
+      else
+       this.searchMultipleTickets()
     }    
   } 
+
+  searchOneTicket(){  
+    this.http.checkTicketSold(this.searchTicket).subscribe( data => {
+      this.checkSold(data)                    
+    })                  
+  }
+
+  searchMultipleTickets(){
+    let self = this
+  
+    this.http.checkMultipleTickets(this.searchTicket, this.searchTicketEnd)
+      .subscribe( data => {        
+        self.searchMultipleCallback(data)
+    })       
+  }
+
+  searchMultipleCallback(ticket){
+       
+    Object.keys(ticket).map(function(personNamedIndex){
+      let ticketDetail = ticket[personNamedIndex];                
+      console.log(ticketDetail)
+    }); 
+  }
 
   checkSold(ticket){
 
@@ -212,10 +247,8 @@ export class HomePage {
 
       if(element.data_log_venda == undefined)
         this.ticketNotSold(ticket)
-
       else {
-
-        this.http.checkTicket(this.searchTerm).subscribe(data => {      
+        this.http.checkTicket(this.searchTicket).subscribe(data => {      
           this.checkTicket(data)
         }) 
       }      
@@ -223,14 +256,12 @@ export class HomePage {
   }
 
   ticketNotSold(ticket){  
-    console.log(ticket)
-
     this.ticketRead = true
     this.statusTicket = this.dataInfo.ticketNotSoldedMsg
     this.idTypeBackgrond = this.dataInfo.backgroundIdRed
     this.message1 = this.dataInfo.ticketNotSolded
     this.message2 = this.dataInfo.ticketNotSoldedMsg
-    this.dataInfo.ticketRead = this.dataInfo.ticketRead + this.searchTerm
+    this.dataInfo.ticketRead = this.dataInfo.ticketRead + this.searchTicket
     this.backHome()
   }
 
@@ -238,21 +269,18 @@ export class HomePage {
 
     if(ticket.success.length > 0){
       this.ticketAlreadyUsed(ticket)
-
     } else {
       this.checkTicketContinue()
     }
   }
 
   checkTicketContinue(){    
-
-    this.http.checkTicketContinue(this.searchTerm).subscribe(data => {            
+    this.http.checkTicketContinue(this.searchTicket).subscribe(data => {            
       this.checkTicketContinueCallback(data)     
     })  
   }
 
   checkTicketContinueCallback(ticket){    
-
     if(ticket.success.length == 0){
       this.ticketNotExist(ticket)
     } else {
@@ -265,10 +293,9 @@ export class HomePage {
     this.statusTicket = this.dataInfo.already
     this.idTypeBackgrond = this.dataInfo.backgroundIdSearchNotOk
     this.ticketRead = true
-    this.dataInfo.ticketRead = this.dataInfo.ticketRead + this.searchTerm
+    this.dataInfo.ticketRead = this.dataInfo.ticketRead + this.searchTicket
 
     ticket.success.forEach(element => {
-
       this.statusTicketUsedOn = element.nome_ponto_acesso
       this.statusTicketStart = moment(element.data_log_utilizacao).format("L");      
     });
@@ -282,8 +309,7 @@ export class HomePage {
     this.message2 = this.dataInfo.ticketNotRegisteredMsg
     this.idTypeBackgrond = this.dataInfo.backgroundIdRed
     this.ticketRead = true
-    this.dataInfo.ticketRead = this.dataInfo.ticketRead + this.searchTerm
-
+    this.dataInfo.ticketRead = this.dataInfo.ticketRead + this.searchTicket
     this.backHome()
   }
 
@@ -294,15 +320,12 @@ export class HomePage {
       if(element.mesmo_dia_validade == 1){          
         this.ticketValiditySameDay(element)          
       } 
-
       else if(element.infinito_validade == 1){    
         this.ticketValidityInfinite(element)
       } 
-
       else {    
         this.ticketValidityTime(element)
       } 
-
     });           
   }
 
@@ -321,19 +344,16 @@ export class HomePage {
 
     } else {
       this.ticketValidityTimeNotOk(ticket)      
-
     }    
   }
 
   ticketValidityTimeNotOk(ticket){
-
     let tempo_validade = ticket.tempo_validade
     this.idTypeBackgrond = this.dataInfo.backgroundIdRed
     this.message1 = this.dataInfo.ticketOld
     this.message2 = moment(ticket.data_log_venda).hours(tempo_validade).format("L");
     this.ticketRead = true
-    this.dataInfo.ticketRead = this.dataInfo.ticketRead + this.searchTerm
-    
+    this.dataInfo.ticketRead = this.dataInfo.ticketRead + this.searchTicket    
     this.backHome()
   }
 
@@ -342,7 +362,7 @@ export class HomePage {
     let now = moment().format()    
 
     let isSame = moment(ticket.data_log_venda).isSame(now, 'day')
-    this.history = this.dataInfo.ticketRead + this.searchTerm
+    this.history = this.dataInfo.ticketRead + this.searchTicket
     this.statusTicketStart = moment(ticket.data_log_venda).format("L")    
 
     if(this.idTypeBackgrond === this.dataInfo.backgroundIdSearch){                      
@@ -362,8 +382,7 @@ export class HomePage {
     } else {
 
       if(isSame)
-        this.useTicket(ticket)
-        
+        this.useTicket(ticket)        
       else
         this.ticketValidityNotSame(ticket)
     }        
@@ -371,18 +390,16 @@ export class HomePage {
 
   ticketValidityNotSame(ticket){
     this.ticketRead = true
-    this.dataInfo.ticketRead = this.dataInfo.ticketRead + this.searchTerm
+    this.dataInfo.ticketRead = this.dataInfo.ticketRead + this.searchTicket
     this.idTypeBackgrond = this.dataInfo.backgroundIdRed
     this.message1 = this.dataInfo.ticketOld
-    this.message2 = moment(ticket.data_log_venda).format("L")
-    
+    this.message2 = moment(ticket.data_log_venda).format("L")    
     this.backHome()
   }
 
   ticketValidityInfinite(ticket){
-    this.history = this.dataInfo.ticketRead + this.searchTerm
+    this.history = this.dataInfo.ticketRead + this.searchTicket
     this.statusTicketStart = moment(ticket.data_log_venda).format("L")   
-
     this.useTicket(ticket)    
   }
 
@@ -391,7 +408,7 @@ export class HomePage {
     console.log('Utilizando ticket: ', ticket.id_estoque_utilizavel, this.areaId)
 
     this.ticketRead = true
-    this.dataInfo.ticketRead = this.dataInfo.ticketRead + this.searchTerm
+    this.dataInfo.ticketRead = this.dataInfo.ticketRead + this.searchTicket
 
     let self = this
 
@@ -404,16 +421,22 @@ export class HomePage {
       self.message2 = self.dataInfo.welcomeMsg
 
       self.incrementCounter()
-
       self.backHome()
       
     })
-
   }
 
+  setMultiple(){
+      this.isMultiple = !this.isMultiple
 
-  
-
-  
-
+      if(this.isMultiple){
+        this.titleTicketOne = "Ingresso inicial"
+        this.multipleColor = "secondary"
+      }        
+      else {
+        this.titleTicketOne = "Ingresso"
+        this.multipleColor = "danger"
+      }
+        
+  }    
 }
