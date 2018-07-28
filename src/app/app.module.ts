@@ -2,9 +2,10 @@ import { BrowserModule } from '@angular/platform-browser';
 import { ErrorHandler, NgModule } from '@angular/core';
 import { IonicApp, IonicErrorHandler, IonicModule } from 'ionic-angular';
 
-
 import { MyApp } from './app.component';
 import { HomePage } from '../pages/home/home';
+
+import { MultiplePageModule } from '../pages/multiple/multiple.module';
 
 import { HttpdProvider } from '../providers/httpd/httpd';
 import { DataInfoProvider } from '../providers/data-info/data-info';
@@ -38,11 +39,13 @@ export const firebaseConfig = {
     AngularFireDatabaseModule,
     IonicModule.forRoot(MyApp)
   ],
+  exports: [
+    MultiplePageModule
+  ],
   bootstrap: [IonicApp],
   entryComponents: [
     MyApp,
-    HomePage
-    
+    HomePage    
   ],
   providers: [        
     NativeStorage,

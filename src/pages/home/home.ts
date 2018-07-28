@@ -20,7 +20,6 @@ export class HomePage {
   areaInfo: Observable<any>;
   ticket: Observable<any>;  
   
-  isMultiple: Boolean = false;
   idTypeBackgrond: number = this.dataInfo.backgroundIdNone;
   ticketRead: Boolean = false
 
@@ -48,8 +47,7 @@ export class HomePage {
   historyText2: string = this.dataInfo.accessPoints
   historyText3: string = this.dataInfo.usedDay
 
-  searchTicket: string = '';
-  searchTicketEnd: string = '';
+  searchTicket: string = '';  
   searching: any = false;  
   
   constructor(
@@ -88,9 +86,7 @@ export class HomePage {
   }
 
   setFocus(){
-    if(! this.isMultiple)
-      this.searchbar.setFocus();
-    
+    this.searchbar.setFocus();          
   }
 
   backHome(){
@@ -99,7 +95,6 @@ export class HomePage {
     setTimeout(function(){ 
       self.idTypeBackgrond = self.dataInfo.backgroundIdNone
       self.searchTicket = ''
-      self.searchTicketEnd = ''
       self.searching = false    
       self.ticketRead = false
       self.dataInfo.ticketRead = self.dataInfo.ticketReadDefault
@@ -132,7 +127,7 @@ export class HomePage {
   showSettings(){
     this.updating = true
     this.navCtrl.push("SettingsPage")
-  }
+  }  
 
   decrementCounter(){
 
@@ -202,6 +197,7 @@ export class HomePage {
   ticketInputChanged(){
 
     console.log('Modificado:', this.searchTicket)
+
     if(this.searchTicket.length > 0){
       this.setFilteredItems()
     }
@@ -210,36 +206,18 @@ export class HomePage {
   setFilteredItems(){
 
     if(this.searchTicket.length > 0){
-
-      if(! this.isMultiple)
-        this.searchOneTicket()
-      else
-       this.searchMultipleTickets()
+      this.searchOneTicket()      
     }    
   } 
 
   searchOneTicket(){  
+    console.log('Procurando um ingresso:', this.searchTicket)
+
     this.http.checkTicketSold(this.searchTicket).subscribe( data => {
       this.checkSold(data)                    
     })                  
   }
-
-  searchMultipleTickets(){
-    let self = this
   
-    this.http.checkMultipleTickets(this.searchTicket, this.searchTicketEnd)
-      .subscribe( data => {        
-        self.searchMultipleCallback(data)
-    })       
-  }
-
-  searchMultipleCallback(ticket){
-       
-    Object.keys(ticket).map(function(personNamedIndex){
-      let ticketDetail = ticket[personNamedIndex];                
-      console.log(ticketDetail)
-    }); 
-  }
 
   checkSold(ticket){
 
@@ -426,17 +404,7 @@ export class HomePage {
     })
   }
 
-  setMultiple(){
-      this.isMultiple = !this.isMultiple
-
-      if(this.isMultiple){
-        this.titleTicketOne = "Ingresso inicial"
-        this.multipleColor = "secondary"
-      }        
-      else {
-        this.titleTicketOne = "Ingresso"
-        this.multipleColor = "danger"
-      }
-        
+  setMultiple(){      
+      this.navCtrl.push("MultiplePage")        
   }    
 }

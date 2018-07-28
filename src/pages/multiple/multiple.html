@@ -1,18 +1,28 @@
-<!--
-  Generated template for the MultiplePage page.
-
-  See http://ionicframework.com/docs/components/#navigation for more info on
-  Ionic pages and navigation.
--->
 <ion-header>
-
-  <ion-navbar>
-    <ion-title>multiple</ion-title>
-  </ion-navbar>
-
-</ion-header>
-
+    <ion-navbar no-border-bottom color="light">        
+      <ion-title> Múltiplo </ion-title>     
+    </ion-navbar>  
+  </ion-header>
 
 <ion-content padding>
+
+  <ion-list>
+      <ion-item no-lines><ion-label stacked> Ingresso inicial </ion-label>
+        <ion-input type="number" [(ngModel)]="searchTicket" #searchbar></ion-input>
+    </ion-item>  
+
+    <ion-item no-lines><ion-label stacked> Ingresso Final </ion-label>
+      <ion-input type="number" [(ngModel)]="searchTicketEnd" #searchbarEnd></ion-input>
+    </ion-item>  
+
+    <button ion-button full (click)="searchMultipleTickets()"> Enviar </button>    
+                        
+      <ion-item *ngFor="let command of (allTickets)?.success">                      
+          <ion-title> Ingresso: {{ command.id_estoque_utilizavel}} </ion-title>        
+          <p> Data: {{ command.data_log_venda}} </p>                  
+    </ion-item>  
+
+  </ion-list>
+  
 
 </ion-content>

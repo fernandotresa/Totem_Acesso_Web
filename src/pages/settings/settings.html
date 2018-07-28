@@ -29,21 +29,16 @@
 
         <ion-item-sliding *ngFor="let area of (allAreas | async)?.success let i = index"  #item>    
                       
-            <ion-item>
-                            
+            <ion-item>                            
                 <ion-title> {{ area.nome_area_acesso }} </ion-title>
-                <p> Lotaçao atual: {{ area.lotacao_area_acesso }}</p>
-              
+                <p> Lotaçao atual: {{ area.lotacao_area_acesso }}</p>              
           </ion-item>
 
           <ion-item-options side="right" >
-
               <button ion-button color="secondary" (click)="selectArea(area)" icon-start>
-                <ion-icon name="star" color="light"></ion-icon>  Selecionar
-              </button> 
+                 <ion-icon name="star" color="light"></ion-icon>  Selecionar
+              </button>                     
 
-              
-      
           </ion-item-options>
 
         </ion-item-sliding>
