@@ -1,14 +1,14 @@
 import { Component } from '@angular/core';
 import { Platform } from 'ionic-angular';
 
-//import { HomePage } from '../pages/home/home';
-import { MultiplePage } from '../pages/multiple/multiple';
+import { HomePage } from '../pages/home/home';
+//import { MultiplePage } from '../pages/multiple/multiple';
 
 @Component({
   templateUrl: 'app.html'
 })
 export class MyApp {
-  rootPage:any = MultiplePage;
+  rootPage:any = HomePage;
 
   constructor(platform: Platform) {
     platform.ready().then(() => {

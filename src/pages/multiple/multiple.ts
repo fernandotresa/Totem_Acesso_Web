@@ -71,7 +71,6 @@ export class MultiplePage {
   checkTicket(ticketCallback, ticketActual){   
     
     if(ticketCallback.success.length > 0){
-
       this.ticketAlreadyUsed(ticketCallback)
       
     } else {
@@ -102,11 +101,10 @@ export class MultiplePage {
       ticket.success.forEach(subelement => {
       
         if(element.id_estoque_utilizavel == subelement.id_estoque_utilizavel){
+          element.data_log_venda = moment(element.data_log_utilizacao).format("L");      
           element.nome_ponto_acesso  = subelement.nome_ponto_acesso 
         }
-
-      });
-      
+      });    
     });
   }
 

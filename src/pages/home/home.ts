@@ -186,8 +186,14 @@ export class HomePage {
     return this.http.getAreaCounter(this.areaId).subscribe(data => {
 
       Object.keys(data).map(function(personNamedIndex){
-        let person = data[personNamedIndex];                
-        self.counter = person[0].lotacao_area_acesso
+        let person = data[personNamedIndex];     
+
+        if(person[0].lotacao_area_acesso == undefined){
+          self.uiUtils.showToast('Favor configurar sistema')
+        } else {
+          self.counter = person[0].lotacao_area_acesso
+        }
+        
       }); 
       
       self.updating = false
