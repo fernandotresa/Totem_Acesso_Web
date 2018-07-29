@@ -30,8 +30,8 @@ export class HomePage {
   message1: string = this.dataInfo.isLoading
   message2: string = this.dataInfo.isLoading
       
-  areaId: string = '1'
-  pontoId: string = '1'
+  areaId: number = this.dataInfo.areaId
+  pontoId: number = this.dataInfo.pontoId
   updatedInfo: Boolean = false
   updating: Boolean = false
 
@@ -170,7 +170,7 @@ export class HomePage {
         self.areaId = el.id_area_acesso  
       });            
       
-      if(self.areaId == ''){
+      if(self.areaId == undefined){
         self.uiUtils.showToast(self.dataInfo.noConfiguration)
       }                 
     })

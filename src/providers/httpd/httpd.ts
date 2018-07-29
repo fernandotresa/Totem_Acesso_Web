@@ -9,7 +9,7 @@ export class HttpdProvider {
   
   address : string = 'http://localhost:8085'  
   //address : string = 'http://10.0.2.114:8085'  
-  idTotem: number = 2
+  idTotem: number = 28
   
   constructor(public http: HttpClient) {
     console.log('Hello HttpdProvider Provider');

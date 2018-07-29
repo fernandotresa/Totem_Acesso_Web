@@ -5,6 +5,8 @@ import { Injectable } from '@angular/core';
 export class DataInfoProvider {
   
   areaId: number =  1
+  pontoId: number =  28
+
   backgroundIdGreen: number = 1
   backgroundIdRed: number = 2
   backgroundIdNone: number = 3

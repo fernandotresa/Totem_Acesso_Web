@@ -19,7 +19,8 @@
                         
       <ion-item *ngFor="let command of (allTickets)?.success">                      
           <ion-title> Ingresso: {{ command.id_estoque_utilizavel}} </ion-title>        
-          <p> Data: {{ command.data_log_venda}} </p>                  
+          <p> Data venda: {{ command.data_log_venda}} </p>                  
+          <p> Ponto utilização: {{ command.nome_ponto_acesso}} </p>         
     </ion-item>  
 
   </ion-list>
