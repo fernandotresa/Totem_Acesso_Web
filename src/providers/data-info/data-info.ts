@@ -31,6 +31,7 @@ export class DataInfoProvider {
   ticketOk: string = "Ingresso válido"  
   isLoading: string =  "Carregando"
 
+  ticketNotAllowed: string = "Não permitido nessa área"
   welcomeMsg: string = "Seja bem vindo!"
   pleaseWait: string = "Favor aguarde"
   atention: string = "Atenção"   
@@ -67,9 +68,7 @@ export class DataInfoProvider {
     console.log(this.history)
   }  
 
-  getAreaId(){
-    return this.areaId
-  }
+
   
 
 }

@@ -18,9 +18,11 @@
     <button ion-button full (click)="searchMultipleTickets()"> Enviar </button>    
                         
       <ion-item *ngFor="let command of (allTickets)?.success">                      
-          <ion-title> Ingresso: {{ command.id_estoque_utilizavel}} </ion-title>        
-          <p> Data venda: {{ command.data_log_venda}} </p>                  
-          <p> Ponto utilização: {{ command.nome_ponto_acesso}} </p>         
+          <h2 *ngIf="! command.alerta" style="color: green;"> Ingresso: {{ command.id_estoque_utilizavel}}  </h2>                  
+          <h2 *ngIf="command.alerta" style="color: red;"> Ingresso: {{ command.id_estoque_utilizavel}}  </h2>                  
+          <h2 *ngIf="command.data_log_venda"> Data venda: {{ command.data_log_venda}} </h2>                  
+          <h2 *ngIf="command.nome_ponto_acesso"> Ponto utilização: {{ command.nome_ponto_acesso}} </h2>         
+          <h2 *ngIf="command.alerta">Atenção: {{ command.alerta}} </h2>
     </ion-item>  
 
   </ion-list>

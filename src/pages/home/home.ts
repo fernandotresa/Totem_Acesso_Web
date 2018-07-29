@@ -107,12 +107,12 @@ export class HomePage {
     this.statusTicket = this.dataInfo.already
     this.idTypeBackgrond = this.dataInfo.backgroundIdSearch
 
-   /* setTimeout(function(){ 
+    setTimeout(function(){ 
 
       self.idTypeBackgrond = self.dataInfo.backgroundIdNone
-      self.searchTerm = ''
+      self.searchTicket = ''
       self.searching = false    
-    }, 6000); */
+    }, 6000); 
   }
 
   showHistory(){
@@ -254,8 +254,35 @@ export class HomePage {
     if(ticket.success.length > 0){
       this.ticketAlreadyUsed(ticket)
     } else {
-      this.checkTicketContinue()
+      this.checkTicketArea()
     }
+  }
+
+  checkTicketArea(){
+    this.http.checkTicketAreaAccess(this.areaId, this.searchTicket).subscribe(data => {            
+      this.checkTicketAreaCallback(data)     
+    })
+  }
+
+  checkTicketAreaCallback(ticket){
+
+    console.log(ticket.success.length)
+
+    if(ticket.success.length > 0){
+      this.checkTicketContinue()
+    } else {
+      this.checkTicketAreaAccessDenied()
+    }    
+  }
+
+  checkTicketAreaAccessDenied(){
+    this.statusTicket = this.dataInfo.accessDenied
+    this.idTypeBackgrond = this.dataInfo.backgroundIdRed
+    this.ticketRead = true
+    this.dataInfo.ticketRead = this.dataInfo.ticketRead + this.searchTicket   
+    this.message1 = this.dataInfo.accessDenied      
+    this.message2 = this.dataInfo.ticketNotAllowed
+    this.backHome()
   }
 
   checkTicketContinue(){    
@@ -270,7 +297,7 @@ export class HomePage {
     } else {
       this.ticketCheckValidity(ticket)
     }
-  }
+  } 
 
   ticketAlreadyUsed(ticket){
 

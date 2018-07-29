@@ -58,13 +58,7 @@ export class HttpdProvider {
   }
 
   useTicket(value_, idArea_){
-
-    let myData = JSON.stringify({id: this.idTotem, 
-            idAreaAcesso: idArea_, 
-            ticket: value_});
-
-            console.log(myData)
-
+    let myData = JSON.stringify({id: this.idTotem, idAreaAcesso: idArea_, ticket: value_});
     const headers = new HttpHeaders({'Content-Type':'application/json'});
     return this.http.post(this.address  + "/useTicket", myData, {headers: headers})
   }
@@ -73,6 +67,12 @@ export class HttpdProvider {
     let myData = JSON.stringify({id: this.idTotem, ticketStart: start_, ticketEnd: end_});
     const headers = new HttpHeaders({'Content-Type':'application/json'});
     return this.http.post(this.address  + "/checkMultipleTickets", myData, {headers: headers})
+  }
+
+  checkTicketAreaAccess(idArea_, value_){    
+    let myData = JSON.stringify({id: this.idTotem, idArea: idArea_, ticket: value_});
+    const headers = new HttpHeaders({'Content-Type':'application/json'});
+    return this.http.post(this.address  + "/checkTicketAreaAccess", myData, {headers: headers})
   }
 
  

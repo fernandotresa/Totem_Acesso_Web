@@ -9,6 +9,7 @@ import { HomePage } from '../pages/home/home';
 })
 export class MyApp {
   rootPage:any = HomePage;
+  
 
   constructor(platform: Platform) {
     platform.ready().then(() => {
