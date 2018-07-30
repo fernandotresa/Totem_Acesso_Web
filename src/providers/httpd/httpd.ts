@@ -8,7 +8,7 @@ export class HttpdProvider {
   data:any = {};
   
   address : string = 'http://localhost:8085'  
-  idTotem: number = 28
+  idTotem: number = 0
   
   constructor(public http: HttpClient, public dataInfo: DataInfoProvider) {
     console.log('Hello HttpdProvider Provider');

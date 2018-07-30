@@ -12,7 +12,7 @@
     <ion-list>    
     
     <ion-item no-lines><ion-label fixed> {{titleTicketOne}} </ion-label>
-        <ion-input type="number" (ionChange)="ticketInputChanged()" [(ngModel)]="searchTicket" #searchbar></ion-input>
+        <ion-input type="number"  (keyup.enter)="setFilteredItems()" [(ngModel)]="searchTicket" #searchbar></ion-input>
     </ion-item>                                    
 
     <ion-grid>

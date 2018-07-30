@@ -37,10 +37,9 @@ export class HomePage {
 
   counter: string = this.dataInfo.isLoading
   statusTicket: string = this.dataInfo.ticketOk
-  statusTicketStart: string = this.dataInfo.fakeTime1  
-  statusTicketAccess: string = this.dataInfo.fakeAccessPoints
-
-  statusTicketUsedOn: string = this.dataInfo.fakeAccessPointsUsed  
+  statusTicketStart: string = "" 
+  statusTicketAccess: string = ""
+  statusTicketUsedOn: string = ""
 
   history: string = this.dataInfo.history
   historyText1: string = this.dataInfo.historyUntilDay
@@ -158,6 +157,7 @@ export class HomePage {
   loadConfig(){       
     this.configs = this.db.getConfigArea()
     let self = this
+    this.areaId = this.dataInfo.areaId    
 
     this.configs.subscribe(data => {            
 
@@ -200,18 +200,11 @@ export class HomePage {
     })
   }
 
-  ticketInputChanged(){
-
+  setFilteredItems(){
+    
     console.log('Modificado:', this.searchTicket)
 
-    if(this.searchTicket.length > 0){
-      this.setFilteredItems()
-    }
-  }
-
-  setFilteredItems(){
-
-    if(this.searchTicket.length > 0){
+    if(this.searchTicket.length == 8){
       this.searchOneTicket()      
     }    
   } 
