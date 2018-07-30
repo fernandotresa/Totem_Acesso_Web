@@ -1,12 +1,18 @@
 <ion-header>
-    <ion-navbar no-border-bottom color="light">        
+    <ion-navbar text-center no-border-bottom color="primary">        
       <ion-title> Múltiplo </ion-title>     
     </ion-navbar>  
   </ion-header>
 
-<ion-content padding>
+<ion-content padding>  
 
-  <ion-list>
+  <ion-list *ngIf="isLoading">
+      <ion-spinner name="bubbles"></ion-spinner>
+      <ion-title align="center"> Favor aguarde </ion-title>
+  </ion-list>
+    
+
+  <ion-list *ngIf="! isLoading">
       <ion-item no-lines><ion-label stacked> Ingresso inicial </ion-label>
         <ion-input type="number" [(ngModel)]="searchTicket" #searchbar></ion-input>
     </ion-item>  

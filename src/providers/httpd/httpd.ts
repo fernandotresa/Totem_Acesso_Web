@@ -1,6 +1,6 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-
+import { DataInfoProvider } from '../../providers/data-info/data-info'
 
 @Injectable()
 export class HttpdProvider {
@@ -8,11 +8,15 @@ export class HttpdProvider {
   data:any = {};
   
   address : string = 'http://localhost:8085'  
-  //address : string = 'http://10.0.2.114:8085'  
   idTotem: number = 28
   
-  constructor(public http: HttpClient) {
+  constructor(public http: HttpClient, public dataInfo: DataInfoProvider) {
     console.log('Hello HttpdProvider Provider');
+
+    this.address = this.dataInfo.addressServer
+    this.idTotem = this.dataInfo.totemId
+
+    console.log('Configurado Endereço e Id do totem', this.address, this.idTotem)
   }
   
   getAreas(){

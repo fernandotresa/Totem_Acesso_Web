@@ -1,5 +1,5 @@
 import { BrowserModule } from '@angular/platform-browser';
-import { ErrorHandler, NgModule } from '@angular/core';
+import { ErrorHandler, NgModule, APP_INITIALIZER } from '@angular/core';
 import { IonicApp, IonicErrorHandler, IonicModule } from 'ionic-angular';
 
 import { MyApp } from './app.component';
@@ -17,6 +17,12 @@ import { HttpClientModule } from '@angular/common/http';
 
 import { AngularFireModule } from 'angularfire2';
 import { AngularFireDatabaseModule } from 'angularfire2/database';
+
+import { ConfigurationService } from "ionic-configuration-service";
+
+export function loadConfiguration(configurationService: ConfigurationService): () => Promise<void> {
+  return () => configurationService.load("assets/configs/document.json");
+}
 
 export const firebaseConfig = {
   apiKey: "AIzaSyDhZ2TQlXhn6x-E3qWBUQqd-GQ8D2uw69o",
@@ -55,7 +61,14 @@ export const firebaseConfig = {
     DatabaseProvider,
     SmartAudioProvider,
     UiUtilsProvider,
-    AngularFireModule
+    AngularFireModule,
+    ConfigurationService,
+    {
+      provide: APP_INITIALIZER,
+      useFactory: loadConfiguration,
+      deps: [ConfigurationService],
+      multi: true
+    }
   ]
 })
 export class AppModule {}

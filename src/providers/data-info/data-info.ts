@@ -1,12 +1,13 @@
 import { Injectable } from '@angular/core';
-
+import { ConfigurationService } from "ionic-configuration-service";
 
 @Injectable()
 export class DataInfoProvider {
   
-  areaId: number =  1
-  pontoId: number =  28
-
+  areaId: number =  1  
+  totemId: number =  1
+  addressServer: string = "http://localhost:8085"
+  
   backgroundIdGreen: number = 1
   backgroundIdRed: number = 2
   backgroundIdNone: number = 3
@@ -43,29 +44,22 @@ export class DataInfoProvider {
     
   sucess: string = "Sucesso"
   erro: string = "Erro"
-  noConfiguration: string = "Nenhuma configuraçao disponivel"
-  notAvailable: string = "Não acessível do browser"
+  noConfiguration: string = "Nenhuma configuraçao disponivel"  
+  noResults: string = "Nenhum resultado"
   accessDenied: string = "Acesso negado"
-  added: string = "Adicionado"
-  
-  areYouSure: string = "Tem certeza disso?"  
-  slideLeft: string = "Arraste para esquerda para modificar"  
+  added: string = "Adicionado"  
+  areYouSure: string = "Tem certeza disso?"        
 
-  notSupported: string = "Não suportado nesta plataforma"
-  syncConfigurations: string = "Sincronizando configuraçoes"
-  syncDatabase: string = "Sincronizando banco de dados"
-
-  fakeTime1: string = '22/06/2018 - 23:59'
-  
-  fakeAccessPoints: string = 'Principal, Festa, Chapelaria'
-
-  fakeAccessPointsUsed: string = 'Chapelaria'
-
-  constructor() {
+  constructor(private configurationService: ConfigurationService) {
 
     console.log('ionViewDidLoad DataInfoProvider');   
 
-    console.log(this.history)
+    this.areaId =  this.configurationService.getValue<number>("idArea");
+    this.totemId =  this.configurationService.getValue<number>("idTotem");
+    this.addressServer =  this.configurationService.getValue<string>("addressServer");
+
+    console.log('Data Info configurado:', this.areaId, this.totemId, this.addressServer)
+
   }  
 
 

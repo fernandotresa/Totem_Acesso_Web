@@ -14,8 +14,8 @@ import moment from 'moment';
 export class MultiplePage {
 
   areaId: number = this.dataInfo.areaId
-  pontoId: number = this.dataInfo.pontoId  
-  
+  pontoId: number = this.dataInfo.totemId  
+  isLoading: Boolean = false;
 
   searchTicket: string = '19270001';
   searchTicketEnd: string = '19270010';
@@ -34,21 +34,76 @@ export class MultiplePage {
   }
 
   searchMultipleTickets(){
-    let self = this
+    let self = this    
+
+    if(this.checkInputs){
+
+      this.uiUtils.showToast('Iniciando verificação')
+      this.isLoading = true
+
+      this.http.checkMultipleTickets(this.searchTicket, this.searchTicketEnd)
+      .subscribe( data => {            
+        self.searchMultipleCallback(data)                
+      })       
+    }
+         
+  }
+
+  checkInputs(){
+    new Promise<boolean>((resolve, reject) => { 
+
+      if(this.searchTicket > this.searchTicketEnd){
+        this.uiUtils.showToast('Inicio maior que o final')  
+        resolve(false); 
+
+      } else if( (parseInt(this.searchTicketEnd) - parseInt(this.searchTicket)) > 100) {
+        this.uiUtils.showToast('Ultrapassou o limite de ingressos')
+        resolve(false); 
   
-    this.http.checkMultipleTickets(this.searchTicket, this.searchTicketEnd)
-      .subscribe( data => {        
-        self.searchMultipleCallback(data)
-    })       
+      } else if(this.searchTicket.length < 8) {
+        this.uiUtils.showToast('Inicio deve possuir 8 dígitos')
+        resolve(false); 
+  
+      } else if(this.searchTicketEnd.length < 8) {
+        this.uiUtils.showToast('Fim deve possuir 8 dígitos')
+        resolve(false); 
+      }
+
+      resolve(true); 
+      
+    });
+    
   }
 
   searchMultipleCallback(ticket){    
 
-    this.allTickets = ticket
+    console.log(ticket)    
 
+    this.allTickets = ticket    
+
+    if(this.allTickets.success.length == 0)
+      this.searchCallbackNone()    
+    else 
+      this.searchCallbackContinue(ticket)          
+  }
+
+
+  searchCallbackNone(){
+      this.uiUtils.showToast(this.dataInfo.noResults)
+      this.isLoading = false
+  }
+
+  searchCallbackContinue(ticket){
     ticket.success.forEach(element => {
-      this.searchOneTicket(element)
-    });
+      this.searchOneTicket(element)      
+    });    
+
+    let self = this
+    setTimeout(function(){ 
+      self.uiUtils.showToast('Finalizando verificação')
+      self.isLoading = false       
+
+    }, 5000);
   }
 
   searchOneTicket(ticket){  
@@ -213,17 +268,18 @@ export class MultiplePage {
     if(isSame)
       this.useTicket(ticket)        
     else
-      this.ticketValidityNotSame(ticket, ticketActual)        
+      this.ticketValidityNotSame(ticketActual)        
   }
 
-  ticketValidityNotSame(ticket, ticketActual){
-    console.log('ticketValidityNotSame', ticket)
+  ticketValidityNotSame(ticket){
+    console.log('ticketValidityNotSame', ticket.success)
+    console.log(this.allTickets)
 
     let self = this
 
     this.allTickets.success.forEach(element => {
 
-      ticketActual.success.forEach(subelement => {
+      ticket.success.forEach(subelement => {
       
         if(element.id_estoque_utilizavel == subelement.id_estoque_utilizavel){
           element.data_log_venda = moment(element.data_log_utilizacao).format("L");      
@@ -255,11 +311,8 @@ export class MultiplePage {
         if(element.id_estoque_utilizavel == ticket.id_estoque_utilizavel){                    
           element.alerta  = self.dataInfo.ticketOld
         }
-
       });
-
     })
   }
-
 
 }

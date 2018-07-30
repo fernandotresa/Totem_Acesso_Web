@@ -31,7 +31,7 @@ export class HomePage {
   message2: string = this.dataInfo.isLoading
       
   areaId: number = this.dataInfo.areaId
-  pontoId: number = this.dataInfo.pontoId
+  pontoId: number = this.dataInfo.totemId
   updatedInfo: Boolean = false
   updating: Boolean = false
 
@@ -227,16 +227,22 @@ export class HomePage {
 
   checkSold(ticket){
 
-    ticket.success.forEach(element => {
+    if(ticket.success.length == 0){
 
-      if(element.data_log_venda == undefined)
-        this.ticketNotSold(ticket)
-      else {
-        this.http.checkTicket(this.searchTicket).subscribe(data => {      
-          this.checkTicket(data)
-        }) 
-      }      
-    });   
+      this.ticketNotSold(ticket)
+    } else {
+
+      ticket.success.forEach(element => {
+
+        if(element.data_log_venda == undefined)
+          this.ticketNotSold(ticket)
+        else {
+          this.http.checkTicket(this.searchTicket).subscribe(data => {      
+            this.checkTicket(data)
+          }) 
+        }      
+      });   
+    }    
   }
 
   ticketNotSold(ticket){  
@@ -265,8 +271,7 @@ export class HomePage {
   }
 
   checkTicketAreaCallback(ticket){
-
-    console.log(ticket.success.length)
+    console.log(ticket)
 
     if(ticket.success.length > 0){
       this.checkTicketContinue()
