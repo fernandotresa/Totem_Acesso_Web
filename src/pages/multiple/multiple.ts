@@ -1,10 +1,11 @@
-import { Component } from '@angular/core';
-import { IonicPage, NavController, NavParams } from 'ionic-angular';
+import { Component, ViewChild } from '@angular/core';
+import { IonicPage, NavController, NavParams, } from 'ionic-angular';
 import { HttpdProvider } from '../../providers/httpd/httpd';
 import { DatabaseProvider } from '../../providers/database/database';
 import { DataInfoProvider } from '../../providers/data-info/data-info'
 import { UiUtilsProvider } from '../../providers/ui-utils/ui-utils'
 import moment from 'moment';
+import { Searchbar } from 'ionic-angular';
 
 @IonicPage()
 @Component({
@@ -12,13 +13,15 @@ import moment from 'moment';
   templateUrl: 'multiple.html',
 })
 export class MultiplePage {
+  @ViewChild('searchbar') searchbar:Searchbar;
+  @ViewChild('searchbarEnd') searchbarEnd:Searchbar;
 
   areaId: number = this.dataInfo.areaId
   pontoId: number = this.dataInfo.totemId  
   isLoading: Boolean = false;
 
-  searchTicket: string = '19270001';
-  searchTicketEnd: string = '19270010';
+  searchTicket: string = '';
+  searchTicketEnd: string = '';
   allTickets: any
 
   constructor(public dataInfo: DataInfoProvider,
@@ -26,11 +29,47 @@ export class MultiplePage {
     public uiUtils: UiUtilsProvider,     
     public db: DatabaseProvider,
     public navParams: NavParams,  
-    public http: HttpdProvider) {
+    public http: HttpdProvider) {      
+
+      this.setIntervalFocus()
   }
 
   ionViewDidLoad() {
     console.log('ionViewDidLoad MultiplePage');
+
+    let self = this
+    setTimeout(function(){ 
+
+      if(self.searchTicket.length == 0)
+        self.navCtrl.pop()
+      
+    }, 6000); 
+
+    this.setFocus()
+  }
+
+  setIntervalFocus(){
+    let self = this
+
+      setInterval(function(){ 
+
+        if(self.searchTicket.length < 8)
+            self.setFocus();
+         else 
+          self.setFocusEnd();
+      
+      }, 3000);      
+  }
+
+  setTimeoutBack(){
+    let self = this
+
+      setTimeout(function(){ 
+
+        if(self.searchTicket.length == 0 && self.searchTicketEnd.length == 0)            
+          self.navCtrl.popToRoot()
+          
+      }, 3000);      
   }
 
   searchMultipleTickets(){
@@ -45,9 +84,37 @@ export class MultiplePage {
       .subscribe( data => {            
         self.searchMultipleCallback(data)                
       })       
-    }
-         
+    }         
   }
+
+  checkTicketStart(){
+    if(this.searchTicket.length == 8){
+      this.setFocusEnd()
+    } else {
+      this.searchTicket = ""
+      this.setFocus()
+    }
+  }
+
+  checkTicketEnd(){
+    if(this.searchTicketEnd.length == 8){
+      console.log('Check ok')
+
+    } else {
+      this.searchTicketEnd = ""
+      this.setFocusEnd()
+    }
+  }
+
+  setFocus(){
+    this.searchbar.setFocus();          
+  }
+
+  setFocusEnd(){
+    this.searchbarEnd.setFocus();          
+  }
+
+
 
   checkInputs(){
     new Promise<boolean>((resolve, reject) => { 

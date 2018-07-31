@@ -6,6 +6,7 @@ import { DataInfoProvider } from '../../providers/data-info/data-info'
 import { UiUtilsProvider } from '../../providers/ui-utils/ui-utils'
 import { Observable } from 'rxjs/Observable';
 import { Searchbar } from 'ionic-angular';
+import { Socket } from 'ng-socket-io';
 import moment from 'moment';
 
 @Component({
@@ -19,6 +20,7 @@ export class HomePage {
   configs: Observable<any>;
   areaInfo: Observable<any>;
   ticket: Observable<any>;  
+  gpios: Observable<any>;
   
   idTypeBackgrond: number = this.dataInfo.backgroundIdNone;
   ticketRead: Boolean = false
@@ -55,9 +57,10 @@ export class HomePage {
     public uiUtils: UiUtilsProvider,     
     public db: DatabaseProvider,
     public navParams: NavParams,  
+    private socket: Socket,
     public http: HttpdProvider) { 
       
-      let self = this
+      let self = this      
 
       setInterval(function(){ 
 
@@ -66,7 +69,9 @@ export class HomePage {
             self.updateInfo(); 
             self.setFocus();
       
-      }, 3000);            
+      }, 3000);      
+      
+      this.startGPIOs()
   }
 
   ionViewDidLoad() {
@@ -82,6 +87,36 @@ export class HomePage {
         this.updateInfo()
     else   
       this.loadConfig()                
+  }
+
+  startGPIOs(){
+    this.gpios = this.getGpios()
+
+    this.gpios.subscribe(data => {
+      this.gpioEvent(data)          
+    })
+  }
+
+  gpioEvent(data){
+    let gpio_ = data.gpio
+    let event_ = data.event
+
+    console.log('Evento GPIO recebido:', gpio_, event_)
+
+    if(gpio_ == 2)
+        this.setMultiple()
+
+    else if(gpio_ == 3)
+      this.goHistory()
+
+    else if(gpio_ == 4)
+
+      this.decrementCounter()
+
+     else 
+      console.log('Comando desconhecido do gpio:', gpio_)
+    
+      
   }
 
   setFocus(){
@@ -111,6 +146,7 @@ export class HomePage {
       self.idTypeBackgrond = self.dataInfo.backgroundIdNone
       self.searchTicket = ''
       self.searching = false    
+      
     }, 6000); 
   }
 
@@ -438,4 +474,14 @@ export class HomePage {
   setMultiple(){      
       this.navCtrl.push("MultiplePage")        
   }    
+
+  getGpios() {
+    let observable = new Observable(observer => {
+      this.socket.on('gpio-changed', (data) => {
+        observer.next(data);
+      });
+    })
+    return observable;
+  }
+
 }
