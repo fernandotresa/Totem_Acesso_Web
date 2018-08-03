@@ -25,6 +25,12 @@ export class HttpdProvider {
     return this.http.post(this.address  + "/getAreas", myData, {headers: headers})
   }  
 
+  getAreaInfo(idArea_){
+    let myData = JSON.stringify({id: this.idTotem, idArea: idArea_});
+    const headers = new HttpHeaders({'Content-Type':'application/json'});
+    return this.http.post(this.address  + "/getAreaInfo", myData, {headers: headers})
+  }
+
   getAreaCounter(idArea_){
     let myData = JSON.stringify({id: this.idTotem, idArea: idArea_});
     const headers = new HttpHeaders({'Content-Type':'application/json'});

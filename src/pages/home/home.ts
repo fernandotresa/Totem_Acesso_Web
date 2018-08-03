@@ -191,25 +191,35 @@ export class HomePage {
   }  
 
   loadConfig(){       
-    this.configs = this.db.getConfigArea()
     let self = this
-    this.areaId = this.dataInfo.areaId    
+    this.areaId = this.dataInfo.areaId   
+    
+    if(self.areaId == undefined){
+      self.uiUtils.showToast(self.dataInfo.noConfiguration)
 
-    this.configs.subscribe(data => {            
+    } else {
 
-      data.forEach(element => {
+      console.log('Configurado Totem ID:', this.pontoId)
+      console.log('Configurado Area ID:', this.areaId)    
 
-        let el = element.areaInfo    
+    this.http.getAreaInfo(this.areaId).subscribe(data => {            
+      self.loadConfigCallback(data)            
+    });
 
-        self.title = el.nome_area_acesso
-        self.counter = el.lotacao_area_acesso   
-        self.areaId = el.id_area_acesso  
-      });            
-      
-      if(self.areaId == undefined){
-        self.uiUtils.showToast(self.dataInfo.noConfiguration)
-      }                 
-    })
+    }    
+  }
+
+  loadConfigCallback(data){
+    console.log(data)
+
+    let self = this
+
+    data.success.forEach(element => {      
+
+      self.title = element.nome_area_acesso
+      self.counter = element.lotacao_area_acesso         
+    });                    
+
   }
   
   updateInfo(){

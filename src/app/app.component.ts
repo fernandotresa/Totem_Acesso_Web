@@ -8,7 +8,7 @@ import { MultiplePage } from '../pages/multiple/multiple';
   templateUrl: 'app.html'
 })
 export class MyApp {
-  rootPage:any = MultiplePage;
+  rootPage:any = HomePage;
   
 
   constructor(platform: Platform) {
