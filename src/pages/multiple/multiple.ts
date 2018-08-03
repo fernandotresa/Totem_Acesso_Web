@@ -5,7 +5,6 @@ import { DatabaseProvider } from '../../providers/database/database';
 import { DataInfoProvider } from '../../providers/data-info/data-info'
 import { UiUtilsProvider } from '../../providers/ui-utils/ui-utils'
 import moment from 'moment';
-import { Searchbar } from 'ionic-angular';
 
 @IonicPage()
 @Component({
@@ -13,8 +12,8 @@ import { Searchbar } from 'ionic-angular';
   templateUrl: 'multiple.html',
 })
 export class MultiplePage {
-  @ViewChild('searchbar') searchbar:Searchbar;
-  @ViewChild('searchbarEnd') searchbarEnd:Searchbar;
+  @ViewChild('searchbar') searchbar;
+  @ViewChild('inputEnd') inputEnd;
 
   areaId: number = this.dataInfo.areaId
   pontoId: number = this.dataInfo.totemId  
@@ -38,14 +37,14 @@ export class MultiplePage {
     console.log('ionViewDidLoad MultiplePage');
 
     let self = this
-    setTimeout(function(){ 
+    /*setTimeout(function(){ 
 
       if(self.searchTicket.length == 0)
         self.navCtrl.pop()
       
     }, 6000); 
 
-    this.setFocus()
+    this.setFocus()*/
   }
 
   setIntervalFocus(){
@@ -54,9 +53,7 @@ export class MultiplePage {
       setInterval(function(){ 
 
         if(self.searchTicket.length < 8)
-            self.setFocus();
-         else 
-          self.setFocusEnd();
+            self.setFocus();        
       
       }, 3000);      
   }
@@ -74,17 +71,26 @@ export class MultiplePage {
 
   searchMultipleTickets(){
     let self = this    
+    console.log('searchMultipleTickets')
 
-    if(this.checkInputs){
+    this.checkInputs().then(result => {
+      
+      if(result){
 
-      this.uiUtils.showToast('Iniciando verificação')
-      this.isLoading = true
+        self.uiUtils.showToast('Iniciando verificação')
+        self.isLoading = true
 
-      this.http.checkMultipleTickets(this.searchTicket, this.searchTicketEnd)
-      .subscribe( data => {            
+        self.http.checkMultipleTickets(self.searchTicket, self.searchTicketEnd)
+        .subscribe( data => {            
         self.searchMultipleCallback(data)                
       })       
-    }         
+    }
+            
+    }).catch(error => {
+      console.log(error)
+      self.uiUtils.showToast('Verificar os inputs')
+    })
+      
   }
 
   checkTicketStart(){
@@ -97,8 +103,8 @@ export class MultiplePage {
   }
 
   checkTicketEnd(){
-    if(this.searchTicketEnd.length == 8){
-      console.log('Check ok')
+    if(this.searchTicketEnd.length == 8){      
+      this.searchMultipleTickets()
 
     } else {
       this.searchTicketEnd = ""
@@ -111,30 +117,21 @@ export class MultiplePage {
   }
 
   setFocusEnd(){
-    this.searchbarEnd.setFocus();          
+    console.log('setFocusEnd()')
+    this.inputEnd.setFocus();          
   }
 
-
-
   checkInputs(){
-    new Promise<boolean>((resolve, reject) => { 
+    return new Promise<boolean>((resolve, reject) => { 
 
-      if(this.searchTicket > this.searchTicketEnd){
-        this.uiUtils.showToast('Inicio maior que o final')  
-        resolve(false); 
-
-      } else if( (parseInt(this.searchTicketEnd) - parseInt(this.searchTicket)) > 100) {
-        this.uiUtils.showToast('Ultrapassou o limite de ingressos')
-        resolve(false); 
+      if(this.searchTicket >= this.searchTicketEnd)     
+        reject("this.searchTicket >= this.searchTicketEnd"); 
+      
+      else if(this.searchTicket.length < 8)       
+        reject("this.searchTicket.length < 8");  
   
-      } else if(this.searchTicket.length < 8) {
-        this.uiUtils.showToast('Inicio deve possuir 8 dígitos')
-        resolve(false); 
-  
-      } else if(this.searchTicketEnd.length < 8) {
-        this.uiUtils.showToast('Fim deve possuir 8 dígitos')
-        resolve(false); 
-      }
+      else if(this.searchTicketEnd.length < 8)
+        reject("this.searchTicket.length < 8"); 
 
       resolve(true); 
       
@@ -150,6 +147,7 @@ export class MultiplePage {
 
     if(this.allTickets.success.length == 0)
       this.searchCallbackNone()    
+
     else 
       this.searchCallbackContinue(ticket)          
   }
@@ -161,11 +159,13 @@ export class MultiplePage {
   }
 
   searchCallbackContinue(ticket){
+    let self = this
+
     ticket.success.forEach(element => {
-      this.searchOneTicket(element)      
+      self.searchOneTicket(element)      
     });    
 
-    let self = this
+    
     setTimeout(function(){ 
       self.uiUtils.showToast('Finalizando verificação')
       self.isLoading = false       

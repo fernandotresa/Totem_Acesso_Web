@@ -146,7 +146,7 @@ export class HomePage {
       self.idTypeBackgrond = self.dataInfo.backgroundIdNone
       self.searchTicket = ''
       self.searching = false    
-      
+
     }, 6000); 
   }
 

@@ -1,12 +1,9 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { ErrorHandler, NgModule, APP_INITIALIZER } from '@angular/core';
 import { IonicApp, IonicErrorHandler, IonicModule } from 'ionic-angular';
-
 import { MyApp } from './app.component';
 import { HomePage } from '../pages/home/home';
-
 import { MultiplePageModule } from '../pages/multiple/multiple.module';
-
 import { HttpdProvider } from '../providers/httpd/httpd';
 import { DataInfoProvider } from '../providers/data-info/data-info';
 import { DatabaseProvider } from '../providers/database/database';
@@ -17,9 +14,7 @@ import { HttpClientModule } from '@angular/common/http';
 
 import { AngularFireModule } from 'angularfire2';
 import { AngularFireDatabaseModule } from 'angularfire2/database';
-
 import { ConfigurationService } from "ionic-configuration-service";
-
 import { SocketIoModule, SocketIoConfig } from 'ng-socket-io';
 
 export function loadConfiguration(configurationService: ConfigurationService): () => Promise<void> {
