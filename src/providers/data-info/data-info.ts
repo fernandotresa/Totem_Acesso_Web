@@ -62,6 +62,10 @@ export class DataInfoProvider {
 
   }  
 
+  configureTotem(data){
+    console.log(data)
+  }
+
 
   
 
