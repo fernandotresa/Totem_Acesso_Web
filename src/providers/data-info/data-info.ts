@@ -1,11 +1,12 @@
 import { Injectable } from '@angular/core';
 import { ConfigurationService } from "ionic-configuration-service";
+import { Events } from 'ionic-angular';
 
 @Injectable()
 export class DataInfoProvider {
   
-  areaId: number =  1  
-  totemId: number =  1
+  areaId: number =  0  
+  totemId: number =  0
   addressServer: string = "http://localhost:8085"
   
   backgroundIdGreen: number = 1
@@ -32,6 +33,8 @@ export class DataInfoProvider {
   ticketOk: string = "Ingresso válido"  
   isLoading: string =  "Carregando"
 
+  titleGeneral: string = "Carregando"
+
   ticketNotAllowed: string = "Não permitido nessa área"
   welcomeMsg: string = "Seja bem vindo!"
   pleaseWait: string = "Favor aguarde"
@@ -50,20 +53,28 @@ export class DataInfoProvider {
   added: string = "Adicionado"  
   areYouSure: string = "Tem certeza disso?"        
 
-  constructor(private configurationService: ConfigurationService) {
-
-    console.log('ionViewDidLoad DataInfoProvider');   
-
-    this.areaId =  this.configurationService.getValue<number>("idArea");
-    this.totemId =  this.configurationService.getValue<number>("idTotem");
+  constructor(private configurationService: ConfigurationService, public events: Events) {        
     this.addressServer =  this.configurationService.getValue<string>("addressServer");
 
-    console.log('Data Info configurado:', this.areaId, this.totemId, this.addressServer)
-
+    console.log('Endereço do servidor:', this.addressServer)
   }  
 
   configureTotem(data){
-    console.log(data)
+    if(data.success.length == 0)    
+      this.titleGeneral = "Inexistente"
+
+    else {
+
+      let self = this
+
+      data.success.forEach(element => {
+        self.titleGeneral = element.nome_ponto_acesso
+        self.totemId = element.fk_id_ponto_acesso
+        self.areaId = element.fk_id_area_acesso
+      });
+
+      this.events.publish('totem:updated', data);
+    }
   }
 
 

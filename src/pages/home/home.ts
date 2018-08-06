@@ -1,5 +1,5 @@
 import { Component, ViewChild } from '@angular/core';
-import { NavController, NavParams } from 'ionic-angular';
+import { NavController, NavParams, Events } from 'ionic-angular';
 import { HttpdProvider } from '../../providers/httpd/httpd';
 import { DatabaseProvider } from '../../providers/database/database';
 import { DataInfoProvider } from '../../providers/data-info/data-info'
@@ -28,7 +28,7 @@ export class HomePage {
   titleTicketOne: string = "Ingresso"
   multipleColor: string = "danger"
 
-  title: string = this.dataInfo.isLoading
+  title: string = this.dataInfo.titleGeneral
   message1: string = this.dataInfo.isLoading
   message2: string = this.dataInfo.isLoading
       
@@ -58,21 +58,18 @@ export class HomePage {
     public db: DatabaseProvider,
     public navParams: NavParams,  
     private socket: Socket,
+    public events: Events,
     public http: HttpdProvider) { 
       
-      let self = this      
+      let self = this    
 
-      setInterval(function(){ 
+      //this.startGPIOs()
 
-        if(! self.updating && self.areaId)
-
-            self.updateInfo(); 
-            self.setFocus();
-      
-      }, 3000);      
-      
-      this.startGPIOs()
+      events.subscribe('totem:updated', (data) => {
+        self.loadConfigCallback(data)
+      });
   }
+  
 
   ionViewDidLoad() {
 
@@ -87,6 +84,19 @@ export class HomePage {
         this.updateInfo()
     else   
       this.loadConfig()                
+  }
+
+  startTimer(){
+    let self = this
+
+    setInterval(function(){ 
+
+      if(! self.updating && self.areaId)
+
+          self.updateInfo(); 
+          self.setFocus();
+    
+    }, 3000);      
   }
 
   startGPIOs(){
@@ -114,9 +124,7 @@ export class HomePage {
       this.decrementCounter()
 
      else 
-      console.log('Comando desconhecido do gpio:', gpio_)
-    
-      
+      console.log('Comando desconhecido do gpio:', gpio_);
   }
 
   setFocus(){
@@ -210,16 +218,16 @@ export class HomePage {
   }
 
   loadConfigCallback(data){
-    console.log(data)
-
+    
     let self = this
 
-    data.success.forEach(element => {      
-
+    data.success.forEach(element => {            
+      console.log('Configuração do totem: ', element)
       self.title = element.nome_area_acesso
-      self.counter = element.lotacao_area_acesso         
+      self.counter = element.lotacao_area_acesso           
     });                    
 
+    self.startTimer()
   }
   
   updateInfo(){
@@ -294,10 +302,14 @@ export class HomePage {
     this.backHome()
   }
 
-  checkTicket(ticket){    
+  checkTicket(ticket){   
+    console.log(ticket) 
 
     if(ticket.success.length > 0){
+
       this.ticketAlreadyUsed(ticket)
+
+
     } else {
       this.checkTicketArea()
     }
@@ -345,6 +357,40 @@ export class HomePage {
 
   ticketAlreadyUsed(ticket){
 
+    ticket.success.forEach(element => {
+      let horas_porta_acesso = element.horas_porta_acesso
+      let mesmo_dia_porta_acesso = element.mesmo_dia_porta_acesso
+      let unica_porta_acesso = element.unica_porta_acesso
+      let numero_liberacoes = element.numero_liberacoes
+      let contagem_porta_acesso = element.numero_liberacoes
+
+      console.log('Configuração do ticket:', horas_porta_acesso, mesmo_dia_porta_acesso, unica_porta_acesso, numero_liberacoes, contagem_porta_acesso)
+
+      if(horas_porta_acesso > 0){
+        this.ticketAccessTimeDoor(element)
+      }
+      else if(mesmo_dia_porta_acesso > 0){
+        this.ticketAlreadUsedFinish(element)
+      }
+      else if(numero_liberacoes > 0){
+        this.ticketAccessCountPass(element)
+      }
+      
+      else {
+        console.log('Tipo de ingresso não encontrado:', element)
+      }
+    });    
+  }
+
+  ticketAccessTimeDoor(ticket){
+    console.log('horas_porta_acesso:', ticket)
+  }
+
+  ticketAccessCountPass(ticket){
+    console.log('numero_liberacoes:', ticket)
+  }
+
+  ticketAlreadUsedFinish(ticket){
     this.statusTicket = this.dataInfo.already
     this.idTypeBackgrond = this.dataInfo.backgroundIdSearchNotOk
     this.ticketRead = true
@@ -357,6 +403,8 @@ export class HomePage {
 
     this.backHome()
   }
+
+  
 
   ticketNotExist(ticket){
 
