@@ -14,7 +14,8 @@ export class HttpdProvider {
 
     this.address = this.dataInfo.addressServer
     
-    this.getTotemInfo().subscribe(data => {              
+    this.getTotemInfo().subscribe(data => {    
+      console.log(data)          
       this.dataInfo.configureTotem(data)
     })
   }  
@@ -62,19 +63,25 @@ export class HttpdProvider {
   }
 
   checkTicket(value_){    
-    let myData = JSON.stringify({id: this.dataInfo.totemId, ticket: value_});
+    let myData = JSON.stringify({id: this.dataInfo.totemId, ticket: value_, idArea: this.dataInfo.areaId, idPorta: this.dataInfo.portaId});
     const headers = new HttpHeaders({'Content-Type':'application/json'});
     return this.http.post(this.address  + "/checkTicket", myData, {headers: headers})
   }
 
-  checkTicketContinue(value_){    
-    let myData = JSON.stringify({id: this.dataInfo.totemId, ticket: value_});
+  checkTicketContinue(value_){        
+    let myData = JSON.stringify({id: this.dataInfo.totemId, ticket: value_, idArea: this.dataInfo.areaId, idPorta: this.dataInfo.portaId});
     const headers = new HttpHeaders({'Content-Type':'application/json'});
     return this.http.post(this.address  + "/checkTicketContinue", myData, {headers: headers})
   }
 
+  checkTicketUsed(value_){    
+    let myData = JSON.stringify({id: this.dataInfo.totemId, ticket: value_, idArea: this.dataInfo.areaId, idPorta: this.dataInfo.portaId});
+    const headers = new HttpHeaders({'Content-Type':'application/json'});
+    return this.http.post(this.address  + "/checkTicketUsed", myData, {headers: headers})
+  }
+
   useTicket(value_, idArea_){
-    let myData = JSON.stringify({id: this.dataInfo.totemId, idAreaAcesso: idArea_, ticket: value_});
+    let myData = JSON.stringify({id: this.dataInfo.totemId, ticket: value_, idArea: this.dataInfo.areaId, idPorta: this.dataInfo.portaId});
     const headers = new HttpHeaders({'Content-Type':'application/json'});
     return this.http.post(this.address  + "/useTicket", myData, {headers: headers})
   }

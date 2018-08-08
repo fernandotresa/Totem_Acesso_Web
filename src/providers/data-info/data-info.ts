@@ -6,6 +6,7 @@ import { Events } from 'ionic-angular';
 export class DataInfoProvider {
   
   areaId: number =  0  
+  portaId: number =  0  
   totemId: number =  0
   addressServer: string = "http://localhost:8085"
   
@@ -59,22 +60,19 @@ export class DataInfoProvider {
     console.log('Endereço do servidor:', this.addressServer)
   }  
 
-  configureTotem(data){
-    if(data.success.length == 0)    
-      this.titleGeneral = "Inexistente"
+  configureTotem(data){    
 
-    else {
-
-      let self = this
+    let self = this
 
       data.success.forEach(element => {
         self.titleGeneral = element.nome_ponto_acesso
         self.totemId = element.fk_id_ponto_acesso
         self.areaId = element.fk_id_area_acesso
-      });
+        self.portaId = element.id_porta_acesso        
+      });          
 
-      this.events.publish('totem:updated', data);
-    }
+    this.events.publish('totem:updated', data);    
+      
   }
 
 
