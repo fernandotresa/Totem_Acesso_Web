@@ -369,7 +369,7 @@ export class MultiplePage {
 
     let self = this
 
-    this.http.useTicket(ticket.id_estoque_utilizavel, this.areaId).subscribe( () => {
+    this.http.useTicket(ticket.id_estoque_utilizavel).subscribe( () => {
       
       console.log('Ticket usado', ticket)      
 

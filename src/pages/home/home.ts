@@ -356,7 +356,7 @@ export class HomePage {
       
   ticketNotExist(ticket){
 
-    console.log('ticketNotExist', ticket)
+    console.log('Ticket não existe: ', ticket)
 
     this.message1 = this.dataInfo.ticketNotRegistered      
     this.message2 = this.dataInfo.ticketNotRegisteredMsg
@@ -460,7 +460,6 @@ export class HomePage {
 
   checkValidityOk(ticket){
     console.log('Validação do ticket ok' , ticket)
-
     this.checkDoorRules(ticket)
   }
 
@@ -535,7 +534,7 @@ export class HomePage {
 
   useTicket(ticket){
 
-    console.log('Utilizando ticket: ', this.searchTicket)
+    console.log('Utilizando ticket: ', this.searchTicket, ticket)
 
     this.ticketRead = true
     this.dataInfo.ticketRead = ''
@@ -543,18 +542,36 @@ export class HomePage {
 
     let self = this
 
-    this.http.useTicket(this.searchTicket).subscribe( () => {
-
-      self.statusTicket = self.dataInfo.ticketOk
-      self.idTypeBackgrond = self.dataInfo.backgroundIdGreen
-
-      self.message1 = ticket.nome_tipo_produto
-      self.message2 = self.dataInfo.welcomeMsg
-
-      self.incrementCounter()
-      self.backHome()
-      
+    this.http.useTicket(this.searchTicket).subscribe( data => {
+      self.useTicketContinue()            
     })
+  }
+
+  useTicketContinue(){
+    let self = this
+    
+    this.http.checkTicket(this.searchTicket).subscribe(data => {
+      self.useTicketEnd(data)
+    })    
+  }
+  
+  useTicketEnd(ticket){
+    console.log('Ticket utilizado com sucesso', ticket)
+
+    let self = this
+    
+    ticket.success.forEach(element => {
+      console.log('element.nome_subtipo_produto', element.nome_subtipo_produto)
+      self.message1 = element.nome_subtipo_produto
+    });
+
+    
+    self.statusTicket = self.dataInfo.ticketOk
+    self.idTypeBackgrond = self.dataInfo.backgroundIdGreen
+    
+    self.message2 = self.dataInfo.welcomeMsg              
+    self.incrementCounter()
+    self.backHome()
   }
 
   setMultiple(){      
