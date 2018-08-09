@@ -51,6 +51,8 @@ export class DataInfoProvider {
   noConfiguration: string = "Nenhuma configuraçao disponivel"  
   noResults: string = "Nenhum resultado"
   accessDenied: string = "Acesso negado"
+  timeAccessOver: string = "Tempo de acesso vencido"
+  accessCountLimitPassed: string = "Qtd. de acessos máximo utilizados"
   added: string = "Adicionado"  
   areYouSure: string = "Tem certeza disso?"        
 

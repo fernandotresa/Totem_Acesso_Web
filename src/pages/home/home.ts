@@ -287,8 +287,6 @@ export class HomePage {
   
 
   checkSold(ticket){
-    console.log('Verificando se foi vendido', ticket)
-
     if(ticket.success.length == 0){
 
       this.ticketNotSold(ticket)
@@ -337,8 +335,6 @@ export class HomePage {
   }
 
   checkTicketContinue(){    
-    console.log('Ticket vendido, verificando validade')
-
     this.http.checkTicketContinue(this.searchTicket).subscribe(data => {            
       this.checkTicketContinueCallback(data)     
     })  
@@ -354,10 +350,7 @@ export class HomePage {
     }
   } 
       
-  ticketNotExist(ticket){
-
-    console.log('Ticket não existe: ', ticket)
-
+  ticketNotExist(ticket){    
     this.message1 = this.dataInfo.ticketNotRegistered      
     this.message2 = this.dataInfo.ticketNotRegisteredMsg
     this.idTypeBackgrond = this.dataInfo.backgroundIdRed
@@ -383,8 +376,6 @@ export class HomePage {
   }
 
   ticketValidityTime(ticket){
-    console.log('ticketValidityTime')
-    
     let tempo_validade = ticket.tempo_validade
     this.statusTicketStart = moment(ticket.data_log_venda).format("L")    
 
@@ -458,21 +449,16 @@ export class HomePage {
     this.useTicket(ticket)    
   }
 
-  checkValidityOk(ticket){
-    console.log('Validação do ticket ok' , ticket)
+  checkValidityOk(ticket){    
     this.checkDoorRules(ticket)
   }
 
   checkDoorRules(ticket){
-    console.log('Verificando regras da porta de acesso', ticket)
-
     let horas_porta_acesso = ticket.horas_porta_acesso
     let mesmo_dia_porta_acesso = ticket.mesmo_dia_porta_acesso
     let unica_porta_acesso = ticket.unica_porta_acesso
     let numero_liberacoes = ticket.numero_liberacoes
-    let contagem_porta_acesso = ticket.numero_liberacoes
-
-    console.log('Configuração do ticket:', horas_porta_acesso, mesmo_dia_porta_acesso, unica_porta_acesso, numero_liberacoes, contagem_porta_acesso)
+    //let contagem_porta_acesso = ticket.numero_liberacoes
 
     if(horas_porta_acesso > 0){
       this.ticketAccessTimeDoor(ticket)
@@ -485,31 +471,89 @@ export class HomePage {
     }
     else if(numero_liberacoes > 0){
       this.ticketAccessCountPass(ticket)
-    }
-    
+    }    
     else {
       console.log('Tipo de ingresso não encontrado:', ticket)
     }
   }
 
   ticketAccessTimeDoor(ticket){
-    console.log('horas_porta_acesso:', ticket)
+    let until =  moment(ticket.data_log_venda).add(ticket.horas_porta_acesso, 'hours').format();
+    let now = moment().format()        
+    
+    let isAfter = moment(until).isAfter(now);
+
+    if(isAfter){
+      this.useTicket(ticket)
+    } else {
+      this.ticketAccessTimeDoorNotOk(ticket)      
+    }
+  }
+
+  ticketAccessTimeDoorNotOk(ticket){    
+    this.idTypeBackgrond = this.dataInfo.backgroundIdRed
+    this.message1 = this.dataInfo.timeAccessOver
+    this.message2 = moment(ticket.data_log_venda).add(ticket.horas_porta_acesso, 'hours').format("LT");
+    this.ticketRead = true
+    this.dataInfo.ticketRead = this.dataInfo.ticketRead + this.searchTicket    
+    this.backHome()
   }
 
   ticketAccessOnlyone(ticket){
-    console.log('Checando acesso único:', ticket)
-
     this.http.checkTicketUsed(this.searchTicket).subscribe(data => {
       this.ticketAccessOnlyOneCallback(data)      
     })
   }
 
   ticketAccessCountPass(ticket){
-    console.log('numero_liberacoes:', ticket)   
+    console.log(ticket)    
+
+    this.http.checkTicketUsedTotal(this.searchTicket).subscribe(data => {
+
+      this.ticketAccessCountPassCallback(data, ticket)      
+    })
   }
 
-  ticketAccessOnlyOneCallback(ticket){
+  ticketAccessCountPassCallback(ticket, ticketInfo){
+
+    console.log(ticket)
+
+    if(ticket.success.length == 0){
+      this.useTicket(ticket)
+    } else {
+      this.ticketAccessCountPassContinue(ticket, ticketInfo)      
+    }
+  }
+
+  ticketAccessCountPassContinue(ticket, ticketInfo){
     
+
+    let numero_liberacoes = ticketInfo.numero_liberacoes
+    console.log('#### numero_liberacoes permitidos' ,numero_liberacoes)
+
+    ticket.success.forEach(element => {
+       let total = element.TOTAL
+
+       console.log('TOTAL', total)
+
+       if(total < numero_liberacoes)
+          this.useTicket(ticket)
+        else          
+          this.ticketAccessCountPassNotOk(ticketInfo)
+    });
+  }
+
+
+  ticketAccessCountPassNotOk(ticket){
+    this.idTypeBackgrond = this.dataInfo.backgroundIdRed
+    this.message1 = this.dataInfo.accessDenied
+    this.message2 = this.dataInfo.accessCountLimitPassed
+    this.ticketRead = true
+    this.dataInfo.ticketRead = this.dataInfo.ticketRead + this.searchTicket    
+    this.backHome()
+  }
+
+  ticketAccessOnlyOneCallback(ticket){  
     if(ticket.success.length > 0){
       this.ticketAlreadUsedFinish(ticket)
     } else {
@@ -533,9 +577,6 @@ export class HomePage {
   }
 
   useTicket(ticket){
-
-    console.log('Utilizando ticket: ', this.searchTicket, ticket)
-
     this.ticketRead = true
     this.dataInfo.ticketRead = ''
     this.dataInfo.ticketRead = this.dataInfo.ticketRead + this.searchTicket
@@ -555,16 +596,13 @@ export class HomePage {
     })    
   }
   
-  useTicketEnd(ticket){
-    console.log('Ticket utilizado com sucesso', ticket)
+  useTicketEnd(ticket){    
 
     let self = this
-    
+
     ticket.success.forEach(element => {
-      console.log('element.nome_subtipo_produto', element.nome_subtipo_produto)
       self.message1 = element.nome_subtipo_produto
     });
-
     
     self.statusTicket = self.dataInfo.ticketOk
     self.idTypeBackgrond = self.dataInfo.backgroundIdGreen
