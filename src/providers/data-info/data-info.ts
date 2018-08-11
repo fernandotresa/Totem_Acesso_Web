@@ -35,6 +35,8 @@ export class DataInfoProvider {
   ticketNotSolded: string = "Não vendido"
   ticketNotSoldedMsg: string = "Ingresso consta mas não foi vendido"
   ticketOk: string = "Ingresso válido"  
+  
+  ticketNotOk: string = "Ingresso inválido"  
   isLoading: string =  "Carregando"
 
   titleGeneral: string = "Carregando"

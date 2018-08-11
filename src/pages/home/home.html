@@ -28,7 +28,7 @@
 
             <ion-col class="box-header-gray" *ngIf="idTypeBackgrond !== dataInfo.backgroundIdNone">                
                 <h3 text-right class="titleHistory" *ngIf="idTypeBackgrond !== dataInfo.backgroundIdSearch">  {{history}} </h3>                       
-                <h3 text-right class="titleHistory" *ngIf="idTypeBackgrond >= dataInfo.backgroundIdSearch">  {{dataInfo.historyGeneral}} </h3>
+                <h3 text-right class="titleHistory" *ngIf="idTypeBackgrond >= dataInfo.backgroundIdSearch && !ticketRead">  {{dataInfo.historyGeneral}} </h3>
              </ion-col>
 
         </ion-row>  
@@ -44,26 +44,15 @@
                 <h2 text-right class="ticket-type-msg"> {{message2}} </h2>     
             </div>
 
-            <div class="box-message-gray" *ngIf="idTypeBackgrond == dataInfo.backgroundIdSearchOk">
-
-                <div class="box-header-green" align="center">
-                    <h4 class="box-header-ticket-status"> {{statusTicket}} </h4>     
-                </div>                    
-               
-                <h4 text-right class="box-header-text"> {{historyText1}}: <b> {{statusTicketStart}} </b> </h4>     
-                <h4 text-right class="box-header-text"> {{historyText2}}: </h4>                     
-                <h4 text-right class="box-header-text"><b> {{statusTicketAccess}} </b></h4>     
+            <div class="box-message-gray" *ngIf="idTypeBackgrond == dataInfo.backgroundIdSearchOk">                                       
+                <h4 text-right class="box-header-text"> {{historyText1}} </h4>     
+                <h4 text-right class="box-header-text"> {{historyText2}}:</h4>                                     
             </div>
 
-            <div class="box-message-gray" *ngIf="idTypeBackgrond == dataInfo.backgroundIdSearchNotOk">
-
-                <div class="box-header-red" align="center">
-                    <h4 class="box-header-ticket-status"> {{statusTicket}} </h4>     
-                </div>                    
+            <div class="box-message-red" *ngIf="idTypeBackgrond == dataInfo.backgroundIdSearchNotOk">
+                <h4 text-right class="ticket-type-font"> {{historyText1}} </h4>     
+                <h4 text-right class="ticket-type-msg"> {{historyText2}}</h4>     
                
-                <h4 text-right class="box-header-text"> {{historyText3}}: 
-                     <b> {{statusTicketStart}} - {{statusTicketUsedOn}} </b> 
-                 </h4>                                        
             </div>
         </ion-row>
     </ion-grid>

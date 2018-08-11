@@ -42,8 +42,7 @@ export class HomePage {
 
   counter: string = this.dataInfo.isLoading
   statusTicket: string = this.dataInfo.ticketOk
-  statusTicketStart: string = "" 
-  statusTicketAccess: string = ""
+  statusTicketStart: string = ""   
   statusTicketUsedOn: string = ""
 
   history: string = this.dataInfo.history
@@ -229,6 +228,7 @@ export class HomePage {
     
       data.success.forEach(element => {            
         console.log('Configuração do totem: ', element)
+
         self.title = element.nome_area_acesso
         self.counter = element.lotacao_area_acesso       
         self.areaId = element.fk_id_area_acesso    
@@ -310,50 +310,40 @@ export class HomePage {
     }    
   }
 
-  ticketNotSold(ticket){  
-    this.isLoading = false
-    this.ticketRead = true        
-    this.message1 = this.dataInfo.ticketNotSolded
-    this.message2 = this.dataInfo.ticketNotSoldedMsg      
-    this.history = this.dataInfo.ticketRead + this.searchTicket
-    this.statusTicket = this.dataInfo.ticketNotSoldedMsg
+  showError(str1, str2){  
 
-    if(this.idTypeBackgrond === this.dataInfo.backgroundIdSearch){                  
-      this.idTypeBackgrond = this.dataInfo.backgroundIdSearchNotOk                    
+    this.isLoading = false
+    this.ticketRead = true            
+    this.history = this.dataInfo.ticketRead + this.searchTicket
+    
+    if(this.idTypeBackgrond === this.dataInfo.backgroundIdSearch){                      
+      this.idTypeBackgrond = this.dataInfo.backgroundIdSearchNotOk                   
+      this.historyText1 = this.dataInfo.ticketNotOk    
+      this.historyText2 = str2
 
     } else {                  
       this.idTypeBackgrond = this.dataInfo.backgroundIdRed      
+      this.message1 = str1
+      this.message2 = str2
     }
 
     this.backHome()    
+  }  
+
+  ticketNotSold(ticket){          
+    this.showError(this.dataInfo.ticketNotSolded, this.dataInfo.ticketNotSoldedMsg)
   }
 
   checkTicket(ticket){       
 
-  if(ticket.success.length > 0){
+  if(ticket.success.length > 0)
       this.checkTicketContinue()
-    } else {
-      this.checkTicketAreaAccessDenied()    
-    }
+  else 
+      this.checkTicketAreaAccessDenied()      
   }    
 
   checkTicketAreaAccessDenied(){
-
-    this.isLoading = false    
-    this.ticketRead = true
-    this.history = this.dataInfo.ticketRead + this.searchTicket
-    this.message1 = this.dataInfo.accessDenied      
-    this.message2 = this.dataInfo.ticketNotAllowed
-    this.statusTicket = this.dataInfo.accessDenied
-
-    if(this.idTypeBackgrond === this.dataInfo.backgroundIdSearch){                  
-      this.idTypeBackgrond = this.dataInfo.backgroundIdSearchNotOk                    
-
-    } else {                  
-      this.idTypeBackgrond = this.dataInfo.backgroundIdRed
-    }
-
-    this.backHome()
+    this.showError(this.dataInfo.accessDenied, this.dataInfo.ticketNotAllowed)
   }
 
   checkTicketContinue(){    
@@ -364,44 +354,29 @@ export class HomePage {
 
   checkTicketContinueCallback(ticket){    
 
-    if(ticket.success.length == 0){
+    if(ticket.success.length == 0)
       this.ticketNotExist(ticket)
-
-    } else {
-      this.ticketCheckValidity(ticket)
-    }
+    else 
+      this.ticketCheckValidity(ticket)    
   } 
       
   ticketNotExist(ticket){    
-    this.isLoading = false
-    this.ticketRead = true    
-    this.message1 = this.dataInfo.ticketNotRegistered      
-    this.message2 = this.dataInfo.ticketNotRegisteredMsg
-    this.idTypeBackgrond = this.dataInfo.backgroundIdRed
-    this.history = this.dataInfo.ticketRead + this.searchTicket
-    
-    if(this.idTypeBackgrond === this.dataInfo.backgroundIdSearch){                  
-      this.idTypeBackgrond = this.dataInfo.backgroundIdSearchNotOk                    
-    } else {                  
-      this.idTypeBackgrond = this.dataInfo.backgroundIdRed
-    }
-
-    this.backHome()
+    this.showError(this.dataInfo.ticketNotRegistered, this.dataInfo.ticketNotRegisteredMsg)    
   }
 
   ticketCheckValidity(ticket){    
         
     ticket.success.forEach(element => {      
       
-      if(element.mesmo_dia_validade == 1){          
+      if(element.mesmo_dia_validade == 1)
         this.ticketValiditySameDay(element)          
-      } 
-      else if(element.infinito_validade == 1){    
+    
+      else if(element.infinito_validade == 1)
         this.ticketValidityInfinite(element)
-      } 
-      else {    
+    
+      else 
         this.ticketValidityTime(element)
-      } 
+      
     });           
   }
 
@@ -409,32 +384,19 @@ export class HomePage {
     let tempo_validade = ticket.tempo_validade
     this.statusTicketStart = moment(ticket.data_log_venda).format("L")    
     let until =  moment(ticket.data_log_venda).hours(tempo_validade).format();
-    let now = moment().format()    
-    
+    let now = moment().format()        
     let isAfter = moment(until).isAfter(now);
 
     if(isAfter)
       this.checkValidityOk(ticket)
      else 
-      this.ticketValidityTimeNotOk(ticket)      
-     
+      this.ticketValidityTimeNotOk(ticket)           
   }
 
   ticketValidityTimeNotOk(ticket){    
-    this.isLoading = false
-    this.ticketRead = true
-    let tempo_validade = ticket.tempo_validade
-    this.idTypeBackgrond = this.dataInfo.backgroundIdRed
-    this.message1 = this.dataInfo.ticketOld
-    this.message2 = moment(ticket.data_log_venda).hours(tempo_validade).format("L");        
-    this.history = this.dataInfo.ticketRead + this.searchTicket
-
-    if(this.idTypeBackgrond === this.dataInfo.backgroundIdSearch)       
-      this.idTypeBackgrond = this.dataInfo.backgroundIdSearchNotOk                    
-    else       
-      this.statusTicket = this.dataInfo.ticketNotSoldedMsg  
-
-    this.backHome()
+    let tempo_validade = ticket.tempo_validade    
+    let message = 'Limite: ' + moment(ticket.data_log_venda).hours(tempo_validade).format("L");        
+    this.showError(this.dataInfo.ticketOld, message)        
   }
 
   ticketValiditySameDay(ticket){
@@ -452,23 +414,9 @@ export class HomePage {
         this.ticketValidityNotSame(ticket)        
   }
 
-  ticketValidityNotSame(ticket){
-    
-    this.isLoading = false
-    this.ticketRead = true
-    this.idTypeBackgrond = this.dataInfo.backgroundIdRed
-    this.message1 = this.dataInfo.ticketOld
-    this.message2 = moment(ticket.data_log_venda).format("L")    
-    this.history = this.dataInfo.ticketRead + this.searchTicket
-
-    if(this.idTypeBackgrond === this.dataInfo.backgroundIdSearch){            
-      this.idTypeBackgrond = this.dataInfo.backgroundIdSearchNotOk                    
-
-    } else {            
-      this.statusTicket = this.dataInfo.accessDenied
-    }
-
-    this.backHome()
+  ticketValidityNotSame(ticket){    
+    let message = 'Limite: ' + moment(ticket.data_log_venda).format("L")    
+    this.showError(this.dataInfo.ticketOld, message)            
   }
 
   ticketValidityInfinite(ticket){
@@ -520,21 +468,8 @@ export class HomePage {
   }
 
   ticketAccessTimeDoorNotOk(ticket){    
-    this.isLoading = false
-    this.idTypeBackgrond = this.dataInfo.backgroundIdRed
-    this.message1 = this.dataInfo.timeAccessOver
-    this.message2 = moment(ticket.data_log_venda).add(ticket.horas_porta_acesso, 'hours').format("LT");
-    this.ticketRead = true
-    this.dataInfo.ticketRead = this.dataInfo.ticketRead + this.searchTicket  
-    
-    this.history = this.dataInfo.ticketRead + this.searchTicket
-
-    if(this.idTypeBackgrond === this.dataInfo.backgroundIdSearch)
-      this.idTypeBackgrond = this.dataInfo.backgroundIdSearchNotOk                    
-    else 
-      this.statusTicket = this.dataInfo.accessDenied
-  
-    this.backHome()
+    let message = 'Limite: ' + moment(ticket.data_log_venda).add(ticket.horas_porta_acesso, 'hours').format("LT");
+    this.showError(this.dataInfo.timeAccessOver, message)    
   }
 
   ticketAccessOnlyone(ticket){
@@ -551,15 +486,12 @@ export class HomePage {
     })
   }
 
-  ticketAccessCountPassCallback(ticket, ticketInfo){
+  ticketAccessCountPassCallback(ticket, ticketInfo){    
 
-    console.log(ticket)
-
-    if(ticket.success.length == 0){
+    if(ticket.success.length == 0)
       this.useTicket(ticket)
-    } else {
-      this.ticketAccessCountPassContinue(ticket, ticketInfo)      
-    }
+    else 
+      this.ticketAccessCountPassContinue(ticket, ticketInfo)        
   }
 
   ticketAccessCountPassContinue(ticket, ticketInfo){    
@@ -578,20 +510,7 @@ export class HomePage {
 
 
   ticketAccessCountPassNotOk(ticket){
-    this.isLoading = false
-    this.idTypeBackgrond = this.dataInfo.backgroundIdRed
-    this.message1 = this.dataInfo.accessDenied
-    this.message2 = this.dataInfo.accessCountLimitPassed
-    this.ticketRead = true
-    
-    this.history = this.dataInfo.ticketRead + this.searchTicket
-
-    if(this.idTypeBackgrond === this.dataInfo.backgroundIdSearch)
-      this.idTypeBackgrond = this.dataInfo.backgroundIdSearchNotOk                    
-    else 
-      this.statusTicket = this.dataInfo.accessDenied
-
-    this.backHome()
+    this.showError(this.dataInfo.accessDenied, this.dataInfo.accessCountLimitPassed)    
   }
 
   ticketAccessOnlyOneCallback(ticket){  
@@ -602,39 +521,33 @@ export class HomePage {
     }
   }
 
-  ticketAlreadUsedFinish(ticket){
-    this.isLoading = false
-    this.statusTicket = this.dataInfo.already
-    this.idTypeBackgrond = this.dataInfo.backgroundIdSearchNotOk
-    this.ticketRead = true
-    this.dataInfo.ticketRead = ''
-    this.dataInfo.ticketRead = this.searchTicket
+  ticketAlreadUsedFinish(ticket){    
 
     ticket.success.forEach(element => {
       this.statusTicketUsedOn = element.nome_ponto_acesso
       this.statusTicketStart = moment(element.data_log_utilizacao).format("L");      
     });
 
-    this.history = this.dataInfo.ticketRead + this.searchTicket
-
-    if(this.idTypeBackgrond === this.dataInfo.backgroundIdSearch)
-      this.idTypeBackgrond = this.dataInfo.backgroundIdSearchNotOk                    
-    else 
-      this.statusTicket = this.dataInfo.accessDenied
-
-    this.backHome()
+    let message = 'Utilizado em ' + this.statusTicketUsedOn + ' - ' + this.statusTicketStart
+    this.showError(this.dataInfo.accessDenied, message)    
   }
 
   useTicket(ticket){
     this.ticketRead = true
-    this.dataInfo.ticketRead = ''
-    this.dataInfo.ticketRead = this.dataInfo.ticketRead + this.searchTicket
+    
+    if(this.idTypeBackgrond === this.dataInfo.backgroundIdSearch){                      
+      this.idTypeBackgrond = this.dataInfo.backgroundIdSearchOk                   
+      this.historyText1 = this.dataInfo.sucess
+      this.historyText2 = this.dataInfo.ticketOk      
 
-    let self = this
+    } else {                  
 
-    this.http.useTicket(this.searchTicket).subscribe( data => {
-      self.useTicketContinue()            
-    })
+      let self = this
+
+      this.http.useTicket(this.searchTicket).subscribe( data => {
+        self.useTicketContinue()            
+      })
+    }    
   }
 
   useTicketContinue(){
@@ -654,8 +567,7 @@ export class HomePage {
     });
     
     self.statusTicket = self.dataInfo.ticketOk
-    self.idTypeBackgrond = self.dataInfo.backgroundIdGreen
-    
+    self.idTypeBackgrond = self.dataInfo.backgroundIdGreen    
     self.message2 = self.dataInfo.welcomeMsg              
     self.incrementCounter()
     self.backHome()
