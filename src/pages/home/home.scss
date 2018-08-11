@@ -142,6 +142,22 @@ page-home {
         align-items: right !important;
         color: white;
     }
+
+    ion-spinner * {
+        width: 32px;
+        height: 32px;
+        stroke: #444;
+        fill: #222;
+        display: block;
+        position: fixed;
+        overflow: show;
+        margin: auto;
+        top: 0;
+        left: 0;
+        bottom: 0;
+        right: 0;
+        
+      }
     
 
 }

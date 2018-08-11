@@ -11,7 +11,6 @@
       <ion-title align="center"> Favor aguarde </ion-title>
   </ion-list>
     
-
   <ion-list *ngIf="! isLoading">
       <ion-item no-lines><ion-label stacked> Ingresso inicial </ion-label>
         <ion-input type="number" (keyup.enter)="checkTicketStart()" [(ngModel)]="searchTicket" #searchbar></ion-input>

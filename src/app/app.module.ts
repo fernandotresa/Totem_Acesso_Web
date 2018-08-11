@@ -16,6 +16,7 @@ import { AngularFireModule } from 'angularfire2';
 import { AngularFireDatabaseModule } from 'angularfire2/database';
 import { ConfigurationService } from "ionic-configuration-service";
 import { SocketIoModule, SocketIoConfig } from 'ng-socket-io';
+import { MultiplePage } from '../pages/multiple/multiple';
 
 export function loadConfiguration(configurationService: ConfigurationService): () => Promise<void> {
   return () => configurationService.load("assets/configs/document.json");
@@ -42,7 +43,12 @@ export const firebaseConfig = {
     HttpClientModule,
     AngularFireModule.initializeApp(firebaseConfig),
     AngularFireDatabaseModule,
-    IonicModule.forRoot(MyApp),
+    IonicModule.forRoot(MyApp, {}, {
+      links: [
+        { component: HomePage, name: 'Home'},
+        { component: MultiplePage, name: 'Multiple'}        
+      ]}),
+
     SocketIoModule.forRoot(config)
   ],
   exports: [

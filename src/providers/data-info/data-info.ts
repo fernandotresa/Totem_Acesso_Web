@@ -19,6 +19,9 @@ export class DataInfoProvider {
   backgroundIdTicketRead: number = 7
     
   history: string = "Histórico do ingresso"
+  
+  historyGeneral: string = "Histórico do ingresso"
+  
   historyUntilDay: string = "Até dia"
   historyUsedDay: string = "Usado dia"
   accessPoints: string = "Acesso aos pontos"

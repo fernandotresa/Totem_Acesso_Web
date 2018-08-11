@@ -4,6 +4,7 @@ import { HttpdProvider } from '../../providers/httpd/httpd';
 import { DatabaseProvider } from '../../providers/database/database';
 import { DataInfoProvider } from '../../providers/data-info/data-info'
 import { UiUtilsProvider } from '../../providers/ui-utils/ui-utils'
+import { HomePage } from '../../pages/home/home';
 import moment from 'moment';
 
 @IonicPage()
@@ -34,17 +35,28 @@ export class MultiplePage {
   }
 
   ionViewDidLoad() {
-    console.log('ionViewDidLoad MultiplePage');
+    console.log('ionViewDidLoad MultiplePage');    
+    this.goBack()
+    this.setFocus()
+  }
 
+  goBack(){
     let self = this
-    /*setTimeout(function(){ 
+    let total = 0
+
+    setTimeout(function(){ 
 
       if(self.searchTicket.length == 0)
-        self.navCtrl.pop()
-      
-    }, 6000); 
+        self.navCtrl.setRoot(HomePage)
+      else {
 
-    this.setFocus()*/
+        if(total > 2)
+          self.navCtrl.setRoot(HomePage)
+
+        total++
+      }      
+      
+    }, 5000); 
   }
 
   setIntervalFocus(){

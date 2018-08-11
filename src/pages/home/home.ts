@@ -22,7 +22,7 @@ export class HomePage {
   ticket: Observable<any>;  
   gpios: Observable<any>;
   
-  idTypeBackgrond: number = this.dataInfo.backgroundIdNone;
+  idTypeBackgrond: number = this.dataInfo.backgroundIdSearch;
   ticketRead: Boolean = false
 
   titleTicketOne: string = "Ingresso"
@@ -34,8 +34,11 @@ export class HomePage {
       
   areaId: number = this.dataInfo.areaId
   pontoId: number = this.dataInfo.totemId
+  areaName: string;
   updatedInfo: Boolean = false
   updating: Boolean = false
+  inputVisible: Boolean = true
+  isLoading: Boolean = true
 
   counter: string = this.dataInfo.isLoading
   statusTicket: string = this.dataInfo.ticketOk
@@ -68,8 +71,7 @@ export class HomePage {
       events.subscribe('totem:updated', (data) => {
         self.loadConfigCallback(data)
       });
-  }
-  
+  }  
 
   ionViewDidLoad() {
 
@@ -93,10 +95,14 @@ export class HomePage {
 
       if(! self.updating && self.areaId)
 
-          self.updateInfo(); 
-          self.setFocus();
+          self.updateInfo();                     
+
+          if(self.inputVisible){
+            self.searchTicket = ""
+            self.setFocus();
+          }            
     
-    }, 3000);      
+    }, 5000);      
   }
 
   startGPIOs(){
@@ -110,8 +116,6 @@ export class HomePage {
   gpioEvent(data){
     let gpio_ = data.gpio
     let event_ = data.event
-
-    console.log('Evento GPIO recebido:', gpio_, event_)
 
     if(gpio_ == 2)
         this.setMultiple()
@@ -139,23 +143,26 @@ export class HomePage {
       self.searchTicket = ''
       self.searching = false    
       self.ticketRead = false
+      self.title = self.areaName
+      self.history = self.dataInfo.historyGeneral
       self.dataInfo.ticketRead = self.dataInfo.ticketReadDefault
+      self.totemWorking()
     }, 3000);      
   }
 
   goHistory(){
-    let self = this
-
-    this.statusTicket = this.dataInfo.already
+    
+    //this.statusTicket = this.dataInfo.already
     this.idTypeBackgrond = this.dataInfo.backgroundIdSearch
 
+    /* let self = this
     setTimeout(function(){ 
 
       self.idTypeBackgrond = self.dataInfo.backgroundIdNone
       self.searchTicket = ''
       self.searching = false    
 
-    }, 6000); 
+    }, 6000); */
   }
 
   showHistory(){
@@ -167,13 +174,7 @@ export class HomePage {
     }   
   }
 
-  showSettings(){
-    this.updating = true
-    this.navCtrl.push("SettingsPage")
-  }  
-
   decrementCounter(){
-
     this.updating = true
     this.updatedInfo = false
 
@@ -186,7 +187,6 @@ export class HomePage {
   }
 
   incrementCounter(){
-
     this.updating = true
     this.updatedInfo = false
 
@@ -205,10 +205,7 @@ export class HomePage {
     if(self.areaId == undefined){
       self.uiUtils.showToast(self.dataInfo.noConfiguration)
 
-    } else {
-
-      console.log('Configurado Totem ID:', this.pontoId)
-      console.log('Configurado Area ID:', this.areaId)    
+    } else {     
 
     this.http.getAreaInfo(this.areaId).subscribe(data => {            
       self.loadConfigCallback(data)            
@@ -236,12 +233,13 @@ export class HomePage {
         self.counter = element.lotacao_area_acesso       
         self.areaId = element.fk_id_area_acesso    
         self.pontoId = element.fk_id_ponto_acesso
+        self.areaName = self.title
       });                    
   
       self.uiUtils.showToast('Inicializado com sucesso!')
       self.startTimer()
-    }
-    
+      self.totemWorking()
+    }    
   }
   
   updateInfo(){
@@ -260,36 +258,43 @@ export class HomePage {
           self.uiUtils.showToast('Favor configurar sistema')
         } else {
           self.counter = person[0].lotacao_area_acesso
-        }
-        
+        }        
       }); 
       
       self.updating = false
     })
   }
 
-  setFilteredItems(){
-    
-    console.log('Modificado:', this.searchTicket)
-
-    if(this.searchTicket.length == 8){
-      this.searchOneTicket()      
-    }    
+  setFilteredItems(){            
+    if(this.searchTicket.length == 8 && this.inputVisible)
+      this.searchOneTicket() 
   } 
+
+  totemWorking(){
+    this.inputVisible = true    
+    this.isLoading = false
+  }
+
+  totemNotWorking(){
+    this.inputVisible = false
+    this.isLoading = true
+  }
 
   searchOneTicket(){  
     console.log('Procurando um ingresso:', this.searchTicket)
 
+    this.totemNotWorking()
+    
     this.http.checkTicketSold(this.searchTicket).subscribe( data => {
       this.checkSold(data)                    
     })                  
-  }
-  
+  }  
 
   checkSold(ticket){
+    
     if(ticket.success.length == 0){
-
       this.ticketNotSold(ticket)
+
     } else {
 
       ticket.success.forEach(element => {
@@ -306,13 +311,21 @@ export class HomePage {
   }
 
   ticketNotSold(ticket){  
-    this.ticketRead = true
-    this.statusTicket = this.dataInfo.ticketNotSoldedMsg
-    this.idTypeBackgrond = this.dataInfo.backgroundIdRed
+    this.isLoading = false
+    this.ticketRead = true        
     this.message1 = this.dataInfo.ticketNotSolded
-    this.message2 = this.dataInfo.ticketNotSoldedMsg
-    this.dataInfo.ticketRead = this.dataInfo.ticketRead + this.searchTicket
-    this.backHome()
+    this.message2 = this.dataInfo.ticketNotSoldedMsg      
+    this.history = this.dataInfo.ticketRead + this.searchTicket
+    this.statusTicket = this.dataInfo.ticketNotSoldedMsg
+
+    if(this.idTypeBackgrond === this.dataInfo.backgroundIdSearch){                  
+      this.idTypeBackgrond = this.dataInfo.backgroundIdSearchNotOk                    
+
+    } else {                  
+      this.idTypeBackgrond = this.dataInfo.backgroundIdRed      
+    }
+
+    this.backHome()    
   }
 
   checkTicket(ticket){       
@@ -325,12 +338,21 @@ export class HomePage {
   }    
 
   checkTicketAreaAccessDenied(){
-    this.statusTicket = this.dataInfo.accessDenied
-    this.idTypeBackgrond = this.dataInfo.backgroundIdRed
+
+    this.isLoading = false    
     this.ticketRead = true
-    this.dataInfo.ticketRead = this.dataInfo.ticketRead + this.searchTicket   
+    this.history = this.dataInfo.ticketRead + this.searchTicket
     this.message1 = this.dataInfo.accessDenied      
     this.message2 = this.dataInfo.ticketNotAllowed
+    this.statusTicket = this.dataInfo.accessDenied
+
+    if(this.idTypeBackgrond === this.dataInfo.backgroundIdSearch){                  
+      this.idTypeBackgrond = this.dataInfo.backgroundIdSearchNotOk                    
+
+    } else {                  
+      this.idTypeBackgrond = this.dataInfo.backgroundIdRed
+    }
+
     this.backHome()
   }
 
@@ -351,11 +373,19 @@ export class HomePage {
   } 
       
   ticketNotExist(ticket){    
+    this.isLoading = false
+    this.ticketRead = true    
     this.message1 = this.dataInfo.ticketNotRegistered      
     this.message2 = this.dataInfo.ticketNotRegisteredMsg
     this.idTypeBackgrond = this.dataInfo.backgroundIdRed
-    this.ticketRead = true
-    this.dataInfo.ticketRead = this.dataInfo.ticketRead + this.searchTicket
+    this.history = this.dataInfo.ticketRead + this.searchTicket
+    
+    if(this.idTypeBackgrond === this.dataInfo.backgroundIdSearch){                  
+      this.idTypeBackgrond = this.dataInfo.backgroundIdSearchNotOk                    
+    } else {                  
+      this.idTypeBackgrond = this.dataInfo.backgroundIdRed
+    }
+
     this.backHome()
   }
 
@@ -378,68 +408,66 @@ export class HomePage {
   ticketValidityTime(ticket){
     let tempo_validade = ticket.tempo_validade
     this.statusTicketStart = moment(ticket.data_log_venda).format("L")    
-
     let until =  moment(ticket.data_log_venda).hours(tempo_validade).format();
     let now = moment().format()    
     
     let isAfter = moment(until).isAfter(now);
 
-    if(isAfter){
+    if(isAfter)
       this.checkValidityOk(ticket)
-
-    } else {
+     else 
       this.ticketValidityTimeNotOk(ticket)      
-    }    
+     
   }
 
   ticketValidityTimeNotOk(ticket){    
-
+    this.isLoading = false
+    this.ticketRead = true
     let tempo_validade = ticket.tempo_validade
     this.idTypeBackgrond = this.dataInfo.backgroundIdRed
     this.message1 = this.dataInfo.ticketOld
-    this.message2 = moment(ticket.data_log_venda).hours(tempo_validade).format("L");
-    this.ticketRead = true
-    this.dataInfo.ticketRead = this.dataInfo.ticketRead + this.searchTicket    
+    this.message2 = moment(ticket.data_log_venda).hours(tempo_validade).format("L");        
+    this.history = this.dataInfo.ticketRead + this.searchTicket
+
+    if(this.idTypeBackgrond === this.dataInfo.backgroundIdSearch)       
+      this.idTypeBackgrond = this.dataInfo.backgroundIdSearchNotOk                    
+    else       
+      this.statusTicket = this.dataInfo.ticketNotSoldedMsg  
+
     this.backHome()
   }
 
   ticketValiditySameDay(ticket){
 
     let now = moment().format()    
-
+    this.ticketRead = true        
     let isSame = moment(ticket.data_log_venda).isSame(now, 'day')
     this.history = this.dataInfo.ticketRead + this.searchTicket
     this.statusTicketStart = moment(ticket.data_log_venda).format("L")    
+    this.history = this.dataInfo.ticketRead + this.searchTicket
 
-    if(this.idTypeBackgrond === this.dataInfo.backgroundIdSearch){                      
-
-      if(isSame){
-
-        this.statusTicket = this.dataInfo.ticketOk
-        this.idTypeBackgrond = this.dataInfo.backgroundIdSearchOk
-        this.ticketRead = true
-        
-        this.backHome()
-  
-      } else {          
-        this.ticketValidityNotSame(ticket)
-      }      
-
-    } else {
-
-      if(isSame)
+    if(isSame)
         this.checkValidityOk(ticket)    
       else
-        this.ticketValidityNotSame(ticket)
-    }        
+        this.ticketValidityNotSame(ticket)        
   }
 
   ticketValidityNotSame(ticket){
+    
+    this.isLoading = false
     this.ticketRead = true
-    this.dataInfo.ticketRead = this.dataInfo.ticketRead + this.searchTicket
     this.idTypeBackgrond = this.dataInfo.backgroundIdRed
     this.message1 = this.dataInfo.ticketOld
     this.message2 = moment(ticket.data_log_venda).format("L")    
+    this.history = this.dataInfo.ticketRead + this.searchTicket
+
+    if(this.idTypeBackgrond === this.dataInfo.backgroundIdSearch){            
+      this.idTypeBackgrond = this.dataInfo.backgroundIdSearchNotOk                    
+
+    } else {            
+      this.statusTicket = this.dataInfo.accessDenied
+    }
+
     this.backHome()
   }
 
@@ -474,6 +502,7 @@ export class HomePage {
     }    
     else {
       console.log('Tipo de ingresso não encontrado:', ticket)
+      this.isLoading = false
     }
   }
 
@@ -491,11 +520,20 @@ export class HomePage {
   }
 
   ticketAccessTimeDoorNotOk(ticket){    
+    this.isLoading = false
     this.idTypeBackgrond = this.dataInfo.backgroundIdRed
     this.message1 = this.dataInfo.timeAccessOver
     this.message2 = moment(ticket.data_log_venda).add(ticket.horas_porta_acesso, 'hours').format("LT");
     this.ticketRead = true
-    this.dataInfo.ticketRead = this.dataInfo.ticketRead + this.searchTicket    
+    this.dataInfo.ticketRead = this.dataInfo.ticketRead + this.searchTicket  
+    
+    this.history = this.dataInfo.ticketRead + this.searchTicket
+
+    if(this.idTypeBackgrond === this.dataInfo.backgroundIdSearch)
+      this.idTypeBackgrond = this.dataInfo.backgroundIdSearchNotOk                    
+    else 
+      this.statusTicket = this.dataInfo.accessDenied
+  
     this.backHome()
   }
 
@@ -509,7 +547,6 @@ export class HomePage {
     console.log(ticket)    
 
     this.http.checkTicketUsedTotal(this.searchTicket).subscribe(data => {
-
       this.ticketAccessCountPassCallback(data, ticket)      
     })
   }
@@ -525,16 +562,12 @@ export class HomePage {
     }
   }
 
-  ticketAccessCountPassContinue(ticket, ticketInfo){
-    
+  ticketAccessCountPassContinue(ticket, ticketInfo){    
 
-    let numero_liberacoes = ticketInfo.numero_liberacoes
-    console.log('#### numero_liberacoes permitidos' ,numero_liberacoes)
+    let numero_liberacoes = ticketInfo.numero_liberacoes    
 
     ticket.success.forEach(element => {
-       let total = element.TOTAL
-
-       console.log('TOTAL', total)
+       let total = element.TOTAL       
 
        if(total < numero_liberacoes)
           this.useTicket(ticket)
@@ -545,11 +578,19 @@ export class HomePage {
 
 
   ticketAccessCountPassNotOk(ticket){
+    this.isLoading = false
     this.idTypeBackgrond = this.dataInfo.backgroundIdRed
     this.message1 = this.dataInfo.accessDenied
     this.message2 = this.dataInfo.accessCountLimitPassed
     this.ticketRead = true
-    this.dataInfo.ticketRead = this.dataInfo.ticketRead + this.searchTicket    
+    
+    this.history = this.dataInfo.ticketRead + this.searchTicket
+
+    if(this.idTypeBackgrond === this.dataInfo.backgroundIdSearch)
+      this.idTypeBackgrond = this.dataInfo.backgroundIdSearchNotOk                    
+    else 
+      this.statusTicket = this.dataInfo.accessDenied
+
     this.backHome()
   }
 
@@ -562,6 +603,7 @@ export class HomePage {
   }
 
   ticketAlreadUsedFinish(ticket){
+    this.isLoading = false
     this.statusTicket = this.dataInfo.already
     this.idTypeBackgrond = this.dataInfo.backgroundIdSearchNotOk
     this.ticketRead = true
@@ -572,6 +614,13 @@ export class HomePage {
       this.statusTicketUsedOn = element.nome_ponto_acesso
       this.statusTicketStart = moment(element.data_log_utilizacao).format("L");      
     });
+
+    this.history = this.dataInfo.ticketRead + this.searchTicket
+
+    if(this.idTypeBackgrond === this.dataInfo.backgroundIdSearch)
+      this.idTypeBackgrond = this.dataInfo.backgroundIdSearchNotOk                    
+    else 
+      this.statusTicket = this.dataInfo.accessDenied
 
     this.backHome()
   }
@@ -613,7 +662,7 @@ export class HomePage {
   }
 
   setMultiple(){      
-      this.navCtrl.push("MultiplePage")        
+      this.navCtrl.push('Multiple')        
   }    
 
   getGpios() {
