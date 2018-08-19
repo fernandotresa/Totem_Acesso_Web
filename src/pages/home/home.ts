@@ -114,7 +114,7 @@ export class HomePage {
 
   gpioEvent(data){
     let gpio_ = data.gpio
-    let event_ = data.event
+    //let event_ = data.event
 
     if(gpio_ == 2)
         this.setMultiple()
@@ -390,26 +390,7 @@ export class HomePage {
         this.ticketValidityTime(element)
       
     });           
-  }
-
-  ticketValidityTime(ticket){
-    let tempo_validade = ticket.tempo_validade
-    this.statusTicketStart = moment(ticket.data_log_venda).format("L")    
-    let until =  moment(ticket.data_log_venda).hours(tempo_validade).format();
-    let now = moment().format()        
-    let isAfter = moment(until).isAfter(now);
-
-    if(isAfter)
-      this.checkValidityOk(ticket)
-     else 
-      this.ticketValidityTimeNotOk(ticket)           
-  }
-
-  ticketValidityTimeNotOk(ticket){    
-    let tempo_validade = ticket.tempo_validade    
-    let message = 'Limite: ' + moment(ticket.data_log_venda).hours(tempo_validade).format("L");        
-    this.showError(this.dataInfo.ticketOld, message)        
-  }
+  }  
 
   ticketValiditySameDay(ticket){
 
@@ -435,6 +416,25 @@ export class HomePage {
     this.history = this.dataInfo.ticketRead + this.searchTicket
     this.statusTicketStart = moment(ticket.data_log_venda).format("L")   
     this.useTicket(ticket)    
+  }
+
+  ticketValidityTime(ticket){
+    let tempo_validade = ticket.tempo_validade
+    this.statusTicketStart = moment(ticket.data_log_venda).format("L")    
+    let until =  moment(ticket.data_log_venda).hours(tempo_validade).format();
+    let now = moment().format()        
+    let isAfter = moment(until).isAfter(now);
+
+    if(isAfter)
+      this.checkValidityOk(ticket)
+     else 
+      this.ticketValidityTimeNotOk(ticket)           
+  }
+
+  ticketValidityTimeNotOk(ticket){    
+    let tempo_validade = ticket.tempo_validade    
+    let message = 'Limite: ' + moment(ticket.data_log_venda).hours(tempo_validade).format("L");        
+    this.showError(this.dataInfo.ticketOld, message)        
   }
 
   checkValidityOk(ticket){    
