@@ -68,6 +68,19 @@ export class HttpdProvider {
     return this.http.post(this.address  + "/checkTicket", myData, {headers: headers})
   }
 
+  
+  checkTicketQuick(value_){    
+    let myData = JSON.stringify({id: this.dataInfo.totemId, ticket: value_, idArea: this.dataInfo.areaId, idPorta: this.dataInfo.portaId});
+    const headers = new HttpHeaders({'Content-Type':'application/json'});
+    return this.http.post(this.address  + "/checkTicketQuick", myData, {headers: headers})
+  }
+
+  checkTicketExist(value_){    
+    let myData = JSON.stringify({id: this.dataInfo.totemId, ticket: value_, idArea: this.dataInfo.areaId, idPorta: this.dataInfo.portaId});
+    const headers = new HttpHeaders({'Content-Type':'application/json'});
+    return this.http.post(this.address  + "/checkTicketExist", myData, {headers: headers})
+  }
+
   checkTicketContinue(value_){        
     let myData = JSON.stringify({id: this.dataInfo.totemId, ticket: value_, idArea: this.dataInfo.areaId, idPorta: this.dataInfo.portaId});
     const headers = new HttpHeaders({'Content-Type':'application/json'});

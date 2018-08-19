@@ -44,9 +44,11 @@
                 <h2 text-right class="ticket-type-msg"> {{message2}} </h2>     
             </div>
 
-            <div class="box-message-gray" *ngIf="idTypeBackgrond == dataInfo.backgroundIdSearchOk">                                       
-                <h4 text-right class="box-header-text"> {{historyText1}} </h4>     
-                <h4 text-right class="box-header-text"> {{historyText2}}:</h4>                                     
+            <div class="box-message-green" *ngIf="idTypeBackgrond == dataInfo.backgroundIdSearchOk">                                       
+                <h4 text-right class="ticket-type-font"> {{historyText1}} </h4>     
+                <h4 text-right class="ticket-type-msg"> {{dataInfo.historyUntilDay}}: {{historyText2}}</h4>                                                     
+                <h3 text-right class="ticket-type-msg"> {{dataInfo.accessPoints}}:</h3>
+                <h4 text-right class="ticket-type-submsg"> {{historyText3}}</h4>
             </div>
 
             <div class="box-message-red" *ngIf="idTypeBackgrond == dataInfo.backgroundIdSearchNotOk">

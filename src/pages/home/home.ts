@@ -22,7 +22,7 @@ export class HomePage {
   ticket: Observable<any>;  
   gpios: Observable<any>;
   
-  idTypeBackgrond: number = this.dataInfo.backgroundIdSearch;
+  idTypeBackgrond: number = this.dataInfo.backgroundIdNone;
   ticketRead: Boolean = false
 
   titleTicketOne: string = "Ingresso"
@@ -84,7 +84,7 @@ export class HomePage {
     if(this.updatedInfo)
         this.updateInfo()
     else   
-      this.loadConfig()                
+      this.loadConfig()             
   }
 
   startTimer(){
@@ -284,11 +284,27 @@ export class HomePage {
     console.log('Procurando um ingresso:', this.searchTicket)
 
     this.totemNotWorking()
-    
-    this.http.checkTicketSold(this.searchTicket).subscribe( data => {
-      this.checkSold(data)                    
+
+    this.http.checkTicketExist(this.searchTicket).subscribe( data => {
+      this.checkTicketExist(data)                    
     })                  
   }  
+
+  checkTicketExist(ticket){
+
+    if(ticket.success.length == 0)
+      this.ticketNotExist(ticket)
+
+    else {
+      this.http.checkTicketSold(this.searchTicket).subscribe( data => {
+        this.checkSold(data)                    
+      })                  
+    }    
+  }
+
+  ticketNotExist(ticket){    
+    this.showError(this.dataInfo.ticketNotRegistered, this.dataInfo.ticketNotRegisteredMsg)    
+  }
 
   checkSold(ticket){
     
@@ -358,11 +374,7 @@ export class HomePage {
       this.ticketNotExist(ticket)
     else 
       this.ticketCheckValidity(ticket)    
-  } 
-      
-  ticketNotExist(ticket){    
-    this.showError(this.dataInfo.ticketNotRegistered, this.dataInfo.ticketNotRegisteredMsg)    
-  }
+  }         
 
   ticketCheckValidity(ticket){    
         
@@ -434,7 +446,6 @@ export class HomePage {
     let mesmo_dia_porta_acesso = ticket.mesmo_dia_porta_acesso
     let unica_porta_acesso = ticket.unica_porta_acesso
     let numero_liberacoes = ticket.numero_liberacoes
-    //let contagem_porta_acesso = ticket.numero_liberacoes
 
     if(horas_porta_acesso > 0){
       this.ticketAccessTimeDoor(ticket)
@@ -535,10 +546,8 @@ export class HomePage {
   useTicket(ticket){
     this.ticketRead = true
     
-    if(this.idTypeBackgrond === this.dataInfo.backgroundIdSearch){                      
-      this.idTypeBackgrond = this.dataInfo.backgroundIdSearchOk                   
-      this.historyText1 = this.dataInfo.sucess
-      this.historyText2 = this.dataInfo.ticketOk      
+    if(this.idTypeBackgrond === this.dataInfo.backgroundIdSearch){    
+      this.searchOkContinue(ticket)    
 
     } else {                  
 
@@ -548,6 +557,46 @@ export class HomePage {
         self.useTicketContinue()            
       })
     }    
+  }
+
+  searchOkContinue(ticket){
+    console.log(ticket)                  
+
+    this.http.checkTicketQuick(this.searchTicket).subscribe(data =>{
+        this.searchOkCallback(data)
+    })      
+  }
+
+  searchOkCallback(ticket){
+    
+    this.idTypeBackgrond = this.dataInfo.backgroundIdSearchOk                   
+    this.historyText1 = this.dataInfo.ticketOk
+    this.historyText2 = ""
+    this.historyText3 = ""
+
+    console.log(ticket)
+
+    let pontos = "";
+
+    ticket.success.forEach(element => {
+
+      let validity = element.fk_id_validade
+
+      if(validity <= 2)
+        this.historyText2 = moment(element.data_log_venda).format("L")    
+      else {
+
+        console.log(element)
+
+      }
+            
+      pontos += " - " + element.nome_ponto_acesso 
+
+    });
+
+    this.historyText3 = pontos
+    
+    this.backHome()   
   }
 
   useTicketContinue(){

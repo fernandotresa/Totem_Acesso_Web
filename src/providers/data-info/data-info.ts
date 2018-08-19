@@ -23,6 +23,7 @@ export class DataInfoProvider {
   historyGeneral: string = "Histórico do ingresso"
   
   historyUntilDay: string = "Até dia"
+  
   historyUsedDay: string = "Usado dia"
   accessPoints: string = "Acesso aos pontos"
 
