@@ -21,9 +21,10 @@ export class MultiplePage {
   inputVisible: Boolean = true
   isLoading: Boolean = true
 
+  totalChecks: number = 0
   searchTicket: string = '28021610';
   searchTicketEnd: string = '28021620';
-  allTickets: any
+  allTickets: any  
 
   constructor(public dataInfo: DataInfoProvider,
     public navCtrl: NavController,
@@ -36,7 +37,7 @@ export class MultiplePage {
   }
 
   ionViewDidLoad() {
-    console.log('ionViewDidLoad MultiplePage');    
+    
     this.goBack()
     this.setFocus()
 
@@ -84,6 +85,44 @@ export class MultiplePage {
       }, 3000);      
   }
 
+  setTimeoutTicketsVerify(){
+
+    let self = this
+    self.totalChecks = 0
+
+    let timeOutTotal = setInterval(function(){ 
+
+      let allOk = true
+
+      self.allTickets.success.forEach(element => {
+
+        if(! element.MODIFICADO){
+          allOk = false          
+        }          
+      });
+
+      if(allOk){
+          self.totalChecks = 0
+          self.totemWorking()
+          clearInterval(timeOutTotal)
+          self.uiUtils.showToast('Processo finalizado')
+
+      } else {
+
+        self.totalChecks++
+
+        if(self.totalChecks > 15){
+
+          self.totalChecks = 0
+          self.totemWorking()
+          clearInterval(timeOutTotal)
+        }
+      }      
+        
+    }, 5000);      
+       
+  }
+
   searchMultipleTickets(){
     let self = this    
 
@@ -108,7 +147,6 @@ export class MultiplePage {
   }
 
   totemWorking(){
-
     this.inputVisible = true    
     this.isLoading = false
   }
@@ -183,17 +221,17 @@ export class MultiplePage {
   }
 
   searchCallbackContinue(ticket){
-    let self = this
+    let self = this    
    
     ticket.success.forEach(element => {
       self.searchOneTicket(element)      
     });        
+
+    this.setTimeoutTicketsVerify()
   }
 
   searchOneTicket(ticket){  
-    console.log('Procurando um ingresso:', ticket.id_estoque_utilizavel)    
-
-    //this.totemNotWorking()
+    console.log('Procurando um ingresso:', ticket.id_estoque_utilizavel)        
 
     if(ticket.data_log_venda == undefined)
       this.ticketNotSold(ticket.id_estoque_utilizavel)
@@ -211,13 +249,15 @@ export class MultiplePage {
     this.allTickets.success.forEach(element => {
 
       if(element.id_estoque_utilizavel == ticket){        
+        element.data_log_venda = ''
         element.alerta  = self.dataInfo.ticketNotSoldedMsg
+        element.MODIFICADO  = true
       }
     });
   }  
 
   checkTicketExist(ticket, ticketActual){
-    console.log('checkTicketExist', ticket, ticketActual)
+    console.log('checkTicketExist', ticketActual.id_estoque_utilizavel)
 
     if(ticket.success.length == 0)
       this.ticketNotExist(ticketActual.id_estoque_utilizavel)
@@ -236,14 +276,15 @@ export class MultiplePage {
 
     this.allTickets.success.forEach(element => {
 
-      if(element.id_estoque_utilizavel == ticket){          
+      if(element.id_estoque_utilizavel == ticket){              
+        element.data_log_venda = 'Ticket inexistent'
         element.alerta  = self.dataInfo.ticketNotSoldedMsg
+        element.MODIFICADO  = true
       }  
     });
   }
 
-  checkSold(ticket){
-    console.log('checkSold', ticket)
+  checkSold(ticket){    
     
     ticket.success.forEach(element => {
 
@@ -260,7 +301,7 @@ export class MultiplePage {
 
   checkTicket(ticket, ticketActual){   
 
-    console.log('checkTicket', ticket, ticketActual)
+    console.log('checkTicket', ticketActual.id_estoque_utilizavel)
     
     if(ticket.success.length > 0)
       this.checkTicketContinue(ticketActual)
@@ -275,14 +316,18 @@ export class MultiplePage {
 
     this.allTickets.success.forEach(element => {
 
-      if(element.id_estoque_utilizavel == ticket){        
+      if(element.id_estoque_utilizavel == ticket){   
+        let dateSell = moment(element.data_log_venda).format("L");      
+        element.data_log_venda = dateSell            
+
         element.alerta  = self.dataInfo.accessDenied
+        element.MODIFICADO  = true
       }
     });
   } 
 
   checkTicketContinue(ticketActual){    
-    console.log('checkTicketContinue', ticketActual)
+    console.log('checkTicketContinue', ticketActual.id_estoque_utilizavel)
 
     this.http.checkTicketContinue(ticketActual.id_estoque_utilizavel).subscribe(data => {                  
       this.checkTicketContinueCallback(data, ticketActual)     
@@ -290,7 +335,7 @@ export class MultiplePage {
   }
 
   checkTicketContinueCallback(ticket, ticketActual){    
-    console.log('checkTicketContinueCallback', ticketActual)
+    console.log('checkTicketContinueCallback', ticketActual.id_estoque_utilizavel)
 
 
     if(ticket.success.length == 0){
@@ -302,7 +347,7 @@ export class MultiplePage {
 
   ticketCheckValidity(ticket, ticketActual){    
 
-    console.log('ticketCheckValidity', ticketActual)
+    console.log('ticketCheckValidity', ticketActual.id_estoque_utilizavel)
         
     ticket.success.forEach(element => {      
       
@@ -319,7 +364,7 @@ export class MultiplePage {
   }
   
   ticketValidityTime(ticket, ticketActual){
-    console.log('ticketValidityTime', ticketActual)
+    console.log('ticketValidityTime', ticketActual.id_estoque_utilizavel)
 
     let tempo_validade = ticket.tempo_validade
     let until =  moment(ticket.data_log_venda).hours(tempo_validade).format();
@@ -338,14 +383,18 @@ export class MultiplePage {
     
     this.allTickets.success.forEach(element => {
 
-      if(element.id_estoque_utilizavel == ticket.id_estoque_utilizavel){        
+      if(element.id_estoque_utilizavel == ticket.id_estoque_utilizavel){    
+        let dateSell = moment(element.data_log_venda).format("L");      
+        element.data_log_venda = dateSell            
+
         element.alerta  = message
+        element.MODIFICADO  = true
       }
     });
   }
 
   ticketValiditySameDay(ticket, ticketActual){
-    console.log('ticketValiditySameDay', ticketActual)
+    console.log('ticketValiditySameDay', ticketActual.id_estoque_utilizavel)
 
     let now = moment().format()    
     let isSame = moment(ticket.data_log_venda).isSame(now, 'day')
@@ -361,24 +410,28 @@ export class MultiplePage {
 
     this.allTickets.success.forEach(element => {
 
-      if(element.id_estoque_utilizavel == ticket.id_estoque_utilizavel){        
+      if(element.id_estoque_utilizavel == ticket.id_estoque_utilizavel){  
+        let dateSell = moment(element.data_log_venda).format("L");      
+        element.data_log_venda = dateSell
+
         element.alerta  = message
+        element.MODIFICADO  = true
       }
     });
   }
 
   ticketValidityInfinite(ticket){   
-    console.log('ticketValidityInfinite', ticket)
+    console.log('ticketValidityInfinite', ticket.id_estoque_utilizavel)
     this.useTicket(ticket)    
   }
 
   checkValidityOk(ticket, ticketActual){   
-    console.log('checkValidityOk', ticket) 
+    console.log('checkValidityOk', ticketActual.id_estoque_utilizavel) 
     this.checkDoorRules(ticket, ticketActual)
   }
 
   checkDoorRules(ticket, ticketActual){
-    console.log('checkDoorRules', ticket) 
+    console.log('checkDoorRules', ticketActual.id_estoque_utilizavel) 
 
     let horas_porta_acesso = ticket.horas_porta_acesso
     let mesmo_dia_porta_acesso = ticket.mesmo_dia_porta_acesso
@@ -404,7 +457,7 @@ export class MultiplePage {
   }
 
   ticketAccessTimeDoor(ticket, ticketActual){
-    console.log('ticketAccessTimeDoor', ticketActual) 
+    console.log('ticketAccessTimeDoor', ticketActual.id_estoque_utilizavel) 
 
     let until =  moment(ticket.data_log_venda).add(ticket.horas_porta_acesso, 'hours').format();
     let now = moment().format()        
@@ -423,14 +476,19 @@ export class MultiplePage {
     
     this.allTickets.success.forEach(element => {
 
-      if(element.id_estoque_utilizavel == ticket.id_estoque_utilizavel){        
+      if(element.id_estoque_utilizavel == ticket.id_estoque_utilizavel){    
+        
+        let dateSell = moment(element.data_log_venda).format("L");      
+        element.data_log_venda = dateSell            
+
         element.alerta  = message
+        element.MODIFICADO  = true
       }
     });
   }
 
   ticketAccessOnlyone(ticket, ticketActual){
-    console.log('ticketAccessOnlyone', ticketActual) 
+    console.log('ticketAccessOnlyone', ticketActual.id_estoque_utilizavel) 
 
     this.http.checkTicketUsed(ticketActual.id_estoque_utilizavel).subscribe(data => {
       this.ticketAccessOnlyOneCallback(data, ticketActual)      
@@ -438,7 +496,7 @@ export class MultiplePage {
   }
 
   ticketAccessCountPass(ticket, ticketActual){
-    console.log('ticketAccessCountPass', ticketActual) 
+    console.log('ticketAccessCountPass', ticketActual.id_estoque_utilizavel) 
 
     this.http.checkTicketUsedTotal(ticketActual.id_estoque_utilizavel).subscribe(data => {
       this.ticketAccessCountPassCallback(data, ticketActual)      
@@ -447,16 +505,16 @@ export class MultiplePage {
 
   ticketAccessCountPassCallback(ticket, ticketActual){    
 
-    console.log('ticketAccessCountPassCallback', ticketActual) 
+    console.log('ticketAccessCountPassCallback', ticketActual.id_estoque_utilizavel) 
 
     if(ticket.success.length == 0)
       this.useTicket(ticketActual)
     else 
-      this.ticketAccessCountPassContinue(ticket, ticketActual)        
+      this.ticketAccessCountPassContinue(ticket, ticketActual.id_estoque_utilizavel)        
   }
 
   ticketAccessCountPassContinue(ticket, ticketActual){   
-    console.log('ticketAccessCountPassContinue', ticketActual)  
+    console.log('ticketAccessCountPassContinue', ticketActual.id_estoque_utilizavel)  
 
     let numero_liberacoes = ticketActual.numero_liberacoes    
 
@@ -475,14 +533,18 @@ export class MultiplePage {
 
    this.allTickets.success.forEach(element => {
 
-    if(element.id_estoque_utilizavel == ticket.id_estoque_utilizavel){        
+    if(element.id_estoque_utilizavel == ticket.id_estoque_utilizavel){    
+      let dateSell = moment(element.data_log_venda).format("L");      
+      element.data_log_venda = dateSell
+
       element.alerta  = this.dataInfo.accessCountLimitPassed
+      element.MODIFICADO  = true
      }
     });
   }
 
   ticketAccessOnlyOneCallback(ticket, ticketActual){  
-    console.log('ticketAccessOnlyOneCallback', ticketActual)  
+    console.log('ticketAccessOnlyOneCallback', ticketActual.id_estoque_utilizavel)  
 
     if(ticket.success.length > 0){
       this.ticketAlreadUsedFinish(ticket, ticketActual)
@@ -492,13 +554,19 @@ export class MultiplePage {
   }
 
   ticketAlreadUsedFinish(ticket, ticketActual){   
+    console.log('ticketAlreadUsedFinish', ticketActual.id_estoque_utilizavel)
     
     this.allTickets.success.forEach(element => {
 
-      if(element.id_estoque_utilizavel == ticketActual.id_estoque_utilizavel){        
+      if(element.id_estoque_utilizavel == ticketActual.id_estoque_utilizavel){     
 
-        let statusTicketStart = moment(element.data_log_utilizacao).format("L");      
+        let statusTicketStart = moment(element.data_log_utilizacao).format("L");   
+
+        let dateSell = moment(element.data_log_venda).format("L");      
+        element.data_log_venda = dateSell
+
         element.alerta  =  "Utilizado em: " + element.nome_ponto_acesso + " - " + statusTicketStart
+        element.MODIFICADO  = true
        }
       });   
   }
@@ -517,8 +585,12 @@ export class MultiplePage {
 
       this.allTickets.success.forEach(element => {
 
-        if(element.id_estoque_utilizavel == ticket.id_estoque_utilizavel){                    
+        if(element.id_estoque_utilizavel == ticket.id_estoque_utilizavel){   
+          let dateSell = moment(element.data_log_venda).format("L");      
+          element.data_log_venda = dateSell
+
           element.alerta  = self.dataInfo.ticketOld
+          element.MODIFICADO  = true
         }
       });
     })
