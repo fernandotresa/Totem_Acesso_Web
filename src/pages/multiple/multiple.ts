@@ -589,7 +589,8 @@ export class MultiplePage {
           let dateSell = moment(element.data_log_venda).format("L");      
           element.data_log_venda = dateSell
 
-          element.alerta  = self.dataInfo.ticketOld
+          element.message  = self.dataInfo.alreadyOk
+          
           element.MODIFICADO  = true
         }
       });

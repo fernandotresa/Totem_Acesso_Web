@@ -8,26 +8,27 @@
 
   <ion-list *ngIf="isLoading">
       <ion-spinner name="bubbles"></ion-spinner>
-      <ion-title align="center"> Favor aguarde </ion-title>
+      <ion-title align="center"> {{dataInfo.pleaseWait}} </ion-title>
   </ion-list>
     
   <ion-list *ngIf="! isLoading">
-      <ion-item no-lines><ion-label stacked> Ingresso inicial </ion-label>
+      <ion-item no-lines><ion-label stacked> {{dataInfo.ticketStart}} </ion-label>
         <ion-input type="number" (keyup.enter)="checkTicketStart()" [(ngModel)]="searchTicket" #searchbar></ion-input>
     </ion-item>  
 
-    <ion-item no-lines><ion-label stacked> Ingresso Final </ion-label>
+    <ion-item no-lines><ion-label stacked> {{dataInfo.ticketStart}} </ion-label>
       <ion-input type="number" (keyup.enter)="checkTicketEnd()" [(ngModel)]="searchTicketEnd" #inputEnd></ion-input>
     </ion-item>  
 
-    <button ion-button full (click)="searchMultipleTickets()"> Enviar </button>    
+    <button ion-button full (click)="searchMultipleTickets()"> {{dataInfo.send}} </button>    
                         
       <ion-item *ngFor="let command of (allTickets)?.success">                      
-          <h2 *ngIf="! command.alerta" style="color: green;"> Ingresso: {{ command.id_estoque_utilizavel}}  </h2>                  
+          <h2 *ngIf="command.message" style="color: green;"> Ingresso: {{ command.id_estoque_utilizavel}}  </h2>                  
           <h2 *ngIf="command.alerta" style="color: red;"> Ingresso: {{ command.id_estoque_utilizavel}}  </h2>                  
           <h2 *ngIf="command.data_log_venda"> Data venda: {{ command.data_log_venda}} </h2>                  
           <h2 *ngIf="command.nome_ponto_acesso"> Ponto utilização: {{ command.nome_ponto_acesso}} </h2>         
           <h2 *ngIf="command.alerta">Atenção: {{ command.alerta}} </h2>
+          <h2 *ngIf="command.message">Informação: {{ command.message}} </h2>
     </ion-item>  
 
   </ion-list>

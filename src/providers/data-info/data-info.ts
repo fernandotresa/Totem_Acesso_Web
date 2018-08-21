@@ -27,6 +27,8 @@ export class DataInfoProvider {
   historyUsedDay: string = "Usado dia"
   accessPoints: string = "Acesso aos pontos"
 
+  alreadyOk: string = "Utilizado com sucesso"
+
   already: string = "Já utilizado"
   alreadyMsg: string = "10/05/2018 - 10:35 - Chapelaria"
   ticketOld: string = "Ingresso vencido"
@@ -50,7 +52,7 @@ export class DataInfoProvider {
   ticketReadDefault: string = "Ingresso lido: "   
   ticketRead: string = "Ingresso lido: "   
    
-  usedDay: string = "Utilizado dia"   
+  usedDay: string = "Utilizado dia"     
     
   sucess: string = "Sucesso"
   erro: string = "Erro"

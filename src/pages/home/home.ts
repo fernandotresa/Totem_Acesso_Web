@@ -370,8 +370,13 @@ export class HomePage {
 
   checkTicketContinueCallback(ticket){    
 
-    if(ticket.success.length == 0)
-      this.ticketNotExist(ticket)
+    console.log(ticket.success.length)
+    
+    if(ticket.success.length == 0){
+      console.log("Acesso negado")
+      this.checkTicketAreaAccessDenied()
+    }
+      
     else 
       this.ticketCheckValidity(ticket)    
   }         
