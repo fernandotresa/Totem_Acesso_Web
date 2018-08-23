@@ -34,9 +34,9 @@ export class DataInfoProvider {
   ticketOld: string = "Ingresso vencido"
   ticketOldMsg: string = "10/05/2018 - 10:35"
   ticketNotRegistered: string = "Ingresso não cadastrado"
-  ticketNotRegisteredMsg: string = "Não existe esse número no estoque"
+  ticketNotRegisteredMsg: string = "Ingresso não cadastrado"
   ticketNotSolded: string = "Não vendido"
-  ticketNotSoldedMsg: string = "Ingresso consta mas não foi vendido"
+  ticketNotSoldedMsg: string = "Ingresso não foi vendido"
   ticketOk: string = "Ingresso válido"  
   
   ticketNotOk: string = "Ingresso inválido"  
@@ -44,7 +44,7 @@ export class DataInfoProvider {
 
   titleGeneral: string = "Carregando"
 
-  ticketNotAllowed: string = "Não permitido nessa área"
+  ticketNotAllowed: string = "Área não permitida"
   welcomeMsg: string = "Seja bem vindo!"
   pleaseWait: string = "Favor aguarde"
   atention: string = "Atenção"   
@@ -52,7 +52,10 @@ export class DataInfoProvider {
   ticketReadDefault: string = "Ingresso lido: "   
   ticketRead: string = "Ingresso lido: "   
    
-  usedDay: string = "Utilizado dia"     
+  usedDay: string = "Utilizado dia"   
+  ticketStart: string = "Ingresso inicial"  
+  ticketEnd: string = "Ingresso final"  
+  send: string = "Enviar"  
     
   sucess: string = "Sucesso"
   erro: string = "Erro"

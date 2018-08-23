@@ -151,17 +151,17 @@ export class HomePage {
 
   goHistory(){
     
-    //this.statusTicket = this.dataInfo.already
+    this.statusTicket = this.dataInfo.already
     this.idTypeBackgrond = this.dataInfo.backgroundIdSearch
 
-    /* let self = this
+    let self = this
     setTimeout(function(){ 
 
       self.idTypeBackgrond = self.dataInfo.backgroundIdNone
       self.searchTicket = ''
       self.searching = false    
 
-    }, 6000); */
+    }, 6000);
   }
 
   showHistory(){
@@ -303,7 +303,7 @@ export class HomePage {
   }
 
   ticketNotExist(ticket){    
-    this.showError(this.dataInfo.ticketNotRegistered, this.dataInfo.ticketNotRegisteredMsg)    
+    this.showError(this.dataInfo.accessDenied, this.dataInfo.ticketNotRegisteredMsg)    
   }
 
   checkSold(ticket){
@@ -347,7 +347,7 @@ export class HomePage {
   }  
 
   ticketNotSold(ticket){          
-    this.showError(this.dataInfo.ticketNotSolded, this.dataInfo.ticketNotSoldedMsg)
+    this.showError(this.dataInfo.accessDenied, this.dataInfo.ticketNotSoldedMsg)
   }
 
   checkTicket(ticket){       
@@ -370,10 +370,7 @@ export class HomePage {
 
   checkTicketContinueCallback(ticket){    
 
-    console.log(ticket.success.length)
-    
     if(ticket.success.length == 0){
-      console.log("Acesso negado")
       this.checkTicketAreaAccessDenied()
     }
       
@@ -381,7 +378,8 @@ export class HomePage {
       this.ticketCheckValidity(ticket)    
   }         
 
-  ticketCheckValidity(ticket){    
+  ticketCheckValidity(ticket){
+    console.log(ticket)    
         
     ticket.success.forEach(element => {      
       
@@ -398,6 +396,7 @@ export class HomePage {
   }  
 
   ticketValiditySameDay(ticket){
+    console.log(ticket)
 
     let now = moment().format()    
     this.ticketRead = true        
@@ -413,8 +412,8 @@ export class HomePage {
   }
 
   ticketValidityNotSame(ticket){    
-    let message = 'Limite: ' + moment(ticket.data_log_venda).format("L")    
-    this.showError(this.dataInfo.ticketOld, message)            
+    let message = 'Ingresso vencido: ' + moment(ticket.data_log_venda).format("L")    
+    this.showError(this.dataInfo.accessDenied, message)            
   }
 
   ticketValidityInfinite(ticket){
@@ -439,7 +438,7 @@ export class HomePage {
   ticketValidityTimeNotOk(ticket){    
     let tempo_validade = ticket.tempo_validade    
     let message = 'Limite: ' + moment(ticket.data_log_venda).hours(tempo_validade).format("L");        
-    this.showError(this.dataInfo.ticketOld, message)        
+    this.showError(this.dataInfo.accessDenied, message)        
   }
 
   checkValidityOk(ticket){    
@@ -456,7 +455,7 @@ export class HomePage {
       this.ticketAccessTimeDoor(ticket)
     }
     else if(mesmo_dia_porta_acesso > 0){
-      this.ticketAlreadUsedFinish(ticket)
+      this.ticketAccessSameDay(ticket)
     }
     else if(unica_porta_acesso > 0){
       this.ticketAccessOnlyone(ticket)
@@ -464,9 +463,9 @@ export class HomePage {
     else if(numero_liberacoes > 0){
       this.ticketAccessCountPass(ticket)
     }    
-    else {
-      console.log('Tipo de ingresso não encontrado:', ticket)
+    else {      
       this.isLoading = false
+      this.uiUtils.showToast('Tipo de verificação inválida')
     }
   }
 
@@ -485,7 +484,26 @@ export class HomePage {
 
   ticketAccessTimeDoorNotOk(ticket){    
     let message = 'Limite: ' + moment(ticket.data_log_venda).add(ticket.horas_porta_acesso, 'hours').format("LT");
-    this.showError(this.dataInfo.timeAccessOver, message)    
+    this.showError(this.dataInfo.accessDenied, message)    
+  }
+
+  ticketAccessSameDay(ticket){
+    console.log(ticket)
+    let until =  moment(ticket.data_log_venda).format();
+    let now = moment().format()        
+    
+    let isSame = moment(until).isSame(now);
+
+    if(isSame){
+      this.useTicket(ticket)
+    } else {
+      this.ticketAccessSameDayNotOk(ticket)      
+    }
+  }
+
+  ticketAccessSameDayNotOk(ticket){    
+    let message = 'Limite: ' + moment(ticket.data_log_venda).format("L");
+    this.showError(this.dataInfo.accessDenied, message)    
   }
 
   ticketAccessOnlyone(ticket){
@@ -538,13 +556,14 @@ export class HomePage {
   }
 
   ticketAlreadUsedFinish(ticket){    
+    console.log(ticket)
 
     ticket.success.forEach(element => {
       this.statusTicketUsedOn = element.nome_ponto_acesso
       this.statusTicketStart = moment(element.data_log_utilizacao).format("L");      
     });
 
-    let message = 'Utilizado em ' + this.statusTicketUsedOn + ' - ' + this.statusTicketStart
+    let message = 'Já utilizado em ' + this.statusTicketUsedOn + ' - ' + this.statusTicketStart
     this.showError(this.dataInfo.accessDenied, message)    
   }
 
@@ -565,7 +584,6 @@ export class HomePage {
   }
 
   searchOkContinue(ticket){
-    console.log(ticket)                  
 
     this.http.checkTicketQuick(this.searchTicket).subscribe(data =>{
         this.searchOkCallback(data)
@@ -615,14 +633,20 @@ export class HomePage {
   useTicketEnd(ticket){    
 
     let self = this
+    let productType = ''
+    let productSubType = ''
 
     ticket.success.forEach(element => {
-      self.message1 = element.nome_subtipo_produto
+      productType = element.nome_produto_peq
+      productSubType = element.nome_subtipo_produto
     });
     
+    let msg = productType + " - " + productSubType
+
     self.statusTicket = self.dataInfo.ticketOk
     self.idTypeBackgrond = self.dataInfo.backgroundIdGreen    
-    self.message2 = self.dataInfo.welcomeMsg              
+    self.message1 = self.dataInfo.welcomeMsg              
+    self.message2 = msg
     self.incrementCounter()
     self.backHome()
   }

@@ -22,8 +22,8 @@ export class MultiplePage {
   isLoading: Boolean = true
 
   totalChecks: number = 0
-  searchTicket: string = '28021610';
-  searchTicketEnd: string = '28021620';
+  searchTicket: string = '';
+  searchTicketEnd: string = '';
   allTickets: any  
 
   constructor(public dataInfo: DataInfoProvider,
@@ -590,7 +590,7 @@ export class MultiplePage {
           element.data_log_venda = dateSell
 
           element.message  = self.dataInfo.alreadyOk
-          
+
           element.MODIFICADO  = true
         }
       });
