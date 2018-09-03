@@ -25,6 +25,8 @@ export class MultiplePage {
   searchTicket: string = '';
   searchTicketEnd: string = '';
   allTickets: any  
+  totalCheck: number = 0
+
 
   constructor(public dataInfo: DataInfoProvider,
     public navCtrl: NavController,
@@ -42,11 +44,11 @@ export class MultiplePage {
     this.setFocus()
 
     this.totemWorking()
+    this.totalCheck = 0
   }
 
   goBack(){
     let self = this
-    let total = 0
 
     setTimeout(function(){ 
 
@@ -54,10 +56,16 @@ export class MultiplePage {
         self.navCtrl.setRoot(HomePage)
       else {
 
-        if(total > 2)
+        if(this.total > 2){
           self.navCtrl.setRoot(HomePage)
+          this.total = 0
 
-        total++
+        } else {
+          this.total++
+        }
+        
+
+        
       }      
       
     }, 5000); 
