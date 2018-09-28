@@ -4,7 +4,6 @@ import { HttpdProvider } from '../../providers/httpd/httpd';
 import { DatabaseProvider } from '../../providers/database/database';
 import { DataInfoProvider } from '../../providers/data-info/data-info'
 import { UiUtilsProvider } from '../../providers/ui-utils/ui-utils'
-import { HomePage } from '../../pages/home/home';
 import moment from 'moment';
 
 @IonicPage()
@@ -26,7 +25,6 @@ export class MultiplePage {
   searchTicketEnd: string = '';
   allTickets: any  
   totalCheck: number = 0
-
 
   constructor(public dataInfo: DataInfoProvider,
     public navCtrl: NavController,
@@ -53,11 +51,11 @@ export class MultiplePage {
     setTimeout(function(){ 
 
       if(self.searchTicket.length == 0)
-        self.navCtrl.setRoot(HomePage)
+        self.navCtrl.popToRoot()
       else {
 
         if(this.total > 2){
-          self.navCtrl.setRoot(HomePage)
+          self.navCtrl.popToRoot()
           this.total = 0
 
         } else {

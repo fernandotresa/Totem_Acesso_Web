@@ -6,8 +6,8 @@ import { DataInfoProvider } from '../../providers/data-info/data-info'
 import { UiUtilsProvider } from '../../providers/ui-utils/ui-utils'
 import { Observable } from 'rxjs/Observable';
 import { Searchbar } from 'ionic-angular';
-import { Socket } from 'ng-socket-io';
 import moment from 'moment';
+import { GpiosProvider } from '../../providers/gpios/gpios';
 
 @Component({
   selector: 'page-home',
@@ -19,8 +19,7 @@ export class HomePage {
 
   configs: Observable<any>;
   areaInfo: Observable<any>;
-  ticket: Observable<any>;  
-  gpios: Observable<any>;
+  ticket: Observable<any>;    
   
   idTypeBackgrond: number = this.dataInfo.backgroundIdNone;
   ticketRead: Boolean = false
@@ -58,23 +57,24 @@ export class HomePage {
     public navCtrl: NavController,
     public uiUtils: UiUtilsProvider,     
     public db: DatabaseProvider,
-    public navParams: NavParams,  
-    private socket: Socket,
+    public navParams: NavParams,   
+    public gpios: GpiosProvider,  
     public events: Events,
-    public http: HttpdProvider) { 
-      
-      let self = this    
-
-      //this.startGPIOs()
-
-      events.subscribe('totem:updated', (data) => {
-        self.loadConfigCallback(data)
-      });
+    public http: HttpdProvider) {             
   }  
 
+  ngOnDestroy() {    
+    this.events.unsubscribe('totem:updated');		
+    this.events.unsubscribe('socket:pageMultiple');		
+    this.events.unsubscribe('socket:decrementCounter');		
+    this.events.unsubscribe('socket:pageHistory');		
+  }
+    
   ionViewDidLoad() {
+    console.log("Recarregando página")
 
     this.updatedInfo = this.navParams.get('updatedInfo')
+    this.events.unsubscribe('totem:updated');
 
     this.updating = false
 
@@ -83,8 +83,28 @@ export class HomePage {
       
     if(this.updatedInfo)
         this.updateInfo()
-    else   
-      this.loadConfig()             
+    else {
+      this.loadConfig()           
+    }
+            
+    let self = this
+    
+    this.events.subscribe('socket:pageMultiple', (data) => {
+      this.setMultiple()
+    });
+
+    this.events.subscribe('socket:pageHistory', (data) => {
+      this.goHistory()
+    });
+
+    this.events.subscribe('socket:decrementCounter', (data) => {
+      this.decrementCounter()
+    });
+
+    this.events.subscribe('totem:updated', (data) => {
+      self.loadConfigCallback(data)
+      self.events.unsubscribe('totem:updated');	
+    });
   }
 
   startTimer(){
@@ -102,32 +122,7 @@ export class HomePage {
           }            
     
     }, 5000);      
-  }
-
-  startGPIOs(){
-    this.gpios = this.getGpios()
-
-    this.gpios.subscribe(data => {
-      this.gpioEvent(data)          
-    })
-  }
-
-  gpioEvent(data){
-    let gpio_ = data.gpio
-
-    if(gpio_ == 2)
-        this.setMultiple()
-
-    else if(gpio_ == 3)
-      this.goHistory()
-
-    else if(gpio_ == 4)
-
-      this.decrementCounter()
-
-     else 
-      console.log('Comando desconhecido do gpio:', gpio_);
-  }
+  } 
 
   setFocus(){
     this.searchbar.setFocus();          
@@ -176,7 +171,9 @@ export class HomePage {
     this.updating = true
     this.updatedInfo = false
 
-    this.http.decrementAreaCounter(this.areaId)
+    console.log(this.dataInfo.areaId, this.areaId)
+
+    this.http.decrementAreaCounter(this.dataInfo.areaId)
     .subscribe( () => {      
 
       this.updating = false
@@ -247,7 +244,7 @@ export class HomePage {
     this.updatedInfo = false
 
     let self = this
-
+         
     return this.http.getAreaCounter(this.areaId).subscribe(data => {
 
       Object.keys(data).map(function(personNamedIndex){
@@ -530,7 +527,7 @@ export class HomePage {
   }
 
   ticketAccessCountPass(ticket){
-    console.log(ticket)    
+    //console.log(ticket)    
 
     this.http.checkTicketUsedTotal(this.searchTicket).subscribe(data => {
       this.ticketAccessCountPassCallback(data, ticket)      
@@ -667,15 +664,6 @@ export class HomePage {
 
   setMultiple(){      
       this.navCtrl.push('Multiple')        
-  }    
-
-  getGpios() {
-    let observable = new Observable(observer => {
-      this.socket.on('gpio-changed', (data) => {
-        observer.next(data);
-      });
-    })
-    return observable;
-  }
+  }      
 
 }

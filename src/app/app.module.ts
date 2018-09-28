@@ -17,6 +17,7 @@ import { AngularFireDatabaseModule } from 'angularfire2/database';
 import { ConfigurationService } from "ionic-configuration-service";
 import { SocketIoModule, SocketIoConfig } from 'ng-socket-io';
 import { MultiplePage } from '../pages/multiple/multiple';
+import { GpiosProvider } from '../providers/gpios/gpios';
 
 export function loadConfiguration(configurationService: ConfigurationService): () => Promise<void> {
   return () => configurationService.load("assets/configs/document.json");
@@ -74,7 +75,8 @@ export const firebaseConfig = {
       useFactory: loadConfiguration,
       deps: [ConfigurationService],
       multi: true
-    }
+    },
+    GpiosProvider
   ]
 })
 export class AppModule {}
