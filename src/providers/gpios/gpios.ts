@@ -14,7 +14,7 @@ export class GpiosProvider{
   objGpio3: any
   objGpio4: any
 
-  timeOutGpio: Boolean = false;
+  timeOutGpio: Boolean = true;
 
   constructor(private socket: Socket,    
     public events: Events) {
