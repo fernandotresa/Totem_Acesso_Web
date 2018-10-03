@@ -26,9 +26,9 @@ export class GpiosProvider{
 
   ngOnDestroy(){
     // prevent memory leak when component destroyed
-    this.objGpio2.unsubscribe()
+   /* this.objGpio2.unsubscribe()
     this.objGpio3.unsubscribe()
-    this.objGpio4.unsubscribe()
+    this.objGpio4.unsubscribe()*/
   }
 
   startGPIOs(){ 
