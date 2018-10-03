@@ -44,11 +44,12 @@ export class GpiosProvider{
     this.objGpio2 = this.gpio2.subscribe(data => {
       
       if(this.timeOutGpio){
-        console.log("GPIO2 - Evento recebido")
+        console.log("GPIO2 - Evento recebido", new Date())
         this.timeOutGpio = false
         this.events.publish('socket:pageMultiple', data);            
 
         setTimeout(function(){ 
+          console.log("Resetando timeout", new Date())
           this.timeOutGpio = true;
          }, 3000);
       }        
@@ -57,21 +58,23 @@ export class GpiosProvider{
     this.objGpio3 =this.gpio3.subscribe(data => {
       if(! this.timeOutGpio){
 
-        console.log("GPIO3 - Evento recebido")
+        console.log("GPIO3 - Evento recebido", new Date())
         this.timeOutGpio = false
         this.events.publish('socket:pageHistory', data);   
         
         setTimeout(function(){ 
+          console.log("Resetando timeout", new Date())
           this.timeOutGpio = true;
          }, 3000);
       }      
     })
 
     this.objGpio4 = this.gpio4.subscribe(data => {
-      console.log("GPIO4 - Evento recebido")
+      console.log("GPIO4 - Evento recebido", new Date())
       this.events.publish('socket:decrementCounter', data);    
 
       setTimeout(function(){ 
+        console.log("Resetando timeout", new Date())
         this.timeOutGpio = true;
        }, 3000);
     })
