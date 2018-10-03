@@ -26,9 +26,9 @@ export class GpiosProvider{
 
   ngOnDestroy(){
     // prevent memory leak when component destroyed
-   /* this.objGpio2.unsubscribe()
+    this.objGpio2.unsubscribe()
     this.objGpio3.unsubscribe()
-    this.objGpio4.unsubscribe()*/
+    this.objGpio4.unsubscribe()
   }
 
   startGPIOs(){ 
@@ -40,6 +40,7 @@ export class GpiosProvider{
     this.gpio4 = this.getGpio4()
 
     console.log('Iniciando gpios', new Date())
+    let self = this
 
     this.objGpio2 = this.gpio2.subscribe(data => {
       
@@ -50,7 +51,7 @@ export class GpiosProvider{
 
         setTimeout(function(){ 
           console.log("Resetando timeout", new Date())
-          this.timeOutGpio = true;
+          self.timeOutGpio = true;
          }, 3000);
       }        
     })
@@ -64,7 +65,7 @@ export class GpiosProvider{
         
         setTimeout(function(){ 
           console.log("Resetando timeout", new Date())
-          this.timeOutGpio = true;
+          self.timeOutGpio = true;
          }, 3000);
       }      
     })
@@ -75,7 +76,7 @@ export class GpiosProvider{
 
       setTimeout(function(){ 
         console.log("Resetando timeout", new Date())
-        this.timeOutGpio = true;
+        self.timeOutGpio = true;
        }, 3000);
     })
   }
