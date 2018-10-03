@@ -14,6 +14,8 @@ export class GpiosProvider{
   objGpio3: any
   objGpio4: any
 
+  timeOutGpio: Boolean = false;
+
   constructor(private socket: Socket,    
     public events: Events) {
 
@@ -40,18 +42,38 @@ export class GpiosProvider{
     console.log('Iniciando gpios', new Date())
 
     this.objGpio2 = this.gpio2.subscribe(data => {
-      console.log("GPIO2 - Evento recebido")
-      this.events.publish('socket:pageMultiple', data);    
+      
+      if(this.timeOutGpio){
+        console.log("GPIO2 - Evento recebido")
+        this.timeOutGpio = false
+        this.events.publish('socket:pageMultiple', data);            
+
+        setTimeout(function(){ 
+          this.timeOutGpio = true;
+         }, 3000);
+      }        
     })
 
     this.objGpio3 =this.gpio3.subscribe(data => {
-      console.log("GPIO3 - Evento recebido")
-      this.events.publish('socket:pageHistory', data);    
+      if(! this.timeOutGpio){
+
+        console.log("GPIO3 - Evento recebido")
+        this.timeOutGpio = false
+        this.events.publish('socket:pageHistory', data);   
+        
+        setTimeout(function(){ 
+          this.timeOutGpio = true;
+         }, 3000);
+      }      
     })
 
     this.objGpio4 = this.gpio4.subscribe(data => {
       console.log("GPIO4 - Evento recebido")
       this.events.publish('socket:decrementCounter', data);    
+
+      setTimeout(function(){ 
+        this.timeOutGpio = true;
+       }, 3000);
     })
   }
 

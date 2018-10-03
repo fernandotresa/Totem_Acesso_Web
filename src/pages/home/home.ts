@@ -171,7 +171,7 @@ export class HomePage {
     this.updating = true
     this.updatedInfo = false
 
-    console.log(this.dataInfo.areaId, this.areaId)
+    //console.log(this.dataInfo.areaId, this.areaId)
 
     this.http.decrementAreaCounter(this.dataInfo.areaId)
     .subscribe( () => {      
@@ -210,7 +210,7 @@ export class HomePage {
   }
 
   loadConfigCallback(data){
-    console.log('Configurando totem', data)
+    //console.log('Configurando totem', data)
 
     if(data.length == 0)    
     {
@@ -223,7 +223,7 @@ export class HomePage {
       let self = this
     
       data.success.forEach(element => {            
-        console.log('Configuração do totem: ', element)
+        //console.log('Configuração do totem: ', element)
 
         self.title = element.nome_area_acesso
         self.counter = element.lotacao_area_acesso       
@@ -279,7 +279,7 @@ export class HomePage {
   }
 
   searchOneTicket(){  
-    console.log('Procurando um ingresso:', this.searchTicket)
+    //console.log('Procurando um ingresso:', this.searchTicket)
 
     this.totemNotWorking()
 
@@ -289,7 +289,7 @@ export class HomePage {
   }  
 
   checkTicketExist(ticket){
-    console.log('Verificando se existe:', this.searchTicket)
+    //console.log('Verificando se existe:', this.searchTicket)
 
     if(ticket.success.length == 0)
       this.ticketNotExist(ticket)
@@ -306,7 +306,7 @@ export class HomePage {
   }
 
   checkSold(ticket){
-    console.log('Verificando se foi vendido:', this.searchTicket)
+    //console.log('Verificando se foi vendido:', this.searchTicket)
     
     if(ticket.success.length == 0){
       this.ticketNotSold(ticket)
