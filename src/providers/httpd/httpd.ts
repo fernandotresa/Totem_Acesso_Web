@@ -7,15 +7,14 @@ export class HttpdProvider {
 
   data:any = {};
   
-  address : string = 'http://localhost:8085'    
-  
+  address : string = 'http://192.168.0.22:8085'    
+        
   constructor(public http: HttpClient, public dataInfo: DataInfoProvider) {
     console.log('Hello HttpdProvider Provider');
 
     this.address = this.dataInfo.addressServer
     
     this.getTotemInfo().subscribe(data => {    
-      console.log(data)          
       this.dataInfo.configureTotem(data)
     })
   }  
@@ -115,6 +114,18 @@ export class HttpdProvider {
     let myData = JSON.stringify({id: this.dataInfo.totemId, idArea: idArea_, ticket: value_});
     const headers = new HttpHeaders({'Content-Type':'application/json'});
     return this.http.post(this.address  + "/checkTicketAreaAccess", myData, {headers: headers})
+  }
+
+  activeGpioSuccess(){
+    let myData = JSON.stringify({id: this.dataInfo.totemId});
+    const headers = new HttpHeaders({'Content-Type':'application/json'});
+    return this.http.post(this.address  + "/activeGpioSuccess", myData, {headers: headers})
+  }
+
+  activeGpioError(){
+    let myData = JSON.stringify({id: this.dataInfo.totemId});
+    const headers = new HttpHeaders({'Content-Type':'application/json'});
+    return this.http.post(this.address  + "/activeGpioError", myData, {headers: headers})
   }
  
 }

@@ -1,5 +1,5 @@
 {
-  "addressServer": "http://localhost:8085",
+  "addressServer": "http://192.168.0.22:8085",
   "idTotem": "30",
   "idArea": "5"
 }

@@ -83,10 +83,11 @@ export class HomePage {
       
     if(this.updatedInfo)
         this.updateInfo()
-    else {
-      this.loadConfig()           
-    }
             
+    this.subscribeStuff()  
+  }
+
+  subscribeStuff(){
     let self = this
     
     this.events.subscribe('socket:pageMultiple', (data) => {
@@ -128,19 +129,31 @@ export class HomePage {
     this.searchbar.setFocus();          
   }
 
-  backHome(){
+  resetConfig(){
     let self = this
+    self.idTypeBackgrond = self.dataInfo.backgroundIdNone
+    self.searchTicket = ''
+    self.searching = false    
+    self.ticketRead = false
+    self.title = self.areaName
+    self.history = self.dataInfo.historyGeneral
+    self.dataInfo.ticketRead = self.dataInfo.ticketReadDefault
+    self.totemWorking()
+  }
 
+  backHome(){
+    
+    if(this.dataInfo.tipoPontoAcesso === 1)
+      this.backWithMessage()
+
+    else  
+      this.resetConfig()
+  }
+
+  backWithMessage(){
     setTimeout(function(){ 
-      self.idTypeBackgrond = self.dataInfo.backgroundIdNone
-      self.searchTicket = ''
-      self.searching = false    
-      self.ticketRead = false
-      self.title = self.areaName
-      self.history = self.dataInfo.historyGeneral
-      self.dataInfo.ticketRead = self.dataInfo.ticketReadDefault
-      self.totemWorking()
-    }, 3000);      
+      this.resetConfig()
+    }, 3000); 
   }
 
   goHistory(){
@@ -203,14 +216,16 @@ export class HomePage {
     } else {     
 
     this.http.getAreaInfo(this.areaId).subscribe(data => {            
+      console.log(new Date())
       self.loadConfigCallback(data)            
     });
 
     }    
   }
 
+  
   loadConfigCallback(data){
-    //console.log('Configurando totem', data)
+    console.log('Configurando totem', data.success[0])
 
     if(data.length == 0)    
     {
@@ -221,16 +236,14 @@ export class HomePage {
     else {
 
       let self = this
+      let element = data.success[0]
     
-      data.success.forEach(element => {            
-        //console.log('Configuração do totem: ', element)
-
-        self.title = element.nome_area_acesso
-        self.counter = element.lotacao_area_acesso       
-        self.areaId = element.fk_id_area_acesso    
-        self.pontoId = element.fk_id_ponto_acesso
-        self.areaName = self.title
-      });                    
+      self.title = element.nome_area_acesso
+      self.counter = element.lotacao_area_acesso       
+      self.areaId = element.fk_id_area_acesso    
+      self.pontoId = element.fk_id_ponto_acesso
+      self.areaName = self.title
+      self.dataInfo.tipoPontoAcesso = element.tipo_ponto_acesso
   
       self.uiUtils.showToast('Inicializado com sucesso!')
       self.startTimer()
@@ -276,6 +289,18 @@ export class HomePage {
     this.inputVisible = false
     this.isLoading = true
     this.updating = true
+  }
+
+  showGpioError(){
+    this.http.activeGpioError().subscribe(data => {
+      console.log(data)
+    })
+  }
+
+  showGpioSuccess(){
+    this.http.activeGpioSuccess().subscribe(data => {
+      console.log(data)
+    })
   }
 
   searchOneTicket(){  
@@ -343,6 +368,7 @@ export class HomePage {
       this.message2 = str2
     }
 
+    this.showGpioError()
     this.backHome()    
   }  
 
@@ -659,6 +685,7 @@ export class HomePage {
     self.message1 = self.dataInfo.welcomeMsg              
     self.message2 = msg
     self.incrementCounter()
+    self.showGpioSuccess()
     self.backHome()
   }
 

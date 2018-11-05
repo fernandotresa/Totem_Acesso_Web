@@ -9,6 +9,7 @@ export class DataInfoProvider {
   portaId: number =  0  
   totemId: number =  0
   addressServer: string = "http://localhost:8085"
+  tipoPontoAcesso: number = 1;
   
   backgroundIdGreen: number = 1
   backgroundIdRed: number = 2
