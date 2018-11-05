@@ -129,6 +129,7 @@ export class HomePage {
     this.searchbar.setFocus();          
   }
 
+
   resetConfig(){
     let self = this
     self.idTypeBackgrond = self.dataInfo.backgroundIdNone
@@ -151,8 +152,10 @@ export class HomePage {
   }
 
   backWithMessage(){
+    let self = this
+
     setTimeout(function(){ 
-      this.resetConfig()
+      self.resetConfig()
     }, 3000); 
   }
 
