@@ -6,13 +6,13 @@ import { Events } from 'ionic-angular';
 @Injectable()
 export class GpiosProvider{
 
-  gpio2: Observable<any>;
-  gpio3: Observable<any>;
-  gpio4: Observable<any>;
+  gpioPageMultiple: Observable<any>;
+  gpioPageHistory: Observable<any>;
+  gpioDecrementCounter: Observable<any>;
 
-  objGpio2: any
-  objGpio3: any
-  objGpio4: any
+  objPageMultiple: any
+  objPageHistory: any
+  objGpioDecrementCounter: any
 
   timeOutGpio: Boolean = true;
 
@@ -25,41 +25,49 @@ export class GpiosProvider{
   }
 
   ngOnDestroy(){
-    // prevent memory leak when component destroyed
-    this.objGpio2.unsubscribe()
-    this.objGpio3.unsubscribe()
-    this.objGpio4.unsubscribe()
+    this.objPageMultiple.unsubscribe()
+    this.objPageMultiple.unsubscribe()
+    this.objGpioDecrementCounter.unsubscribe()
   }
 
   startGPIOs(){ 
+    console.log('Iniciando gpios', new Date())    
     
-    console.log('startGpios')
-    
-    this.gpio2 = this.getGpio2()
-    this.gpio3 = this.getGpio3()
-    this.gpio4 = this.getGpio4()
+    this.gpioPageMultiple = this.getGpioPageMultiple()
+    this.gpioPageHistory = this.getGpioPageHistory()
+    this.gpioDecrementCounter = this.getGpioDecrementCounter()    
 
-    console.log('Iniciando gpios', new Date())
+    this.startGpioPageMultiple()
+    this.startGpioPageHistory()
+    this.startGpioDecrementCounter()    
+  }
+
+  startGpioPageMultiple(){
     let self = this
-
-    this.objGpio2 = this.gpio2.subscribe(data => {
+    this.objPageMultiple = this.gpioPageMultiple.subscribe(data => {
       
       if(this.timeOutGpio){
-        console.log("GPIO2 - Evento recebido", new Date())
+
+        console.log("GPIO4 - Evento recebido", new Date())
+
         this.timeOutGpio = false
         this.events.publish('socket:pageMultiple', data);            
 
         setTimeout(function(){ 
+
           console.log("Resetando timeout", new Date())
           self.timeOutGpio = true;
          }, 3000);
       }        
     })
+  }
 
-    this.objGpio3 =this.gpio3.subscribe(data => {
+  startGpioPageHistory(){
+    let self = this
+    this.objPageMultiple = this.gpioPageHistory.subscribe(data => {
       if(! this.timeOutGpio){
 
-        console.log("GPIO3 - Evento recebido", new Date())
+        console.log("GPIO5 - Evento recebido", new Date())
         this.timeOutGpio = false
         this.events.publish('socket:pageHistory', data);   
         
@@ -69,8 +77,11 @@ export class GpiosProvider{
          }, 3000);
       }      
     })
+  }
 
-    this.objGpio4 = this.gpio4.subscribe(data => {
+  startGpioDecrementCounter(){
+    let self = this
+    this.objGpioDecrementCounter = this.objGpioDecrementCounter.subscribe(data => {
       console.log("GPIO4 - Evento recebido", new Date())
       this.events.publish('socket:decrementCounter', data);    
 
@@ -81,27 +92,27 @@ export class GpiosProvider{
     })
   }
 
-  getGpio2() {
+  getGpioPageMultiple() {
     let observable = new Observable(observer => {
-      this.socket.on('gpio2', (data) => {
+      this.socket.on('gpioPageMultiple', (data) => {
         observer.next(data);
       });
     })
     return observable;
   }
 
-  getGpio3() {
+  getGpioPageHistory() {
     let observable = new Observable(observer => {
-      this.socket.on('gpio3', (data) => {
+      this.socket.on('gpioPageHistory', (data) => {
         observer.next(data);
       });
     })
     return observable;
   }
 
-  getGpio4() {
+  getGpioDecrementCounter() {
     let observable = new Observable(observer => {
-      this.socket.on('gpio4', (data) => {
+      this.socket.on('gpioDecrementCounter', (data) => {
         observer.next(data);
       });
     })
