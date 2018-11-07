@@ -90,15 +90,15 @@ export class HomePage {
   subscribeStuff(){
     let self = this
     
-    this.events.subscribe('socket:pageMultiple', (data) => {
+    this.events.subscribe('socket:pageMultiple', () => {
       this.setMultiple()
     });
 
-    this.events.subscribe('socket:pageHistory', (data) => {
+    this.events.subscribe('socket:pageHistory', () => {
       this.goHistory()
     });
 
-    this.events.subscribe('socket:decrementCounter', (data) => {
+    this.events.subscribe('socket:decrementCounter', () => {
       this.decrementCounter()
     });
 
@@ -129,7 +129,6 @@ export class HomePage {
     this.searchbar.setFocus();          
   }
 
-
   resetConfig(){
     let self = this
     self.idTypeBackgrond = self.dataInfo.backgroundIdNone
@@ -139,14 +138,13 @@ export class HomePage {
     self.title = self.areaName
     self.history = self.dataInfo.historyGeneral
     self.dataInfo.ticketRead = self.dataInfo.ticketReadDefault
-    self.totemWorking()
+    self.totemWorking()  
   }
 
   backHome(){
-    
+        
     if(this.dataInfo.tipoPontoAcesso === 1)
       this.backWithMessage()
-
     else  
       this.resetConfig()
   }
@@ -187,8 +185,6 @@ export class HomePage {
     this.updating = true
     this.updatedInfo = false
 
-    //console.log(this.dataInfo.areaId, this.areaId)
-
     this.http.decrementAreaCounter(this.dataInfo.areaId)
     .subscribe( () => {      
 
@@ -217,21 +213,17 @@ export class HomePage {
       self.uiUtils.showToast(self.dataInfo.noConfiguration)
 
     } else {     
-
     this.http.getAreaInfo(this.areaId).subscribe(data => {            
-      console.log(new Date())
       self.loadConfigCallback(data)            
     });
 
     }    
   }
 
-  
   loadConfigCallback(data){
     console.log('Configurando totem', data.success[0])
 
-    if(data.length == 0)    
-    {
+    if(data.length == 0){
       this.title = "IP não localizado"
       this.counter = "0"
     }
@@ -247,10 +239,10 @@ export class HomePage {
       self.pontoId = element.fk_id_ponto_acesso
       self.areaName = self.title
       self.dataInfo.tipoPontoAcesso = element.tipo_ponto_acesso
-  
-      self.uiUtils.showToast('Inicializado com sucesso!')
+        
       self.startTimer()
       self.totemWorking()
+      self.uiUtils.showToast('Inicializado com sucesso!')
     }    
   }
   
@@ -268,6 +260,7 @@ export class HomePage {
 
         if(person[0].lotacao_area_acesso == undefined){
           self.uiUtils.showToast('Favor configurar sistema')
+
         } else {
           self.counter = person[0].lotacao_area_acesso
         }        
@@ -307,24 +300,27 @@ export class HomePage {
   }
 
   searchOneTicket(){  
-    //console.log('Procurando um ingresso:', this.searchTicket)
+    console.log('Procurando um ingresso:', this.searchTicket, "Tamanho: ", this.searchTicket.length)
 
-    this.totemNotWorking()
+    if(this.searchTicket !== ""){
 
-    this.http.checkTicketExist(this.searchTicket).subscribe( data => {
-      this.checkTicketExist(data)                    
-    })                  
+      this.totemNotWorking()
+
+      this.http.checkTicketExist(this.searchTicket).subscribe( data => {
+        this.checkTicketExist(data, this.searchTicket)                    
+      }) 
+    }                     
   }  
 
-  checkTicketExist(ticket){
-    //console.log('Verificando se existe:', this.searchTicket)
+  checkTicketExist(ticket, ticketTmp){
+    console.log('Verificando se existe:', ticketTmp)
 
     if(ticket.success.length == 0)
       this.ticketNotExist(ticket)
 
     else {
-      this.http.checkTicketSold(this.searchTicket).subscribe( data => {
-        this.checkSold(data)                    
+      this.http.checkTicketSold(ticketTmp).subscribe( data => {
+        this.checkSold(data, ticketTmp)                    
       })                  
     }    
   }
@@ -333,8 +329,8 @@ export class HomePage {
     this.showError(this.dataInfo.accessDenied, this.dataInfo.ticketNotRegisteredMsg)    
   }
 
-  checkSold(ticket){
-    //console.log('Verificando se foi vendido:', this.searchTicket)
+  checkSold(ticket, ticketTmp){
+    console.log('Verificando se foi vendido:', ticketTmp)
     
     if(ticket.success.length == 0){
       this.ticketNotSold(ticket)
@@ -346,8 +342,8 @@ export class HomePage {
         if(element.data_log_venda == undefined)
           this.ticketNotSold(ticket)
         else {
-          this.http.checkTicket(this.searchTicket).subscribe(data => {      
-            this.checkTicket(data)
+          this.http.checkTicket(ticketTmp).subscribe(data => {      
+            this.checkTicket(data, ticketTmp)
           }) 
         }      
       });   
@@ -379,11 +375,11 @@ export class HomePage {
     this.showError(this.dataInfo.accessDenied, this.dataInfo.ticketNotSoldedMsg)
   }
 
-  checkTicket(ticket){       
-    console.log('Verificando se possui acesso:', this.searchTicket)
+  checkTicket(ticket, ticketTmp){       
+    console.log('Verificando se possui acesso:', ticketTmp)
 
   if(ticket.success.length > 0)
-      this.checkTicketContinue()
+      this.checkTicketContinue(ticketTmp)
   else 
       this.checkTicketAreaAccessDenied()      
   }    
@@ -392,53 +388,53 @@ export class HomePage {
     this.showError(this.dataInfo.accessDenied, this.dataInfo.ticketNotAllowed)
   }
 
-  checkTicketContinue(){    
-    this.http.checkTicketContinue(this.searchTicket).subscribe(data => {            
-      this.checkTicketContinueCallback(data)     
+  checkTicketContinue(ticketTmp){    
+    this.http.checkTicketContinue(ticketTmp).subscribe(data => {            
+      this.checkTicketContinueCallback(data, ticketTmp)     
     })  
   }
 
-  checkTicketContinueCallback(ticket){   
+  checkTicketContinueCallback(ticket, ticketTmp){   
     
-    console.log('Verificando validades:', this.searchTicket) 
+    console.log('Verificando validades:', ticketTmp) 
 
     if(ticket.success.length == 0){
       this.checkTicketAreaAccessDenied()
     }
       
     else 
-      this.ticketCheckValidity(ticket)    
+      this.ticketCheckValidity(ticket, ticketTmp)    
   }         
 
-  ticketCheckValidity(ticket){
+  ticketCheckValidity(ticket, ticketTmp){
         
     ticket.success.forEach(element => {      
       
       if(element.mesmo_dia_validade == 1)
-        this.ticketValiditySameDay(element)          
+        this.ticketValiditySameDay(element, ticketTmp)
     
       else if(element.infinito_validade == 1)
-        this.ticketValidityInfinite(element)
+        this.ticketValidityInfinite(element, ticketTmp)
     
       else 
-        this.ticketValidityTime(element)
+        this.ticketValidityTime(element, ticketTmp)
       
     });           
   }  
 
-  ticketValiditySameDay(ticket){
+  ticketValiditySameDay(ticket, ticketTmp){
 
-    console.log('Verificando validade do mesmo dia', this.searchTicket)
+    console.log('Verificando validade do mesmo dia', ticketTmp)
 
     let now = moment().format()        
     let isSame = moment(ticket.data_log_venda).isSame(now, 'day')
 
-    this.history = this.dataInfo.ticketRead + this.searchTicket
+    this.history = this.dataInfo.ticketRead + ticketTmp
     this.statusTicketStart = moment(ticket.data_log_venda).format("L")    
-    this.history = this.dataInfo.ticketRead + this.searchTicket
+    this.history = this.dataInfo.ticketRead + ticketTmp
 
     if(isSame)
-        this.checkValidityOk(ticket)    
+        this.checkValidityOk(ticket, ticketTmp)    
       else
         this.ticketValidityNotSame(ticket)        
   }
@@ -448,13 +444,13 @@ export class HomePage {
     this.showError(this.dataInfo.accessDenied, message)            
   }
 
-  ticketValidityInfinite(ticket){
-    this.history = this.dataInfo.ticketRead + this.searchTicket
+  ticketValidityInfinite(ticket, ticketTmp){
+    this.history = this.dataInfo.ticketRead + ticketTmp
     this.statusTicketStart = moment(ticket.data_log_venda).format("L")   
     this.useTicket(ticket)    
   }
 
-  ticketValidityTime(ticket){
+  ticketValidityTime(ticket, ticketTmp){
     let tempo_validade = ticket.tempo_validade
     this.statusTicketStart = moment(ticket.data_log_venda).format("L")    
     let until =  moment(ticket.data_log_venda).hours(tempo_validade).format();
@@ -462,7 +458,7 @@ export class HomePage {
     let isAfter = moment(until).isAfter(now);
 
     if(isAfter)
-      this.checkValidityOk(ticket)
+      this.checkValidityOk(ticket, ticketTmp)
      else 
       this.ticketValidityTimeNotOk(ticket)           
   }
@@ -473,13 +469,13 @@ export class HomePage {
     this.showError(this.dataInfo.accessDenied, message)        
   }
 
-  checkValidityOk(ticket){    
-    this.checkDoorRules(ticket)
+  checkValidityOk(ticket, ticketTmp){    
+    this.checkDoorRules(ticket, ticketTmp)
   }
 
-  checkDoorRules(ticket){
+  checkDoorRules(ticket, ticketTmp){
 
-    console.log('Verificando regras das portas', this.searchTicket)
+    console.log('Verificando regras das portas', ticketTmp)
 
     let horas_porta_acesso = ticket.horas_porta_acesso
     let mesmo_dia_porta_acesso = ticket.mesmo_dia_porta_acesso
@@ -492,16 +488,16 @@ export class HomePage {
     console.log('Números de liberações ligado:', numero_liberacoes)
 
     if(horas_porta_acesso > 0){
-      this.ticketAccessTimeDoor(ticket)
+      this.ticketAccessTimeDoor(ticket, ticketTmp)
     }
     else if(mesmo_dia_porta_acesso > 0){
-      this.ticketAccessSameDay(ticket)
+      this.ticketAccessSameDay(ticket, ticketTmp)
     }
     else if(unica_porta_acesso > 0){
-      this.ticketAccessOnlyone(ticket)
+      this.ticketAccessOnlyone(ticket, ticketTmp)
     }
     else if(numero_liberacoes > 0){
-      this.ticketAccessCountPass(ticket)
+      this.ticketAccessCountPass(ticket, ticketTmp)
     }    
     else {      
       this.isLoading = false
@@ -509,9 +505,9 @@ export class HomePage {
     }
   }
 
-  ticketAccessTimeDoor(ticket){
+  ticketAccessTimeDoor(ticket, ticketTmp){
 
-    console.log('Verificando tempo de acesso', this.searchTicket)
+    console.log('Verificando tempo de acesso', ticketTmp)
 
     let until =  moment(ticket.data_log_venda).add(ticket.horas_porta_acesso, 'hours').format();
     let now = moment().format()        
@@ -530,8 +526,8 @@ export class HomePage {
     this.showError(this.dataInfo.accessDenied, message)    
   }
 
-  ticketAccessSameDay(ticket){
-    console.log('Verificando acesso porta mesmo dia', this.searchTicket)
+  ticketAccessSameDay(ticket, ticketTmp){
+    console.log('Verificando acesso porta mesmo dia', ticketTmp)
 
     let until =  moment(ticket.data_log_venda).format();
     let now = moment().format()                  
@@ -549,16 +545,16 @@ export class HomePage {
     this.showError(this.dataInfo.accessDenied, message)    
   }
 
-  ticketAccessOnlyone(ticket){
-    this.http.checkTicketUsed(this.searchTicket).subscribe(data => {
+  ticketAccessOnlyone(ticket, ticketTmp){
+    this.http.checkTicketUsed(ticketTmp).subscribe(data => {
       this.ticketAccessOnlyOneCallback(data)      
     })
   }
 
-  ticketAccessCountPass(ticket){
-    //console.log(ticket)    
+  ticketAccessCountPass(ticket, ticketTmp){
+    console.log("Verificando quantidade de vezes utilizados: ", ticketTmp)    
 
-    this.http.checkTicketUsedTotal(this.searchTicket).subscribe(data => {
+    this.http.checkTicketUsedTotal(ticketTmp).subscribe(data => {
       this.ticketAccessCountPassCallback(data, ticket)      
     })
   }
@@ -617,11 +613,11 @@ export class HomePage {
 
     } else {                  
 
-      console.log('Utilizando ticket:', this.searchTicket)
+      console.log('Utilizando ticket:', ticket)
 
       let self = this
 
-      this.http.useTicket(this.searchTicket).subscribe( data => {
+      this.http.useTicket(ticket).subscribe( data => {
         self.useTicketContinue()            
       })
     }    

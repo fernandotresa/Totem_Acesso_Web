@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { Socket } from 'ng-socket-io';
 import { Observable } from 'rxjs/Observable';
 import { Events } from 'ionic-angular';
+import { UiUtilsProvider } from '../../providers/ui-utils/ui-utils'
 
 @Injectable()
 export class GpiosProvider{
@@ -15,8 +16,10 @@ export class GpiosProvider{
   objGpioDecrementCounter: any
 
   timeOutGpio: Boolean = true;
+  timeOut: number = 1000
 
-  constructor(private socket: Socket,    
+  constructor(private socket: Socket, 
+    public uiUtils: UiUtilsProvider,   
     public events: Events) {    
 
     this.startGPIOs()
@@ -26,6 +29,10 @@ export class GpiosProvider{
     this.objPageMultiple.unsubscribe()
     this.objPageMultiple.unsubscribe()
     this.objGpioDecrementCounter.unsubscribe()
+  }
+
+  showAlertTimeout(){
+    this.uiUtils.showToast("Favor aguarde o tempo de espera")
   }
 
   startGPIOs(){ 
@@ -54,8 +61,12 @@ export class GpiosProvider{
         setTimeout(function(){ 
 
           console.log("Resetando timeout", new Date())
+
           self.timeOutGpio = true;
-         }, 3000);
+         }, self.timeOut);
+
+      } else {
+          this.showAlertTimeout()
       }        
     })
   }
@@ -75,8 +86,11 @@ export class GpiosProvider{
         setTimeout(function(){ 
           console.log("Resetando timeout", new Date())
           self.timeOutGpio = true;
-         }, 3000);
-      }      
+         }, self.timeOut);
+
+      } else {
+          this.showAlertTimeout()
+      }     
     })
   }
 
@@ -92,8 +106,11 @@ export class GpiosProvider{
         setTimeout(function(){ 
           console.log("Resetando timeout", new Date())
           self.timeOutGpio = true;
-         }, 3000);
-      }      
+         }, self.timeOut);
+
+      } else {
+          this.showAlertTimeout()
+      }     
     })
   }
 
