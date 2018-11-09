@@ -150,14 +150,20 @@ export class HomePage {
   backWithMessage(){
     let self = this
 
-    let time = this.dataInfo.timeMessage
+    let time = this.dataInfo.timeMessage    
 
-    if(this.idTypeBackgrond === this.dataInfo.backgroundIdSearch)
-      time = this.dataInfo.timeMessageHistory
+    if(this.idTypeBackgrond === this.dataInfo.backgroundIdSearchNotOk || 
+        this.idTypeBackgrond === this.dataInfo.backgroundIdSearchOk){
+
+          time = this.dataInfo.timeMessageHistory
+
+        }
+      
+
+    console.log("Tempo configurado:", time)
 
     setTimeout(function(){ 
       self.resetConfig()
-
     }, time); 
   }
 

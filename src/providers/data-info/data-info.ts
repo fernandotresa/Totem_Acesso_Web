@@ -89,6 +89,8 @@ export class DataInfoProvider {
     this.timeMessageHistory =  this.configurationService.getValue<number>("timeMessageHistory");
 
     console.log('Endereço do servidor:', this.addressServer)
+    console.log('Tempo da mensagem:', this.timeMessage)
+    console.log('Tempo da mensagem no histórico:', this.timeMessageHistory)
   }  
 
   configureTotem(data){    
