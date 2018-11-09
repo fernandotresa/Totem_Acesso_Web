@@ -1,3 +1,4 @@
 {
-  "addressServer": "http://localhost:8085" 
+  "addressServer": "http://localhost:8085",
+  "timeMessage": 3000
 }
