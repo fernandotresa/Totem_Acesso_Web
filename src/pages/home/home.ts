@@ -71,8 +71,6 @@ export class HomePage {
   }
     
   ionViewDidLoad() {
-    console.log("Recarregando página")
-
     this.updatedInfo = this.navParams.get('updatedInfo')
     this.events.unsubscribe('totem:updated');
 
@@ -154,7 +152,8 @@ export class HomePage {
 
     setTimeout(function(){ 
       self.resetConfig()
-    }, 3000); 
+
+    }, this.dataInfo.timeMessage); 
   }
 
   goHistory(){
@@ -213,18 +212,18 @@ export class HomePage {
       self.uiUtils.showToast(self.dataInfo.noConfiguration)
 
     } else {     
-    this.http.getAreaInfo(this.areaId).subscribe(data => {            
-      self.loadConfigCallback(data)            
-    });
+      this.http.getAreaInfo(this.areaId).subscribe(data => {            
+        self.loadConfigCallback(data)            
+      });
 
     }    
   }
 
   loadConfigCallback(data){
-    console.log('Configurando totem', data.success[0])
+    console.log(this.dataInfo.configuringTotem, data.success[0])
 
     if(data.length == 0){
-      this.title = "IP não localizado"
+      this.title = this.dataInfo.ipNotFound
       this.counter = "0"
     }
 
@@ -242,7 +241,7 @@ export class HomePage {
         
       self.startTimer()
       self.totemWorking()
-      self.uiUtils.showToast('Inicializado com sucesso!')
+      self.uiUtils.showToast(this.dataInfo.inicializedSuccessfully)
     }    
   }
   
@@ -259,7 +258,7 @@ export class HomePage {
         let person = data[personNamedIndex];     
 
         if(person[0].lotacao_area_acesso == undefined){
-          self.uiUtils.showToast('Favor configurar sistema')
+          self.uiUtils.showToast(this.dataInfo.configureYourSystem)
 
         } else {
           self.counter = person[0].lotacao_area_acesso
@@ -300,20 +299,24 @@ export class HomePage {
   }
 
   searchOneTicket(){  
-    console.log('Procurando um ingresso:', this.searchTicket, "Tamanho: ", this.searchTicket.length)
+    console.log(this.dataInfo.searchingTicket, this.searchTicket, this.dataInfo.ticketSize, this.searchTicket.length)
 
     if(this.searchTicket !== ""){
 
       this.totemNotWorking()
+      let self = this
 
       this.http.checkTicketExist(this.searchTicket).subscribe( data => {
-        this.checkTicketExist(data, this.searchTicket)                    
+        this.checkTicketExist(data, this.searchTicket)   
+                       
+        self.searchTicket = ""
+        self.setFocus();  
       }) 
     }                     
   }  
 
   checkTicketExist(ticket, ticketTmp){
-    console.log('Verificando se existe:', ticketTmp)
+    console.log(this.dataInfo.checkingTicketExist, ticketTmp)
 
     if(ticket.success.length == 0)
       this.ticketNotExist(ticket)
@@ -330,7 +333,7 @@ export class HomePage {
   }
 
   checkSold(ticket, ticketTmp){
-    console.log('Verificando se foi vendido:', ticketTmp)
+    console.log(this.dataInfo.checkingTicketSold, ticketTmp)
     
     if(ticket.success.length == 0){
       this.ticketNotSold(ticket)
@@ -376,7 +379,7 @@ export class HomePage {
   }
 
   checkTicket(ticket, ticketTmp){       
-    console.log('Verificando se possui acesso:', ticketTmp)
+    console.log(this.dataInfo.checkingTicketAccess, ticketTmp)
 
   if(ticket.success.length > 0)
       this.checkTicketContinue(ticketTmp)
@@ -396,7 +399,7 @@ export class HomePage {
 
   checkTicketContinueCallback(ticket, ticketTmp){   
     
-    console.log('Verificando validades:', ticketTmp) 
+    console.log(this.dataInfo.checkingValidity, ticketTmp) 
 
     if(ticket.success.length == 0){
       this.checkTicketAreaAccessDenied()
@@ -417,14 +420,13 @@ export class HomePage {
         this.ticketValidityInfinite(element, ticketTmp)
     
       else 
-        this.ticketValidityTime(element, ticketTmp)
-      
+        this.ticketValidityTime(element, ticketTmp)      
     });           
   }  
 
   ticketValiditySameDay(ticket, ticketTmp){
 
-    console.log('Verificando validade do mesmo dia', ticketTmp)
+    console.log(this.dataInfo.checkingValiditySameDay, ticketTmp)
 
     let now = moment().format()        
     let isSame = moment(ticket.data_log_venda).isSame(now, 'day')
@@ -440,7 +442,7 @@ export class HomePage {
   }
 
   ticketValidityNotSame(ticket){    
-    let message = 'Ingresso vencido: ' + moment(ticket.data_log_venda).format("L")    
+    let message = this.dataInfo.ticketExpired + moment(ticket.data_log_venda).format("L")    
     this.showError(this.dataInfo.accessDenied, message)            
   }
 
@@ -475,17 +477,17 @@ export class HomePage {
 
   checkDoorRules(ticket, ticketTmp){
 
-    console.log('Verificando regras das portas', ticketTmp)
+    console.log(this.dataInfo.checkingRulesDoores, ticketTmp)
 
     let horas_porta_acesso = ticket.horas_porta_acesso
     let mesmo_dia_porta_acesso = ticket.mesmo_dia_porta_acesso
     let unica_porta_acesso = ticket.unica_porta_acesso
     let numero_liberacoes = ticket.numero_liberacoes
 
-    console.log('Horas porta acesso ligado:', horas_porta_acesso)
-    console.log('Mesmo dia acesso ligado:', mesmo_dia_porta_acesso)
-    console.log('Unico acesso porta ligado:', unica_porta_acesso)
-    console.log('Números de liberações ligado:', numero_liberacoes)
+    console.log(this.dataInfo.ruleDoorUsed, horas_porta_acesso)
+    console.log(this.dataInfo.sameDayDoorRule, mesmo_dia_porta_acesso)
+    console.log(this.dataInfo.accessOlnyRule, unica_porta_acesso)
+    console.log(this.dataInfo.numberAccessRule, numero_liberacoes)
 
     if(horas_porta_acesso > 0){
       this.ticketAccessTimeDoor(ticket, ticketTmp)
@@ -501,13 +503,13 @@ export class HomePage {
     }    
     else {      
       this.isLoading = false
-      this.uiUtils.showToast('Tipo de verificação inválida')
+      this.uiUtils.showToast(this.dataInfo.checkInvalid)
     }
   }
 
   ticketAccessTimeDoor(ticket, ticketTmp){
 
-    console.log('Verificando tempo de acesso', ticketTmp)
+    console.log(this.dataInfo.checkingTimeAccess, ticketTmp)
 
     let until =  moment(ticket.data_log_venda).add(ticket.horas_porta_acesso, 'hours').format();
     let now = moment().format()        
@@ -527,7 +529,7 @@ export class HomePage {
   }
 
   ticketAccessSameDay(ticket, ticketTmp){
-    console.log('Verificando acesso porta mesmo dia', ticketTmp)
+    console.log(this.dataInfo.checkingSameDayRule, ticketTmp)
 
     let until =  moment(ticket.data_log_venda).format();
     let now = moment().format()                  
@@ -552,7 +554,7 @@ export class HomePage {
   }
 
   ticketAccessCountPass(ticket, ticketTmp){
-    console.log("Verificando quantidade de vezes utilizados: ", ticketTmp)    
+    console.log(this.dataInfo.checkingAccessCountRule, ticketTmp)    
 
     this.http.checkTicketUsedTotal(ticketTmp).subscribe(data => {
       this.ticketAccessCountPassCallback(data, ticket)      
@@ -595,37 +597,37 @@ export class HomePage {
   }
 
   ticketAlreadUsedFinish(ticket){    
-    console.log(ticket)
+    console.log(this.dataInfo.ticketAlreadyUsed, ticket)
 
     ticket.success.forEach(element => {
       this.statusTicketUsedOn = element.nome_ponto_acesso
       this.statusTicketStart = moment(element.data_log_utilizacao).format("L");      
     });
 
-    let message = 'Já utilizado em ' + this.statusTicketUsedOn + ' - ' + this.statusTicketStart
+    let message = this.dataInfo.ticketAlreadyUsed + this.statusTicketUsedOn + ' - ' + this.statusTicketStart
     this.showError(this.dataInfo.accessDenied, message)    
   }
 
   useTicket(ticket){        
     
     if(this.idTypeBackgrond === this.dataInfo.backgroundIdSearch){    
-      this.searchOkContinue()    
+      this.searchOkContinue(ticket.data.ticket)    
 
     } else {                  
 
-      console.log('Utilizando ticket:', ticket)
+      console.log(this.dataInfo.usingTicket, ticket)
 
       let self = this
 
       this.http.useTicket(ticket).subscribe( data => {
-        self.useTicketContinue()            
+        self.useTicketContinue(ticket.data.ticket)            
       })
     }    
   }
 
-  searchOkContinue(){
+  searchOkContinue(ticket){
 
-    this.http.checkTicketQuick(this.searchTicket).subscribe(data =>{
+    this.http.checkTicketQuick(ticket).subscribe(data =>{
         this.searchOkCallback(data)
     })      
   }
@@ -654,12 +656,12 @@ export class HomePage {
     this.backHome()   
   }
 
-  useTicketContinue(){
+  useTicketContinue(ticket){
     let self = this
     
-    this.http.checkTicket(this.searchTicket).subscribe(data => {
+    this.http.checkTicket(ticket).subscribe(data => {
 
-      console.log('Ticket utilizado com sucesso!', this.searchTicket)
+      console.log(this.dataInfo.ticketUsedSuccessFully, ticket)
 
       self.useTicketEnd(data)
     })    

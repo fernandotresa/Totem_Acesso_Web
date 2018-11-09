@@ -10,6 +10,7 @@ export class DataInfoProvider {
   totemId: number =  0
   addressServer: string = "http://localhost:8085"
   tipoPontoAcesso: number = 1;
+  timeMessage: number = 3000
   
   backgroundIdGreen: number = 1
   backgroundIdRed: number = 2
@@ -19,17 +20,12 @@ export class DataInfoProvider {
   backgroundIdSearchNotOk: number = 6
   backgroundIdTicketRead: number = 7
     
-  history: string = "Histórico do ingresso"
-  
-  historyGeneral: string = "Histórico do ingresso"
-  
-  historyUntilDay: string = "Até dia"
-  
+  history: string = "Histórico do ingresso"  
+  historyGeneral: string = "Histórico do ingresso"  
+  historyUntilDay: string = "Até dia"  
   historyUsedDay: string = "Usado dia"
   accessPoints: string = "Acesso aos pontos"
-
   alreadyOk: string = "Utilizado com sucesso"
-
   already: string = "Já utilizado"
   alreadyMsg: string = "10/05/2018 - 10:35 - Chapelaria"
   ticketOld: string = "Ingresso vencido"
@@ -39,25 +35,19 @@ export class DataInfoProvider {
   ticketNotSolded: string = "Não vendido"
   ticketNotSoldedMsg: string = "Ingresso não foi vendido"
   ticketOk: string = "Ingresso válido"  
-  
   ticketNotOk: string = "Ingresso inválido"  
   isLoading: string =  "Carregando"
-
   titleGeneral: string = "Carregando"
-
   ticketNotAllowed: string = "Área não permitida"
   welcomeMsg: string = "Seja bem vindo!"
   pleaseWait: string = "Favor aguarde"
   atention: string = "Atenção"   
-
   ticketReadDefault: string = "Ingresso lido: "   
-  ticketRead: string = "Ingresso lido: "   
-   
+  ticketRead: string = "Ingresso lido: "      
   usedDay: string = "Utilizado dia"   
   ticketStart: string = "Ingresso inicial"  
   ticketEnd: string = "Ingresso final"  
-  send: string = "Enviar"  
-    
+  send: string = "Enviar"      
   sucess: string = "Sucesso"
   erro: string = "Erro"
   noConfiguration: string = "Nenhuma configuraçao disponivel"  
@@ -66,10 +56,35 @@ export class DataInfoProvider {
   timeAccessOver: string = "Tempo de acesso vencido"
   accessCountLimitPassed: string = "Qtd. de acessos máximo utilizados"
   added: string = "Adicionado"  
-  areYouSure: string = "Tem certeza disso?"        
+  areYouSure: string = "Tem certeza disso?"    
+  configuringTotem: string = 'Configurando totem'    
+  ipNotFound: string = "IP não localizado"
+  inicializedSuccessfully: string = 'Inicializado com sucesso!'
+  configureYourSystem: string = 'Favor configurar sistema'
+  searchingTicket: string = 'Procurando um ingresso:'
+  ticketSize: string = "Tamanho: "
+  checkingTicketExist: string = 'Verificando se existe:'
+  checkingTicketSold: string = 'Verificando se foi vendido:'
+  checkingTicketAccess: string = 'Verificando se possui acesso:'
+  checkingValidity: string = 'Verificando validades:'
+  checkingValiditySameDay: string = 'Verificando validade do mesmo dia'
+  ticketExpired: string = 'Ingresso vencido: '
+  checkingRulesDoores: string = 'Verificando regras das portas'
+  ruleDoorUsed: string = 'Horas porta acesso ligado:'
+  sameDayDoorRule: string = 'Mesmo dia acesso ligado:'
+  accessOlnyRule: string = 'Unico acesso porta ligado:'
+  numberAccessRule: string = 'Números de liberações ligado:'
+  checkInvalid: string = 'Tipo de verificação inválida'
+  checkingTimeAccess: string = 'Verificando tempo de acesso'
+  checkingSameDayRule: string = 'Verificando acesso porta mesmo dia'
+  checkingAccessCountRule: string = "Verificando quantidade de vezes utilizados: "
+  ticketAlreadyUsed: string = 'Já utilizado em '
+  usingTicket: string = 'Utilizando ticket:'
+  ticketUsedSuccessFully: string = 'Ticket utilizado com sucesso!'
 
   constructor(private configurationService: ConfigurationService, public events: Events) {        
     this.addressServer =  this.configurationService.getValue<string>("addressServer");
+    this.timeMessage =  this.configurationService.getValue<number>("timeMessage");
 
     console.log('Endereço do servidor:', this.addressServer)
   }  
