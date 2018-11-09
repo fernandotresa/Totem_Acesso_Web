@@ -11,6 +11,7 @@ export class DataInfoProvider {
   addressServer: string = "http://localhost:8085"
   tipoPontoAcesso: number = 1;
   timeMessage: number = 3000
+  timeMessageHistory: number = 6000
   
   backgroundIdGreen: number = 1
   backgroundIdRed: number = 2
@@ -85,6 +86,7 @@ export class DataInfoProvider {
   constructor(private configurationService: ConfigurationService, public events: Events) {        
     this.addressServer =  this.configurationService.getValue<string>("addressServer");
     this.timeMessage =  this.configurationService.getValue<number>("timeMessage");
+    this.timeMessageHistory =  this.configurationService.getValue<number>("timeMessageHistory");
 
     console.log('Endereço do servidor:', this.addressServer)
   }  
