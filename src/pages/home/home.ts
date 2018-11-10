@@ -159,9 +159,6 @@ export class HomePage {
 
         }
       
-
-    console.log("Tempo configurado:", time)
-
     setTimeout(function(){ 
       self.resetConfig()
     }, time); 
@@ -394,7 +391,7 @@ export class HomePage {
   if(ticket.success.length > 0)
       this.checkTicketContinue(ticketTmp)
   else 
-      this.checkTicketAreaAccessDenied(ticketTmp)      
+      this.checkTicketAreaAccessDenied(ticketTmp)
   }    
 
   checkTicketAreaAccessDenied(ticket){
@@ -413,8 +410,7 @@ export class HomePage {
 
     if(ticket.success.length == 0){
       this.checkTicketAreaAccessDenied(ticketTmp)
-    }
-      
+    }      
     else 
       this.ticketCheckValidity(ticket, ticketTmp)    
   }         
@@ -459,7 +455,7 @@ export class HomePage {
   ticketValidityInfinite(ticket, ticketTmp){
     this.history = this.dataInfo.ticketRead + ticketTmp
     this.statusTicketStart = moment(ticket.data_log_venda).format("L")   
-    this.useTicket(ticket)    
+    this.useTicket(ticketTmp)    
   }
 
   ticketValidityTime(ticket, ticketTmp){
@@ -527,7 +523,8 @@ export class HomePage {
     let isAfter = moment(until).isAfter(now);
 
     if(isAfter){
-      this.useTicket(ticket)
+      this.useTicket(ticketTmp)
+
     } else {
       this.ticketAccessTimeDoorNotOk(ticketTmp)      
     }
@@ -546,7 +543,7 @@ export class HomePage {
     let isSame = moment(until).isSame(now, 'day');    
 
     if(isSame){
-      this.useTicket(ticket)
+      this.useTicket(ticketTmp)
     } else {
       this.ticketAccessSameDayNotOk(ticketTmp)      
     }
@@ -567,29 +564,29 @@ export class HomePage {
     console.log(this.dataInfo.checkingAccessCountRule, ticketTmp)    
 
     this.http.checkTicketUsedTotal(ticketTmp).subscribe(data => {
-      this.ticketAccessCountPassCallback(data, ticket)      
+      this.ticketAccessCountPassCallback(data, ticketTmp)      
     })
   }
 
-  ticketAccessCountPassCallback(ticket, ticketInfo){    
+  ticketAccessCountPassCallback(ticket, ticketTmp){    
 
     if(ticket.success.length == 0)
-      this.useTicket(ticket)
+      this.useTicket(ticketTmp)
     else 
-      this.ticketAccessCountPassContinue(ticket, ticketInfo)        
+      this.ticketAccessCountPassContinue(ticket, ticketTmp)        
   }
 
-  ticketAccessCountPassContinue(ticket, ticketInfo){    
+  ticketAccessCountPassContinue(ticket, ticketTmp){    
 
-    let numero_liberacoes = ticketInfo.numero_liberacoes    
+    let numero_liberacoes = ticket.numero_liberacoes    
 
     ticket.success.forEach(element => {
        let total = element.TOTAL       
 
        if(total < numero_liberacoes)
-          this.useTicket(ticket)
+          this.useTicket(ticketTmp)
         else          
-          this.ticketAccessCountPassNotOk(ticketInfo)
+          this.ticketAccessCountPassNotOk(ticketTmp)
     });
   }
 
@@ -602,7 +599,7 @@ export class HomePage {
     if(ticket.success.length > 0){
       this.ticketAlreadUsedFinish(ticket, ticketTmp)
     } else {
-      this.useTicket(ticket)
+      this.useTicket(ticketTmp)
     }
   }
 
@@ -621,7 +618,7 @@ export class HomePage {
   useTicket(ticket){        
     
     if(this.idTypeBackgrond === this.dataInfo.backgroundIdSearch){    
-      this.searchOkContinue(ticket.data.ticket)    
+      this.searchOkContinue(ticket)    
 
     } else {                  
 
@@ -630,13 +627,14 @@ export class HomePage {
       let self = this
 
       this.http.useTicket(ticket).subscribe( data => {
-        self.useTicketContinue(ticket.data.ticket)            
+        self.useTicketContinue(ticket)            
       })
     }    
   }
 
   searchOkContinue(ticket){
-
+    console.log("Procurando mais informações sobre ingresso:", ticket
+    )
     this.http.checkTicketQuick(ticket).subscribe(data =>{
         this.searchOkCallback(data)
     })      
