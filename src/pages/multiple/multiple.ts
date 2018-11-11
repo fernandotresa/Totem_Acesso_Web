@@ -37,8 +37,6 @@ export class MultiplePage {
     public http: HttpdProvider) {      
 
       this.setIntervalFocus()
-      this.searchTicket = "21362204"
-      this.searchTicketEnd = "21362210"
   }
 
   ionViewDidLoad() {
