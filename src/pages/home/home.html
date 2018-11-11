@@ -68,11 +68,12 @@
 
       <ion-grid>                  
         <ion-row>
+            
         <ion-col col-4>  
 
             <div class="options">
               
-                <ion-col col-2>  
+                <ion-col>  
                     <ion-fab>
                         <button ion-fab color="light" icon-only (click)="showHistory()" [disabled]="!inputVisible">
                             <ion-icon name='search' color="dark"></ion-icon>
@@ -80,7 +81,7 @@
                     </ion-fab>  
                 </ion-col> 
 
-                <ion-col col-2>  
+                <ion-col>  
                     <ion-fab>
                         <button ion-fab color="light" icon-only (click)="setMultiple()"  [disabled]="!inputVisible">
                             <ion-icon name='flash' color="{{multipleColor}}"></ion-icon>
@@ -88,7 +89,7 @@
                     </ion-fab>  
                 </ion-col>
         
-                <ion-col col-2>  
+                <ion-col>  
                     <ion-fab>
                         <button ion-fab color="light" icon-only (click)="decrementCounter()" [disabled]="!inputVisible">
                             <ion-icon name='remove-circle' color="danger"></ion-icon>
@@ -102,13 +103,14 @@
 
             <ion-col col-8>  
                                 
-            <div class="logo-bottom">
-                <img src="assets/imgs/logo3a.png"/>
-            </div>
+                <div class="logo-bottom">
+                    <img src="assets/imgs/logo3a.png"/>
+                </div>
 
             </ion-col>
 
         </ion-row>          
-        </ion-grid>                                                                                 
+        </ion-grid>   
+                                                                                      
     </ion-toolbar>
   </ion-footer>

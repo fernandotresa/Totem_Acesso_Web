@@ -37,6 +37,8 @@ export class MultiplePage {
     public http: HttpdProvider) {      
 
       this.setIntervalFocus()
+      this.searchTicket = "21362204"
+      this.searchTicketEnd = "21362210"
   }
 
   ionViewDidLoad() {
@@ -124,7 +126,8 @@ export class MultiplePage {
   }
 
   searchMultipleTickets(){
-    let self = this    
+    let self = this  
+    this.clearChecks()  
 
     this.checkInputs().then(result => {
       
@@ -280,7 +283,7 @@ export class MultiplePage {
     this.allTickets.success.forEach(element => {
 
       if(element.id_estoque_utilizavel == ticket){              
-        element.data_log_venda = 'Ticket inexistent'
+        element.data_log_venda = 'Ticket inexistente'
         element.alerta  = self.dataInfo.ticketNotSoldedMsg
         element.MODIFICADO  = true
         self.totalChecksNotOk++
