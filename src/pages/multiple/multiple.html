@@ -21,17 +21,70 @@
     </ion-item>  
 
     <button ion-button full (click)="searchMultipleTickets()"> {{dataInfo.send}} </button>    
-                        
-      <ion-item *ngFor="let command of (allTickets)?.success">                      
-          <h2 *ngIf="command.message" style="color: green;"> Ingresso: {{ command.id_estoque_utilizavel}}  </h2>                  
-          <h2 *ngIf="command.alerta" style="color: red;"> Ingresso: {{ command.id_estoque_utilizavel}}  </h2>                  
-          <h2 *ngIf="command.data_log_venda"> Data venda: {{ command.data_log_venda}} </h2>                  
-          <h2 *ngIf="command.nome_ponto_acesso"> Ponto utilização: {{ command.nome_ponto_acesso}} </h2>         
-          <h2 *ngIf="command.alerta">Atenção: {{ command.alerta}} </h2>
-          <h2 *ngIf="command.message">Informação: {{ command.message}} </h2>
-    </ion-item>  
+                                
+  </ion-list>
 
+  <ion-list>
+      <ion-item *ngFor="let command of (allTickets)?.success">    
+          <ion-row>
+            <ion-col *ngIf="command.message">
+                <h2 style="color: green;"> Ingresso: {{ command.id_estoque_utilizavel}}  </h2>                                
+            </ion-col>    
+            <ion-col *ngIf="command.alerta">
+                <h2 style="color: red;"> Ingresso: {{ command.id_estoque_utilizavel}}  </h2>                  
+            </ion-col>        
+            <ion-col *ngIf="command.data_log_venda">
+                <h2> Data venda: {{ command.data_log_venda}} </h2>                                                            
+            </ion-col>            
+            <ion-col *ngIf="command.nome_ponto_acesso">
+                <h2> Ponto utilização: {{ command.nome_ponto_acesso}} </h2>         
+            </ion-col>
+            <ion-col *ngIf="command.alerta">
+                <h2>Atenção: {{ command.alerta}} </h2>
+            </ion-col>
+            <ion-col *ngIf="command.message">
+                <h2>Informação: {{ command.message}} </h2>
+            </ion-col>
+          </ion-row>                            
+      </ion-item>
   </ion-list>
   
-
 </ion-content>
+
+<ion-footer no-border color="transparent">
+
+    <ion-row>
+        <ion-col class="fs-15 fw-600 pdl-0">
+            <button style="vertical-align: 5%;" ion-button item-right icon-only color="primary" clear outline>
+                <ion-icon name="alert"></ion-icon>
+            </button>            
+        </ion-col>
+
+        <ion-col>
+            <h3 class="fs-15 fw-600 mgb-10">{{totalChecks}}</h3>
+        </ion-col>
+
+        <ion-col class="fs-15 fw-600 pdl-0">
+            <button style="vertical-align: 5%;" ion-button item-right icon-only color="secondary" clear outline>
+                <ion-icon name="checkmark-circle"></ion-icon>
+            </button>            
+        </ion-col>
+
+        <ion-col>
+            <h3 class="fs-15 fw-600 mgb-10">{{totalChecksOk}}</h3>
+        </ion-col>
+
+        <ion-col class="fs-15 fw-600 pdl-0">
+            <button style="vertical-align: 5%;" ion-button item-right icon-only color="danger" clear outline>
+                <ion-icon name="remove-circle"></ion-icon>
+            </button>            
+        </ion-col>    
+
+        <ion-col>
+            <h3 class="fs-15 fw-600 mgb-10">{{totalChecksNotOk}}</h3>
+        </ion-col>
+
+      </ion-row>      
+
+    
+    </ion-footer>

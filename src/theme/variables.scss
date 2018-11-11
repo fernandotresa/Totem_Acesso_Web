@@ -1,89 +1,114 @@
-// Ionic Variables and Theming. For more info, please see:
-// http://ionicframework.com/docs/theming/
 
-// Font path is used to include ionicons,
-// roboto, and noto sans fonts
 $font-path: "../assets/fonts";
-
-
-// The app direction is used to include
-// rtl styles in your app. For more info, please see:
-// http://ionicframework.com/docs/theming/rtl-support/
 $app-direction: ltr;
 
 
 @import "ionic.globals";
-
-
-// Shared Variables
-// --------------------------------------------------
-// To customize the look and feel of this app, you can override
-// the Sass variables found in Ionic's source scss files.
-// To view all the possible Ionic variables, see:
-// http://ionicframework.com/docs/theming/overriding-ionic-variables/
-
-
-
-
-// Named Color Variables
-// --------------------------------------------------
-// Named colors makes it easy to reuse colors on various components.
-// It's highly recommended to change the default colors
-// to match your app's branding. Ionic uses a Sass map of
-// colors so you can add, rename and remove colors as needed.
-// The "primary" color is the only required color in the map.
+@import "ionic.theme.default";
+@import "ionic.ionicons";
+@import "roboto";
+@import "noto-sans";
 
 $colors: (
   primary:    #488aff,
   secondary:  #32db64,
   danger:     #f53d3d,
   light:      #f4f4f4,
-  white_:     white,
-  dark:       #222
+  dark:       #222,
+  white_:       white,
+  gold:        	rgb(255,215,0),
+  silver:        	#C0C0C0,
+  bronze:        #CD7F32,
+  white-transparent: rgba(255,255,255, 0.2)
 );
 
 
-// App iOS Variables
-// --------------------------------------------------
-// iOS only Sass variables can go here
+$text-input-placeholder-color:               color($colors, white-transparent, base) !default;
+$text-input-md-show-focus-highlight:        false !default;
+$text-input-md-show-valid-highlight:        $text-input-md-show-focus-highlight !default;
+$text-input-md-show-invalid-highlight:      $text-input-md-show-focus-highlight !default;
+
+$text-input-ios-show-focus-highlight:        false !default;
+$text-input-ios-show-valid-highlight:        $text-input-ios-show-focus-highlight !default;
+$text-input-ios-show-invalid-highlight:      $text-input-ios-show-focus-highlight !default;
+
+$menu-shadow-color: rgba(0,0,0,.7);
+$menu-icon-color: #747474;
+$menu-font-color: #484848;
+$menu-back-ground-color: #FFFFFF;
+
+$item-color-bg: #ccc;
+$header-color-bg: #eee;
+$animation-duration: 0.3s;
+
+$fab-size: 75px;
+$fab-content-margin: 20px;
+
+ // ======================= 
+// ======================= varible
+// ======================= 
+
+$transparent: transparent;
+
+$black      : #212121;
+$white      : #fff;
+$white-1    : #fafafa;
+$white-2    : #f1f1f1;
+$grey-1     : #ebebeb;
+$grey-2     : #ddd;
+$grey-3     : #bebebe;
+$grey-4     : #757575;
+$grey-5     : #555;
+
+$red        : #F44336;
+$pink       : #E91E63;
+$purple     : #9C27B0;
+$d-purple   : #673AB7;
+$indigo     : #3F51B5;
+$blue       : #2196F3;
+$l-blue     : #03A9F4;
+$cyan       : #00BCD4;
+$teal       : #009688;
+$green      : #4CAF50;
+$l-green    : #8BC34A;
+$lime       : #CDDC39;
+$yellow     : #FFEB3B;
+$amber      : #FFC107;
+$orange     : #FF9800;
+$d-orange   : #FF5722;
+$brown      : #795548;
+$blue-grey  : #607D8B;
+
+
+$coban: #11c99f;
+$lama: #d0eeaa;
+
+$datroi: #a1e3e2;
+$tim: #957eed;
+
+$lanon: #cef9c0;
+$hong: #fcb7be; 
+
+$lot: #eaf8f8;
+$phan: #faecfd;
 
 
 
-
-// App Material Design Variables
-// --------------------------------------------------
-// Material Design only Sass variables can go here
-
-
-
-
-// App Windows Variables
-// --------------------------------------------------
-// Windows only Sass variables can go here
+$shadow-1: 0px 2px 5px 0px rgba(0,0,0,0.05);
+$shadow-2: 0px 5px 10px 0px rgba(0,0,0,0.1);
+$shadow-3: 0px 10px 15px 0px rgba(0,0,0,0.1);
+$shadow-inset-1: inset 0px 2px 5px 0px rgba(0,0,0,0.2);
+$shadow-inset-2: inset 0px 5px 10px 0px rgba(0,0,0,0.2);
+$shadow-inset-3: inset 0px 10px 15px 0px rgba(0,0,0,0.2);
 
 
+$black-opct: rgba(0,0,0,0.3);
+$black-opct-1: rgba(0,0,0,0.6);
+$black-opct-2: rgba(0,0,0,0.9);
 
+$white-opct: rgba(255,255,255,0.3);
+$white-opct-1: rgba(255,255,255,0.6);
+$white-opct-2: rgba(255,255,255,0.9);
 
-// App Theme
-// --------------------------------------------------
-// Ionic apps can have different themes applied, which can
-// then be future customized. This import comes last
-// so that the above variables are used and Ionic's
-// default are overridden.
-
-@import "ionic.theme.default";
-
-
-// Ionicons
-// --------------------------------------------------
-// The premium icon font for Ionic. For more info, please see:
-// http://ionicframework.com/docs/ionicons/
-
-@import "ionic.ionicons";
-
-
-// Fonts
-// --------------------------------------------------
-
-@import "roboto";
-@import "noto-sans";
+$label-ios-text-color: $blue;
+$label-md-text-color: $blue;

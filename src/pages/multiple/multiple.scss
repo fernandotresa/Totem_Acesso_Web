@@ -13,5 +13,341 @@ page-multiple {
         bottom: 0;
         right: 0;
         
-      }    
+      }  
+      
+      .comingsoon-event{
+		height: 100%;
+		.wrapper-content{
+			display: flex;
+			flex-direction: column;
+			height: 100%;
+		}
+		.wrapper-coming{
+			position: relative;
+			flex: 1;
+			width: 100%;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			.main-time{
+				z-index: 10;
+				width: 100%;
+				height: 100%;
+				.seconds{
+					position: absolute;
+					left: -40%;
+    				top: 50%;
+					transform: rotate(90deg);
+				}
+			}
+		}
+		.main-event{
+			z-index: 10;
+		}
+		.bg-img{
+			z-index: 1;
+			position: absolute;
+			top: 0;
+			bottom: 0;
+			left: 0;
+			right: 0;
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			img{
+				min-height: unset;
+				height: unset;
+				min-width: 100%;
+			}
+		}
+		.left-time-flex{
+			display: flex;
+			flex-direction: column;
+			.day{
+				display: flex;
+				margin: auto;
+				margin-top: 0;
+				align-items: center;
+				justify-content: center;
+				width: 45px;
+				height: 45px;
+				border-radius: 50%;
+			}
+		}
+    }
+
+    .black-opct-1{
+        background: $black-opct-1 !important;
+    }
+
+    .text-white{
+        color: $white !important;
+        .p, span, i, a, div, ion-icon, b, small, strong{
+            color: $white !important;
+        }
+        input::placeholder{
+            color: $white !important;
+        }
+    }
+
+    .text-center{
+        text-align: center;
+    }
+
+    .black-opct{
+        background: $black-opct !important;
+    }
+
+    .fs-60{
+        font-size: 60px !important;
+        // line-height: 66px !important;
+    }
+
+    .fw-800{
+        font-weight: 800 !important;
+    }
+
+    .mgb-0{
+        margin-bottom: 0px !important;
+    }
+
+    .spacing-3{
+        letter-spacing: 3px;
+    }
+
+    .ani-bottom-to-top{
+        animation-name: bottom-to-top;
+        animation-duration: 1s;
+        animation-timing-function: linear;
+        animation-direction: alternate;
+    }
+
+    .mgt-0{
+        margin-top: 0px !important;
+    }
+
+    .spacing-2{
+        letter-spacing: 2px;
+    }
+
+    .fs-13{
+        font-size: 13px !important;
+        // line-height: 19px !important;
+    }
+
+    .ani-fade-out{
+        animation-name: fade-out;
+        animation-duration: 1s;
+        animation-timing-function: linear;
+        animation-direction: alternate;
+    }
+
+    .fw-600{
+        font-weight: 600 !important;
+    }
+
+    .bdra-0{
+        border-radius: 0px;
+    }
+
+    .stroke-bottom{
+        border-bottom: solid;
+    }
+
+    .stroke-3{
+        border-width: 3px !important;
+    }
+
+    .stroke-cyan     {
+        border-color: $cyan !important;
+    }
+
+    .mg-0{
+        margin: 0px !important;
+    }
+
+    .full-width{
+        width: 100% !important;
+    }
+
+    .stroke-right{
+        border-right: solid;
+    }
+
+    .stroke-1{
+        border-width: 1px !important;
+    }
+
+    .stroke-grey-1   {
+        border-color: $grey-1 !important;
+    }
+
+    .pdt-20{
+        padding-top: 20px !important;
+    }
+
+    .pdb-20{
+        padding-bottom: 20px !important;
+    }
+
+    .fw-400{
+        font-weight: 400 !important;
+    }
+
+    .block{
+        display: block !important;
+        width: 100%;
+    }
+
+    .text-grey-3{
+        color: $grey-3 !important;
+        .p, span, i, a, div, ion-icon, b, small, strong{
+            color: $grey-3 !important;
+        }
+        input::placeholder{
+            color: $grey-3 !important;
+        }
+    }
+
+    .uppercase{
+        text-transform: uppercase !important;
+    }
+
+    .mgb-10{
+        margin-bottom: 10px !important;
+    }
+
+    .fs-24{
+        font-size: 24px !important;
+        // line-height: 30px !important;
+    }
+
+
+    .stroke{
+        border-style: solid;
+    }
+
+    
+    .text-cyan     {
+        color: $cyan !important;
+        .p, span, i, a, div, ion-icon, b, small, strong{
+            color: $cyan !important;
+        }
+        input::placeholder{
+            color: $cyan !important;
+        }
+    }
+
+    .text-green    {
+        color: $green !important;
+        .p, span, i, a, div, ion-icon, b, small, strong{
+            color: $green !important;
+        }
+        input::placeholder{
+            color: $green !important;
+        }
+    }
+
+    .fs-12{
+        font-size: 12px !important;
+        // line-height: 18px !important;
+    }
+
+    .pd-15{
+        padding: 15px !important;
+    }
+
+    .pdr-10{
+        padding-right: 10px !important;
+    }
+
+    .fs-15{
+        font-size: 15px !important;
+        // line-height: 21px !important;
+    }
+
+    .lst-no-background{
+		ion-list-header{
+			background: none;
+		}
+		ion-item{
+			background: none;
+		}
+		button{
+			background: none;
+			.item-inner{
+				background-image: none !important;	
+			}
+		}
+    }
+    
+    .fs-13{
+        font-size: 13px !important;
+        // line-height: 19px !important;
+    }
+
+    .pdl-0{
+        padding-left: 0px !important;
+    }
+
+    .fs-16{
+        font-size: 16px !important;
+        // line-height: 22px !important;
+    }
+
+    .text-black{
+        color: $black !important;
+        .p, span, i, a, div, ion-icon, b, small, strong{
+            color: $black !important;
+        }
+        input::placeholder{
+            color: $black !important;
+        }
+    }
+
+    .grey-2{
+        background: $grey-2 !important;
+    }
+
+    .stroke-white    {
+        border-color: $white !important;
+    }
+
+    .button{
+		text-transform: capitalize;
+		height: 36px;
+		&.button-circle{
+			width: 36px;
+			border-radius: 50% !important;
+		}
+		&.button-small{
+			height: 25px;
+			&.button-circle{
+				width: 25px;
+				border-radius: 50% !important;
+			}
+		}
+		&.button-large{
+			height: 55px;
+			&.button-circle{
+				width: 55px;
+				border-radius: 50% !important;
+			}
+		}
+	}
+    
+    .back-page{
+		position: absolute;
+		top: 15px;
+		right: 15px;
+		z-index: 10000;
+    }
+    
+    .mgr-15{
+        margin-right: 15px !important;
+    }
+
+    .mgt-20{
+        margin-top: 20px !important;
+    }
 }

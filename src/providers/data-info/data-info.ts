@@ -82,6 +82,11 @@ export class DataInfoProvider {
   ticketAlreadyUsed: string = 'Já utilizado em '
   usingTicket: string = 'Utilizando ticket:'
   ticketUsedSuccessFully: string = 'Ticket utilizado com sucesso!'
+  startVerification: string = 'Iniciando verificação'
+  checkInputs: string = 'Verificar os inputs'
+  totalChecksMultiple: string = 'Total: '
+  totalChecksMultipleOk: string = 'Válidos: '
+  totalChecksMultipleNotOk: string = 'Inválidos: '
 
   constructor(private configurationService: ConfigurationService, public events: Events) {        
     this.addressServer =  this.configurationService.getValue<string>("addressServer");
