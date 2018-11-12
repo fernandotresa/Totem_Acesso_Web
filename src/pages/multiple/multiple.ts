@@ -124,6 +124,7 @@ export class MultiplePage {
   }
 
   searchMultipleTickets(){
+    
     let self = this  
     this.clearChecks()  
 
