@@ -156,7 +156,6 @@ export class HomePage {
         this.idTypeBackgrond === this.dataInfo.backgroundIdSearchOk){
 
           time = this.dataInfo.timeMessageHistory
-
         }
       
     setTimeout(function(){ 
@@ -306,60 +305,6 @@ export class HomePage {
     })
   }
 
-  searchOneTicket(){      
-
-    if(this.searchTicket !== ""){
-
-      let str = this.searchTicket.substring(0,8)
-      console.log(this.dataInfo.searchingTicket, str, this.dataInfo.ticketSize, str.length)
-
-      this.totemNotWorking()      
-
-      this.http.checkTicketExist(str).subscribe( data => {
-        this.checkTicketExist(data, str)
-        this.totemWorking()
-      }) 
-    }                     
-  }  
-
-  checkTicketExist(ticket, ticketTmp){
-    console.log(this.dataInfo.checkingTicketExist, ticketTmp)
-
-    if(ticket.success.length == 0)
-      this.ticketNotExist(ticketTmp)
-
-    else {
-      this.http.checkTicketSold(ticketTmp).subscribe( data => {
-        this.checkSold(data, ticketTmp)                    
-      })                  
-    }    
-  }
-
-  ticketNotExist(ticket){    
-    this.showError(this.dataInfo.accessDenied, this.dataInfo.ticketNotRegisteredMsg, ticket)    
-  }
-
-  checkSold(ticket, ticketTmp){
-    console.log(this.dataInfo.checkingTicketSold, ticketTmp)
-    
-    if(ticket.success.length == 0){
-      this.ticketNotSold(ticket)
-
-    } else {
-
-      ticket.success.forEach(element => {
-
-        if(element.data_log_venda == undefined)
-          this.ticketNotSold(ticketTmp)
-        else {
-          this.http.checkTicket(ticketTmp).subscribe(data => {      
-            this.checkTicket(data, ticketTmp)
-          }) 
-        }      
-      });   
-    }    
-  }
-
   showError(str1, str2, ticket){  
 
     this.isLoading = false
@@ -379,240 +324,127 @@ export class HomePage {
 
     this.showGpioError()
     this.backHome()    
+  }
+
+  searchOneTicket(){      
+
+    if(this.searchTicket !== ""){
+
+      let str = this.searchTicket.substring(0,8)
+      console.log(this.dataInfo.searchingTicket, str, this.dataInfo.ticketSize, str.length)
+
+      this.totemNotWorking()      
+
+      this.http.checkTicketExist(str).subscribe( data => {
+
+        this.seachOneTicketCallback(data, str)
+        this.totemWorking()
+      }) 
+    }                     
   }  
 
+  seachOneTicketCallback(data, ticketTmp){
+    console.log(data.success[0].callback, ticketTmp)
+    
+    if(data.success[0].callback == 1)
+      this.ticketNotExist(ticketTmp)
+
+    else if(data.success[0].callback == 2)
+      this.ticketNotSold(ticketTmp)
+
+    else if(data.success[0].callback == 3)
+      this.checkTicketAreaAccessDenied(ticketTmp)
+
+    else if(data.success[0].callback == 4)
+      this.checkTicketAreaAccessDenied(ticketTmp)
+
+    else if(data.success[0].callback == 5)
+      this.ticketValidityNotSame(data)
+
+    else if(data.success[0].callback == 6)
+      this.ticketValidityTimeNotOk(data)
+
+    else if(data.success[0].callback == 8)
+      this.ticketAccessTimeDoorNotOk(data)
+
+    else if(data.success[0].callback == 9)
+      this.ticketAccessSameDayNotOk(data)
+
+    else if(data.success[0].callback == 10)
+      this.ticketAlreadUsedFinish(data)
+
+    else if(data.success[0].callback == 11)
+      this.ticketAccessCountPassNotOk(data)
+
+    else if(data.success[0].callback == 100)
+      this.useTicket(ticketTmp)
+  }
+  
+  ticketNotExist(ticket){   
+    this.showError(this.dataInfo.accessDenied, this.dataInfo.ticketNotRegisteredMsg, ticket)    
+  }
+    
   ticketNotSold(ticket){          
     this.showError(this.dataInfo.accessDenied, this.dataInfo.ticketNotSoldedMsg, ticket)
   }
 
-  checkTicket(ticket, ticketTmp){       
-    console.log(this.dataInfo.checkingTicketAccess, ticketTmp)
-
-  if(ticket.success.length > 0)
-      this.checkTicketContinue(ticketTmp)
-  else 
-      this.checkTicketAreaAccessDenied(ticketTmp)
-  }    
-
   checkTicketAreaAccessDenied(ticket){
     this.showError(this.dataInfo.accessDenied, this.dataInfo.ticketNotAllowed, ticket)
-  }
+  }    
+ 
+  ticketValidityNotSame(ticket){       
+    let data = ticket.success[0].result
 
-  checkTicketContinue(ticketTmp){    
-    this.http.checkTicketContinue(ticketTmp).subscribe(data => {            
-      this.checkTicketContinueCallback(data, ticketTmp)     
-    })  
-  }
+    this.history = this.dataInfo.ticketRead + data.id_estoque_utilizavel
+    this.statusTicketStart = moment(data.data_log_venda).format("L")      
+    let message = this.dataInfo.ticketExpired + moment(data.data_log_venda).format("L")    
 
-  checkTicketContinueCallback(ticket, ticketTmp){   
-    
-    console.log(this.dataInfo.checkingValidity, ticketTmp) 
-
-    if(ticket.success.length == 0){
-      this.checkTicketAreaAccessDenied(ticketTmp)
-    }      
-    else 
-      this.ticketCheckValidity(ticket, ticketTmp)    
-  }         
-
-  ticketCheckValidity(ticket, ticketTmp){
-        
-    ticket.success.forEach(element => {      
-      
-      if(element.mesmo_dia_validade == 1)
-        this.ticketValiditySameDay(element, ticketTmp)
-    
-      else if(element.infinito_validade == 1)
-        this.ticketValidityInfinite(element, ticketTmp)
-    
-      else 
-        this.ticketValidityTime(element, ticketTmp)      
-    });           
-  }  
-
-  ticketValiditySameDay(ticket, ticketTmp){
-
-    console.log(this.dataInfo.checkingValiditySameDay, ticketTmp)
-
-    let now = moment().format()        
-    let isSame = moment(ticket.data_log_venda).isSame(now, 'day')
-
-    this.history = this.dataInfo.ticketRead + ticketTmp
-    this.statusTicketStart = moment(ticket.data_log_venda).format("L")    
-    this.history = this.dataInfo.ticketRead + ticketTmp
-
-    if(isSame)
-        this.checkValidityOk(ticket, ticketTmp)    
-      else
-        this.ticketValidityNotSame(ticketTmp)        
-  }
-
-  ticketValidityNotSame(ticket){    
-    let message = this.dataInfo.ticketExpired + moment(ticket.data_log_venda).format("L")    
-    this.showError(this.dataInfo.accessDenied, message, ticket)            
-  }
-
-  ticketValidityInfinite(ticket, ticketTmp){
-    this.history = this.dataInfo.ticketRead + ticketTmp
-    this.statusTicketStart = moment(ticket.data_log_venda).format("L")   
-    this.useTicket(ticketTmp)    
-  }
-
-  ticketValidityTime(ticket, ticketTmp){
-    let tempo_validade = ticket.tempo_validade
-    this.statusTicketStart = moment(ticket.data_log_venda).format("L")    
-    let until =  moment(ticket.data_log_venda).hours(tempo_validade).format();
-    let now = moment().format()        
-    let isAfter = moment(until).isAfter(now);
-
-    if(isAfter)
-      this.checkValidityOk(ticket, ticketTmp)
-     else 
-      this.ticketValidityTimeNotOk(ticketTmp)           
+    this.showError(this.dataInfo.accessDenied, message, data.id_estoque_utilizavel)            
   }
 
   ticketValidityTimeNotOk(ticket){    
-    let tempo_validade = ticket.tempo_validade    
-    let message = 'Limite: ' + moment(ticket.data_log_venda).hours(tempo_validade).format("L");        
-    this.showError(this.dataInfo.accessDenied, message, ticket)        
-  }
-
-  checkValidityOk(ticket, ticketTmp){    
-    this.checkDoorRules(ticket, ticketTmp)
-  }
-
-  checkDoorRules(ticket, ticketTmp){
-
-    console.log(this.dataInfo.checkingRulesDoores, ticketTmp)
-
-    let horas_porta_acesso = ticket.horas_porta_acesso
-    let mesmo_dia_porta_acesso = ticket.mesmo_dia_porta_acesso
-    let unica_porta_acesso = ticket.unica_porta_acesso
-    let numero_liberacoes = ticket.numero_liberacoes
-
-    console.log(this.dataInfo.ruleDoorUsed, horas_porta_acesso)
-    console.log(this.dataInfo.sameDayDoorRule, mesmo_dia_porta_acesso)
-    console.log(this.dataInfo.accessOlnyRule, unica_porta_acesso)
-    console.log(this.dataInfo.numberAccessRule, numero_liberacoes)
-
-    if(horas_porta_acesso > 0){
-      this.ticketAccessTimeDoor(ticket, ticketTmp)
-    }
-    else if(mesmo_dia_porta_acesso > 0){
-      this.ticketAccessSameDay(ticket, ticketTmp)
-    }
-    else if(unica_porta_acesso > 0){
-      this.ticketAccessOnlyone(ticket, ticketTmp)
-    }
-    else if(numero_liberacoes > 0){
-      this.ticketAccessCountPass(ticket, ticketTmp)
-    }    
-    else {      
-      this.isLoading = false
-      this.uiUtils.showToast(this.dataInfo.checkInvalid)
-    }
-  }
-
-  ticketAccessTimeDoor(ticket, ticketTmp){
-
-    console.log(this.dataInfo.checkingTimeAccess, ticketTmp)
-
-    let until =  moment(ticket.data_log_venda).add(ticket.horas_porta_acesso, 'hours').format();
-    let now = moment().format()        
+    let data = ticket.success[0].result
+    let id_estoque_utilizavel = data.id_estoque_utilizavel
+    let tempo_validade = data.tempo_validade    
     
-    let isAfter = moment(until).isAfter(now);
-
-    if(isAfter){
-      this.useTicket(ticketTmp)
-
-    } else {
-      this.ticketAccessTimeDoorNotOk(ticketTmp)      
-    }
+    let message = 'Limite: ' + moment(data.data_log_venda).hours(tempo_validade).format("L");        
+    this.showError(this.dataInfo.accessDenied, message, id_estoque_utilizavel)        
   }
 
-  ticketAccessTimeDoorNotOk(ticket){    
-    let message = 'Limite: ' + moment(ticket.data_log_venda).add(ticket.horas_porta_acesso, 'hours').format("LT");
-    this.showError(this.dataInfo.accessDenied, message, ticket)    
+  ticketAccessTimeDoorNotOk(ticket){      
+    let data = ticket.success[0].result[0]
+    let id_estoque_utilizavel = data.id_estoque_utilizavel
+
+    let message = 'Limite: ' + moment(data.data_log_venda).add(data.horas_porta_acesso, 'hours').format("LT");
+    this.showError(this.dataInfo.accessDenied, message, id_estoque_utilizavel)    
   }
 
-  ticketAccessSameDay(ticket, ticketTmp){
-    console.log(this.dataInfo.checkingSameDayRule, ticketTmp)
+  ticketAccessSameDayNotOk(ticket){   
+    console.log(ticket)  
+    let data = ticket.success[0].result[0]
+    let id_estoque_utilizavel = data.id_estoque_utilizavel
 
-    let until =  moment(ticket.data_log_venda).format();
-    let now = moment().format()                  
-    let isSame = moment(until).isSame(now, 'day');    
-
-    if(isSame){
-      this.useTicket(ticketTmp)
-    } else {
-      this.ticketAccessSameDayNotOk(ticketTmp)      
-    }
+    let message = 'Limite: ' + moment(data.data_log_venda).format("L");
+    this.showError(this.dataInfo.accessDenied, message, id_estoque_utilizavel)    
   }
-
-  ticketAccessSameDayNotOk(ticket){    
-    let message = 'Limite: ' + moment(ticket.data_log_venda).format("L");
-    this.showError(this.dataInfo.accessDenied, message, ticket)    
-  }
-
-  ticketAccessOnlyone(ticket, ticketTmp){
-    this.http.checkTicketUsed(ticketTmp).subscribe(data => {
-      this.ticketAccessOnlyOneCallback(data, ticketTmp)      
-    })
-  }
-
-  ticketAccessCountPass(ticket, ticketTmp){
-    console.log(this.dataInfo.checkingAccessCountRule, ticketTmp)    
-
-    this.http.checkTicketUsedTotal(ticketTmp).subscribe(data => {
-      this.ticketAccessCountPassCallback(data, ticketTmp)      
-    })
-  }
-
-  ticketAccessCountPassCallback(ticket, ticketTmp){    
-
-    if(ticket.success.length == 0)
-      this.useTicket(ticketTmp)
-    else 
-      this.ticketAccessCountPassContinue(ticket, ticketTmp)        
-  }
-
-  ticketAccessCountPassContinue(ticket, ticketTmp){    
-
-    let numero_liberacoes = ticket.numero_liberacoes    
-
-    ticket.success.forEach(element => {
-       let total = element.TOTAL       
-
-       if(total < numero_liberacoes)
-          this.useTicket(ticketTmp)
-        else          
-          this.ticketAccessCountPassNotOk(ticketTmp)
-    });
-  }
-
 
   ticketAccessCountPassNotOk(ticket){
-    this.showError(this.dataInfo.accessDenied, this.dataInfo.accessCountLimitPassed, ticket)    
+    let data = ticket.success[0].result[0]
+    let id_estoque_utilizavel = data.id_estoque_utilizavel
+
+    this.showError(this.dataInfo.accessDenied, this.dataInfo.accessCountLimitPassed, id_estoque_utilizavel)    
   }
 
-  ticketAccessOnlyOneCallback(ticket, ticketTmp){  
-    if(ticket.success.length > 0){
-      this.ticketAlreadUsedFinish(ticket, ticketTmp)
-    } else {
-      this.useTicket(ticketTmp)
-    }
-  }
+  ticketAlreadUsedFinish(ticket){    
+    let data = ticket.success[0].result[0]
+    let id_estoque_utilizavel = data.id_estoque_utilizavel
 
-  ticketAlreadUsedFinish(ticket, ticketTmp){    
-    console.log(this.dataInfo.ticketAlreadyUsed, ticketTmp)
+    console.log(this.dataInfo.ticketAlreadyUsed, data)
 
-    ticket.success.forEach(element => {
-      this.statusTicketUsedOn = element.nome_ponto_acesso
-      this.statusTicketStart = moment(element.data_log_utilizacao).format("L");      
-    });
-
-    let message = this.dataInfo.ticketAlreadyUsed + this.statusTicketUsedOn + ' - ' + this.statusTicketStart
-    this.showError(this.dataInfo.accessDenied, message, ticketTmp)    
+    //this.statusTicketUsedOn = data.nome_ponto_acesso
+    this.statusTicketStart = moment(data.data_log_utilizacao).format("L");      ;
+    let message = this.dataInfo.ticketAlreadyUsed + ' - ' + this.statusTicketStart
+    this.showError(this.dataInfo.accessDenied, message, id_estoque_utilizavel)    
   }
 
   useTicket(ticket){        
