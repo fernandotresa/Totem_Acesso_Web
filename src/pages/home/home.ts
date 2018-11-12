@@ -439,8 +439,6 @@ export class HomePage {
     let data = ticket.success[0].result[0]
     let id_estoque_utilizavel = data.id_estoque_utilizavel
 
-    console.log(this.dataInfo.ticketAlreadyUsed, data)
-
     //this.statusTicketUsedOn = data.nome_ponto_acesso
     this.statusTicketStart = moment(data.data_log_utilizacao).format("L");      ;
     let message = this.dataInfo.ticketAlreadyUsed + ' - ' + this.statusTicketStart
@@ -459,7 +457,7 @@ export class HomePage {
       let self = this
 
       this.http.useTicket(ticket).subscribe( data => {
-        self.useTicketContinue(ticket)            
+        self.useTicketEnd(data)              
       })
     }    
   }
@@ -494,17 +492,6 @@ export class HomePage {
 
     this.historyText3 = pontos    
     this.backHome()   
-  }
-
-  useTicketContinue(ticket){
-    let self = this
-    
-    this.http.checkTicket(ticket).subscribe(data => {
-
-      console.log(this.dataInfo.ticketUsedSuccessFully, ticket)
-
-      self.useTicketEnd(data)
-    })    
   }
   
   useTicketEnd(ticket){    

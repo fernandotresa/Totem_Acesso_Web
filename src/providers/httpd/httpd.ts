@@ -67,6 +67,12 @@ export class HttpdProvider {
     return this.http.post(this.address  + "/checkTicket", myData, {headers: headers})
   }
 
+  checkTicketMultiple(value_){    
+    let myData = JSON.stringify({id: this.dataInfo.totemId, ticket: value_, idArea: this.dataInfo.areaId, idPorta: this.dataInfo.portaId});
+    const headers = new HttpHeaders({'Content-Type':'application/json'});
+    return this.http.post(this.address  + "/checkTicketMultiple", myData, {headers: headers})
+  }
+
   
   checkTicketQuick(value_){    
     let myData = JSON.stringify({id: this.dataInfo.totemId, ticket: value_, idArea: this.dataInfo.areaId, idPorta: this.dataInfo.portaId});
@@ -80,10 +86,22 @@ export class HttpdProvider {
     return this.http.post(this.address  + "/checkTicketExist", myData, {headers: headers})
   }
 
+  checkTicketExistMultiple(value_){    
+    let myData = JSON.stringify({id: this.dataInfo.totemId, ticket: value_, idArea: this.dataInfo.areaId, idPorta: this.dataInfo.portaId});
+    const headers = new HttpHeaders({'Content-Type':'application/json'});
+    return this.http.post(this.address  + "/checkTicketExistMultiple", myData, {headers: headers})
+  }
+
   checkTicketContinue(value_){        
     let myData = JSON.stringify({id: this.dataInfo.totemId, ticket: value_, idArea: this.dataInfo.areaId, idPorta: this.dataInfo.portaId});
     const headers = new HttpHeaders({'Content-Type':'application/json'});
     return this.http.post(this.address  + "/checkTicketContinue", myData, {headers: headers})
+  }
+
+  checkTicketContinueMultiple(value_){        
+    let myData = JSON.stringify({id: this.dataInfo.totemId, ticket: value_, idArea: this.dataInfo.areaId, idPorta: this.dataInfo.portaId});
+    const headers = new HttpHeaders({'Content-Type':'application/json'});
+    return this.http.post(this.address  + "/checkTicketContinueMultiple", myData, {headers: headers})
   }
 
   checkTicketUsed(value_){    
@@ -104,18 +122,18 @@ export class HttpdProvider {
     return this.http.post(this.address  + "/useTicket", myData, {headers: headers})
   }
 
+  useTicketMultiple(value_){
+    let myData = JSON.stringify({id: this.dataInfo.totemId, ticket: value_, idArea: this.dataInfo.areaId, idPorta: this.dataInfo.portaId});
+    const headers = new HttpHeaders({'Content-Type':'application/json'});
+    return this.http.post(this.address  + "/useTicketMultiple", myData, {headers: headers})
+  }
+
   checkMultipleTickets(start_, end_){    
     let myData = JSON.stringify({id: this.dataInfo.totemId, ticketStart: start_, ticketEnd: end_});
     const headers = new HttpHeaders({'Content-Type':'application/json'});
     return this.http.post(this.address  + "/checkMultipleTickets", myData, {headers: headers})
   }
-
-  checkTicketAreaAccess(idArea_, value_){    
-    let myData = JSON.stringify({id: this.dataInfo.totemId, idArea: idArea_, ticket: value_});
-    const headers = new HttpHeaders({'Content-Type':'application/json'});
-    return this.http.post(this.address  + "/checkTicketAreaAccess", myData, {headers: headers})
-  }
-
+  
   activeGpioSuccess(){
     let myData = JSON.stringify({id: this.dataInfo.totemId});
     const headers = new HttpHeaders({'Content-Type':'application/json'});

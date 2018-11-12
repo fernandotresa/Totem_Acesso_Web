@@ -240,7 +240,7 @@ export class MultiplePage {
       this.ticketNotSold(ticket.id_estoque_utilizavel)
     else {
 
-      this.http.checkTicketExist(ticket.id_estoque_utilizavel).subscribe(data => {                
+      this.http.checkTicketExistMultiple(ticket.id_estoque_utilizavel).subscribe(data => {                
         this.checkTicketExist(data, ticket)    
       }) 
     }
@@ -297,7 +297,7 @@ export class MultiplePage {
         this.ticketNotSold(element.id_estoque_utilizavel)
 
       else {
-        this.http.checkTicket(element.id_estoque_utilizavel).subscribe(data => {      
+        this.http.checkTicketMultiple(element.id_estoque_utilizavel).subscribe(data => {      
           this.checkTicket(data, element)
         }) 
       }      
@@ -334,7 +334,7 @@ export class MultiplePage {
   checkTicketContinue(ticketActual){    
     console.log('checkTicketContinue', ticketActual.id_estoque_utilizavel)
 
-    this.http.checkTicketContinue(ticketActual.id_estoque_utilizavel).subscribe(data => {                  
+    this.http.checkTicketContinueMultiple(ticketActual.id_estoque_utilizavel).subscribe(data => {                  
       this.checkTicketContinueCallback(data, ticketActual)     
     })  
   }
@@ -589,7 +589,7 @@ export class MultiplePage {
 
     let self = this
 
-    this.http.useTicket(ticket.id_estoque_utilizavel).subscribe( () => {
+    this.http.useTicketMultiple(ticket.id_estoque_utilizavel).subscribe( () => {
       
       console.log('Ticket usado', ticket)      
 
