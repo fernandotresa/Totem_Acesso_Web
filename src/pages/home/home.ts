@@ -374,7 +374,7 @@ export class HomePage {
       this.ticketAlreadUsedFinish(data)
 
     else if(data.success[0].callback == 11)
-      this.ticketAccessCountPassNotOk(data)
+      this.ticketAccessCountPassNotOk(data)    
 
     else if(data.success[0].callback == 100)
       this.useTicket(ticketTmp)
@@ -410,7 +410,7 @@ export class HomePage {
     let message = 'Limite: ' + moment(data.data_log_venda).hours(tempo_validade).format("L");        
     this.showError(this.dataInfo.accessDenied, message, id_estoque_utilizavel)        
   }
-
+  
   ticketAccessTimeDoorNotOk(ticket){      
     let data = ticket.success[0].result[0]
     let id_estoque_utilizavel = data.id_estoque_utilizavel
