@@ -1,5 +1,5 @@
 {
   "addressServer": "http://localhost:8085",
-  "timeMessage": 500,
+  "timeMessage": 1500,
   "timeMessageHistory": 6000
 }

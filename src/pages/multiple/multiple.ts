@@ -249,14 +249,14 @@ export class MultiplePage {
 
   ticketNotSold(ticket){  
     let self = this
+    self.totalChecksNotOk++
 
     this.allTickets.success.forEach(element => {
 
       if(element.id_estoque_utilizavel == ticket){        
         element.data_log_venda = ''
         element.alerta  = self.dataInfo.ticketNotSoldedMsg
-        element.MODIFICADO  = true
-        self.totalChecksNotOk++
+        element.MODIFICADO  = true        
       }
     });
   }  
@@ -278,14 +278,14 @@ export class MultiplePage {
     console.log(this.dataInfo.accessDenied, ticket)
 
     let self = this
+    self.totalChecksNotOk++
 
     this.allTickets.success.forEach(element => {
 
       if(element.id_estoque_utilizavel == ticket){              
         element.data_log_venda = 'Ticket inexistente'
         element.alerta  = self.dataInfo.ticketNotSoldedMsg
-        element.MODIFICADO  = true
-        self.totalChecksNotOk++
+        element.MODIFICADO  = true        
       }  
     });
   }
@@ -319,6 +319,7 @@ export class MultiplePage {
     console.log('checkTicketAreaAccessDenied: ', ticket)
 
     let self = this
+    self.totalChecksNotOk++
 
     this.allTickets.success.forEach(element => {
 
@@ -326,8 +327,7 @@ export class MultiplePage {
         let dateSell = moment(element.data_log_venda).format("L");      
         element.data_log_venda = dateSell            
         element.alerta  = self.dataInfo.accessDenied
-        element.MODIFICADO  = true
-        self.totalChecksNotOk++
+        element.MODIFICADO  = true        
       }
     });
   } 
@@ -384,6 +384,7 @@ export class MultiplePage {
 
   ticketValidityTimeNotOk(ticket){    
     let self = this
+    self.totalChecksNotOk++
     let tempo_validade = ticket.tempo_validade    
     let message = 'Limite: ' + moment(ticket.data_log_venda).hours(tempo_validade).format("L");        
     
@@ -393,8 +394,7 @@ export class MultiplePage {
         let dateSell = moment(element.data_log_venda).format("L");      
         element.data_log_venda = dateSell            
         element.alerta  = message
-        element.MODIFICADO  = true
-        self.totalChecksNotOk++
+        element.MODIFICADO  = true        
       }
     });
   }
@@ -413,6 +413,7 @@ export class MultiplePage {
 
   ticketValidityNotSame(ticket){    
     let self = this
+    self.totalChecksNotOk++
     let message = 'Limite: ' + moment(ticket.data_log_venda).format("L")    
 
     this.allTickets.success.forEach(element => {
@@ -421,8 +422,7 @@ export class MultiplePage {
         let dateSell = moment(element.data_log_venda).format("L");      
         element.data_log_venda = dateSell
         element.alerta  = message
-        element.MODIFICADO  = true
-        self.totalChecksNotOk++
+        element.MODIFICADO  = true        
       }
     });
   }
@@ -480,6 +480,7 @@ export class MultiplePage {
 
   ticketAccessTimeDoorNotOk(ticket){    
     let self = this
+    self.totalChecksNotOk++
     let message = 'Limite: ' + moment(ticket.data_log_venda).add(ticket.horas_porta_acesso, 'hours').format("LT");
     
     this.allTickets.success.forEach(element => {
@@ -489,8 +490,7 @@ export class MultiplePage {
         let dateSell = moment(element.data_log_venda).format("L");      
         element.data_log_venda = dateSell            
         element.alerta  = message
-        element.MODIFICADO  = true
-        self.totalChecksNotOk++
+        element.MODIFICADO  = true        
       }
     });
   }
@@ -540,6 +540,7 @@ export class MultiplePage {
   ticketAccessCountPassNotOk(ticket){    
 
    let self = this
+   self.totalChecksNotOk++
    
    this.allTickets.success.forEach(element => {
 
@@ -547,8 +548,7 @@ export class MultiplePage {
       let dateSell = moment(element.data_log_venda).format("L");      
       element.data_log_venda = dateSell
       element.alerta  = this.dataInfo.accessCountLimitPassed
-      element.MODIFICADO  = true
-      self.totalChecksNotOk++
+      element.MODIFICADO  = true      
      }
     });
   }
@@ -566,6 +566,7 @@ export class MultiplePage {
   ticketAlreadUsedFinish(ticket, ticketActual){   
     console.log('ticketAlreadUsedFinish', ticketActual.id_estoque_utilizavel)
     let self = this
+    self.totalChecksNotOk++
     
     this.allTickets.success.forEach(element => {
 
@@ -576,8 +577,7 @@ export class MultiplePage {
         let dateSell = moment(element.data_log_venda).format("L");      
         element.data_log_venda = dateSell
         element.alerta  =  "Utilizado em: " + element.nome_ponto_acesso + " - " + statusTicketStart
-        element.MODIFICADO  = true
-        self.totalChecksNotOk++
+        element.MODIFICADO  = true        
        }
       });   
   }
@@ -593,6 +593,7 @@ export class MultiplePage {
     this.http.useTicketMultiple(ticket.id_estoque_utilizavel).subscribe( () => {
       
       console.log('Ticket usado', ticket)      
+      self.totalChecksOk++
 
       this.allTickets.success.forEach(element => {
 
@@ -600,9 +601,7 @@ export class MultiplePage {
           let dateSell = moment(element.data_log_venda).format("L");      
           element.data_log_venda = dateSell
           element.message  = self.dataInfo.alreadyOk
-          element.MODIFICADO  = true
-
-          self.totalChecksOk++
+          element.MODIFICADO  = true          
         }
       });
     })

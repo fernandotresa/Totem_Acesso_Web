@@ -429,19 +429,19 @@ export class HomePage {
   }
 
   ticketAccessCountPassNotOk(ticket){
-    let data = ticket.success[0].result[0]
-    let id_estoque_utilizavel = data.id_estoque_utilizavel
-
-    this.showError(this.dataInfo.accessDenied, this.dataInfo.accessCountLimitPassed, id_estoque_utilizavel)    
+    this.ticketAlreadUsedFinish(ticket)
   }
 
-  ticketAlreadUsedFinish(ticket){    
+  ticketAlreadUsedFinish(ticket){   
+    
+    console.log(ticket)
+
     let data = ticket.success[0].result[0]
     let id_estoque_utilizavel = data.id_estoque_utilizavel
+    let nome_ponto_acesso = data.nome_ponto_acesso
 
-    //this.statusTicketUsedOn = data.nome_ponto_acesso
     this.statusTicketStart = moment(data.data_log_utilizacao).format("L");      ;
-    let message = this.dataInfo.ticketAlreadyUsed + ' - ' + this.statusTicketStart
+    let message = this.dataInfo.ticketAlreadyUsed + ' - ' + nome_ponto_acesso + '- ' + this.statusTicketStart
     this.showError(this.dataInfo.accessDenied, message, id_estoque_utilizavel)    
   }
 
