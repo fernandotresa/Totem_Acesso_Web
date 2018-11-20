@@ -295,13 +295,13 @@ export class HomePage {
 
   showGpioError(){
     this.http.activeGpioError().subscribe(data => {
-      console.log(data)
+      console.log("showGpioError")
     })
   }
 
   showGpioSuccess(){
     this.http.activeGpioSuccess().subscribe(data => {
-      console.log(data)
+      console.log("showGpioSuccess")
     })
   }
 
@@ -353,10 +353,10 @@ export class HomePage {
       this.ticketNotSold(ticketTmp)
 
     else if(data.success[0].callback == 3)
-      this.checkTicketAreaAccessDenied(ticketTmp)
+      this.checkTicketAreaAccessDenied(ticketTmp, data.success[0].result)
 
     else if(data.success[0].callback == 4)
-      this.checkTicketAreaAccessDenied(ticketTmp)
+      this.checkTicketAreaAccessDenied(ticketTmp, data.success[0].result)
 
     else if(data.success[0].callback == 5)
       this.ticketValidityNotSame(data)
@@ -388,8 +388,15 @@ export class HomePage {
     this.showError(this.dataInfo.accessDenied, this.dataInfo.ticketNotSoldedMsg, ticket)
   }
 
-  checkTicketAreaAccessDenied(ticket){
-    this.showError(this.dataInfo.accessDenied, this.dataInfo.ticketNotAllowed, ticket)
+  checkTicketAreaAccessDenied(ticket, data){
+    let pontos = ""
+
+    data.forEach(element => {
+      pontos += " - " + element.nome_ponto_acesso 
+    });    
+
+    let msg = this.dataInfo.ticketNotAllowed + this.dataInfo.titleTicketAllowedAccessPoints + pontos
+    this.showError(this.dataInfo.accessDenied, msg, ticket)
   }    
  
   ticketValidityNotSame(ticket){       
@@ -481,6 +488,8 @@ export class HomePage {
 
     ticket.success.forEach(element => {
 
+      console.log(element)
+
       let validity = element.fk_id_validade
 
       if(validity <= 2)
@@ -518,7 +527,7 @@ export class HomePage {
   }
 
   setMultiple(){      
-      this.navCtrl.push('Multiple')        
+      this.navCtrl.push('Multiple')
   }      
 
 }

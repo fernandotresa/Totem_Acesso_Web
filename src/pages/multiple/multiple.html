@@ -54,38 +54,53 @@
 
 <ion-footer color="transparent">
 
-    <ion-row>
-        <ion-col class="fs-15 fw-600 pdl-0">
-            <button style="vertical-align: 5%;" ion-button item-right icon-only color="primary" clear outline>
-                <ion-icon name="alert"></ion-icon>
-            </button>            
+<ion-toolbar color="white_">  
+
+    <ion-grid>                  
+        <ion-row>
+            
+        <ion-col col-4>  
+
+            <div class="options">
+            
+                <ion-col>  
+                    <ion-fab>
+                        <button ion-fab color="primary" (click)="showHistory()" [disabled]="!inputVisible">
+                            <h3 class="fs-15 fw-600">{{totalChecks}}</h3>                    
+                        </button>
+                    </ion-fab>  
+                </ion-col> 
+
+                <ion-col>  
+                    <ion-fab>
+                        <button ion-fab color="secondary" (click)="setMultiple()"  [disabled]="!inputVisible">                            
+                            <h3 class="fs-15 fw-600 mgb-10">{{totalChecksOk}}</h3>
+                        </button>
+                    </ion-fab>  
+                </ion-col>
+        
+                <ion-col>  
+                    <ion-fab>
+                        <button ion-fab color="danger" (click)="decrementCounter()" [disabled]="!inputVisible">
+                            <h3 class="fs-15 fw-600 mgb-10">{{totalChecksNotOk}}</h3>
+                        </button>
+                    </ion-fab>  
+                </ion-col>  
+
+            </div>
+
         </ion-col>
 
-        <ion-col>
-            <h3 class="fs-15 fw-600 mgb-10">{{totalChecks}}</h3>
+        <ion-col col-8>                                  
+            <div class="logo-bottom">
+                <img src="assets/imgs/logo3a.png"/>
+            </div>
         </ion-col>
 
-        <ion-col class="fs-15 fw-600 pdl-0">
-            <button style="vertical-align: 5%;" ion-button item-right icon-only color="secondary" clear outline>
-                <ion-icon name="checkmark-circle"></ion-icon>
-            </button>            
-        </ion-col>
+        </ion-row>  
 
-        <ion-col>
-            <h3 class="fs-15 fw-600 mgb-10">{{totalChecksOk}}</h3>
-        </ion-col>
+        </ion-grid>       
 
-        <ion-col class="fs-15 fw-600 pdl-0">
-            <button style="vertical-align: 5%;" ion-button item-right icon-only color="danger" clear outline>
-                <ion-icon name="remove-circle"></ion-icon>
-            </button>            
-        </ion-col>    
-
-        <ion-col>
-            <h3 class="fs-15 fw-600 mgb-10">{{totalChecksNotOk}}</h3>
-        </ion-col>
-
-      </ion-row>      
-
+    </ion-toolbar>
     
     </ion-footer>

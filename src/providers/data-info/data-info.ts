@@ -40,6 +40,8 @@ export class DataInfoProvider {
   isLoading: string =  "Carregando"
   titleGeneral: string = "Carregando"
   ticketNotAllowed: string = "Área não permitida"
+  titleTicketAllowedAccessPoints: string = "- Acesso aos pontos: "
+  titleDateSaleNotExist: string = "'Ticket inexistente'"
   welcomeMsg: string = "Seja bem vindo!"
   pleaseWait: string = "Favor aguarde"
   atention: string = "Atenção"   

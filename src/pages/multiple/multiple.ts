@@ -1,5 +1,5 @@
 import { Component, ViewChild } from '@angular/core';
-import { IonicPage, NavController, NavParams, } from 'ionic-angular';
+import { IonicPage, NavController, NavParams, Events} from 'ionic-angular';
 import { HttpdProvider } from '../../providers/httpd/httpd';
 import { DatabaseProvider } from '../../providers/database/database';
 import { DataInfoProvider } from '../../providers/data-info/data-info'
@@ -34,17 +34,40 @@ export class MultiplePage {
     public uiUtils: UiUtilsProvider,     
     public db: DatabaseProvider,
     public navParams: NavParams,  
+    public events: Events,
     public http: HttpdProvider) {      
 
       this.setIntervalFocus()
+      this.goBack()
   }
 
-  ionViewDidLoad() {
-    
+  ionViewDidLoad() {    
     this.goBack()
     this.setFocus()
-
     this.totemWorking()
+  }
+
+  ngOnDestroy() {    
+    this.events.unsubscribe('totem:updated');		
+    this.events.unsubscribe('socket:pageMultiple');		
+    this.events.unsubscribe('socket:decrementCounter');		
+    this.events.unsubscribe('socket:pageHistory');		
+  }
+
+  subscribeStuff(){
+    let self = this
+    
+    this.events.subscribe('socket:pageMultiple', () => {
+      self.goBack()
+    });
+
+    this.events.subscribe('socket:pageHistory', () => {
+      self.goBack()
+    });
+
+    this.events.subscribe('socket:decrementCounter', () => {
+      self.goBack()
+    });
   }
 
   goBack(){
@@ -53,12 +76,12 @@ export class MultiplePage {
     setTimeout(function(){ 
 
       if(self.searchTicket.length == 0)
-        self.navCtrl.popToRoot()
+        self.navCtrl.setRoot('Home')
 
       else {
 
         if(this.total > 2){
-          self.navCtrl.popToRoot()
+          self.navCtrl.setRoot('Home')
           this.total = 0
 
         } else {
@@ -283,7 +306,7 @@ export class MultiplePage {
     this.allTickets.success.forEach(element => {
 
       if(element.id_estoque_utilizavel == ticket){              
-        element.data_log_venda = 'Ticket inexistente'
+        element.data_log_venda = self.dataInfo.titleDateSaleNotExist
         element.alerta  = self.dataInfo.ticketNotSoldedMsg
         element.MODIFICADO  = true        
       }  
