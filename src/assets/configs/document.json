@@ -1,5 +1,6 @@
 {
   "addressServer": "http://localhost:8085",
   "timeMessage": 1500,
-  "timeMessageHistory": 15000
+  "timeMessageHistory": 15000,
+  "maxTicketsMultiple": 100
 }

@@ -12,6 +12,7 @@ export class DataInfoProvider {
   tipoPontoAcesso: number = 1;
   timeMessage: number = 3000
   timeMessageHistory: number = 6000
+  maxTicketsMultiple: number = 100
   
   backgroundIdGreen: number = 1
   backgroundIdRed: number = 2
@@ -42,6 +43,7 @@ export class DataInfoProvider {
   ticketNotAllowed: string = "Área não permitida"
   titleTicketAllowedAccessPoints: string = "- Acesso aos pontos: "
   titleDateSaleNotExist: string = "'Ticket inexistente'"
+  titleProcessFinished: string = "Processo finalizado"
   welcomeMsg: string = "Seja bem vindo!"
   pleaseWait: string = "Favor aguarde"
   atention: string = "Atenção"   
@@ -94,6 +96,7 @@ export class DataInfoProvider {
     this.addressServer =  this.configurationService.getValue<string>("addressServer");
     this.timeMessage =  this.configurationService.getValue<number>("timeMessage");
     this.timeMessageHistory =  this.configurationService.getValue<number>("timeMessageHistory");
+    this.maxTicketsMultiple =  this.configurationService.getValue<number>("maxTicketsMultiple");
 
     console.log('Endereço do servidor:', this.addressServer)
     console.log('Tempo da mensagem:', this.timeMessage)

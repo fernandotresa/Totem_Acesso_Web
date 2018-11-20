@@ -38,6 +38,7 @@ export class MultiplePage {
     public http: HttpdProvider) {      
 
       this.setIntervalFocus()
+      this.subscribeStuff()
       this.goBack()
   }
 
@@ -48,7 +49,6 @@ export class MultiplePage {
   }
 
   ngOnDestroy() {    
-    this.events.unsubscribe('totem:updated');		
     this.events.unsubscribe('socket:pageMultiple');		
     this.events.unsubscribe('socket:decrementCounter');		
     this.events.unsubscribe('socket:pageHistory');		
@@ -132,8 +132,7 @@ export class MultiplePage {
       if(allOk){
           self.totemWorking()
           clearInterval(timeOutTotal)
-          self.uiUtils.showToast('Processo finalizado')
-
+          self.uiUtils.showToast(self.dataInfo.titleProcessFinished)
       }
         
     }, 5000);      
@@ -166,7 +165,7 @@ export class MultiplePage {
     }
             
     }).catch(error => {
-      console.log(error)
+      console.error(error)
       self.uiUtils.showToast(this.dataInfo.checkInputs)
     })
       
@@ -215,6 +214,8 @@ export class MultiplePage {
   checkInputs(){
     return new Promise<boolean>((resolve, reject) => { 
 
+      let total =  Number(this.searchTicketEnd) - Number(this.searchTicket) 
+
       if(this.searchTicket >= this.searchTicketEnd)     
         reject("this.searchTicket >= this.searchTicketEnd"); 
       
@@ -223,6 +224,9 @@ export class MultiplePage {
   
       else if(this.searchTicketEnd.length < 8)
         reject("this.searchTicket.length < 8"); 
+
+      else if( total > this.dataInfo.maxTicketsMultiple )
+        reject("total > maxTicketsMultiple"); 
 
       resolve(true); 
       
