@@ -449,7 +449,7 @@ export class MultiplePage {
       this.ticketAccessTimeDoor(ticket, ticketActual)
     }
     else if(mesmo_dia_porta_acesso > 0){
-      this.ticketAlreadUsedFinish(ticket, ticketActual)
+      this.ticketAccessSameDay(ticket, ticketActual)
     }
     else if(unica_porta_acesso > 0){
       this.ticketAccessOnlyone(ticket, ticketActual)
@@ -482,6 +482,38 @@ export class MultiplePage {
     let self = this
     self.totalChecksNotOk++
     let message = 'Limite: ' + moment(ticket.data_log_venda).add(ticket.horas_porta_acesso, 'hours').format("LT");
+    
+    this.allTickets.success.forEach(element => {
+
+      if(element.id_estoque_utilizavel == ticket.id_estoque_utilizavel){    
+        
+        let dateSell = moment(element.data_log_venda).format("L");      
+        element.data_log_venda = dateSell            
+        element.alerta  = message
+        element.MODIFICADO  = true        
+      }
+    });
+  }
+
+  ticketAccessSameDay(ticket, ticketActual){
+    console.log('ticketAccessSameDay', ticketActual.id_estoque_utilizavel) 
+
+    let until =  moment(ticket.data_log_venda).format();
+    let now = moment().format()                  
+    let isSame = moment(until).isSame(now, 'day');    
+    
+    if(isSame){
+      this.useTicket(ticketActual)
+      
+    } else {
+      this.ticketAccessSameDayNotOk(ticketActual)      
+    }
+  }
+
+  ticketAccessSameDayNotOk(ticket){
+    let self = this
+    self.totalChecksNotOk++
+    let message = 'Limite: ' + moment(ticket.data_log_venda).format("LT");
     
     this.allTickets.success.forEach(element => {
 
