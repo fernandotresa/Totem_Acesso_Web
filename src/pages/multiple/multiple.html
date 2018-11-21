@@ -27,6 +27,7 @@
   <ion-grid *ngIf="! isLoading">
     <ion-row wrap>
       <ion-col width-33 *ngFor="let command of (allTickets)?.success">        
+          
         <ion-card>
             
             <ion-card-header style="border-top: 3px solid green; border-bottom: 3px solid green; margin-bottom: 5px;" *ngIf="command.message">

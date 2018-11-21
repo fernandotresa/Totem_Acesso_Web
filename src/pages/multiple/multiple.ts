@@ -20,8 +20,9 @@ export class MultiplePage {
   inputVisible: Boolean = true
   isLoading: Boolean = true  
 
-  totalChecks: number = 0
+  ticketsArray: any = []
 
+  totalChecks: number = 0
   totalChecksOk: number = 0
   totalChecksNotOk: number = 0
 
@@ -158,7 +159,9 @@ export class MultiplePage {
         self.isLoading = true
 
         self.http.checkMultipleTickets(self.searchTicket, self.searchTicketEnd)
-        .subscribe( data => {            
+        .subscribe( data => {  
+
+          console.log(data)          
 
         self.searchMultipleCallback(data)                
       })       
@@ -242,7 +245,7 @@ export class MultiplePage {
       this.searchCallbackNone()    
 
     else 
-      this.searchCallbackContinue(ticket)          
+      this.searchCallbackContinue(ticket) 
   }
 
 
@@ -280,7 +283,7 @@ export class MultiplePage {
 
     this.allTickets.success.forEach(element => {
 
-      if(element.id_estoque_utilizavel == ticket){        
+      if(element.id_estoque_utilizavel == ticket){            
         element.data_log_venda = ''
         element.alerta  = self.dataInfo.ticketNotSoldedMsg
         element.MODIFICADO  = true        
@@ -309,7 +312,7 @@ export class MultiplePage {
 
     this.allTickets.success.forEach(element => {
 
-      if(element.id_estoque_utilizavel == ticket){              
+      if(element.id_estoque_utilizavel == ticket){         
         element.data_log_venda = self.dataInfo.titleDateSaleNotExist
         element.alerta  = self.dataInfo.ticketNotSoldedMsg
         element.MODIFICADO  = true        
@@ -350,7 +353,9 @@ export class MultiplePage {
 
     this.allTickets.success.forEach(element => {
 
-      if(element.id_estoque_utilizavel == ticket){   
+      if(element.id_estoque_utilizavel == ticket){  
+        
+
         let dateSell = moment(element.data_log_venda).format("L");      
         element.data_log_venda = dateSell            
         element.alerta  = self.dataInfo.accessDenied
@@ -370,11 +375,12 @@ export class MultiplePage {
   checkTicketContinueCallback(ticket, ticketActual){    
     console.log('checkTicketContinueCallback', ticketActual.id_estoque_utilizavel)
 
-    if(ticket.success.length == 0){
+    if(ticket.success.length == 0)
       this.ticketNotExist(ticketActual.id_estoque_utilizavel)
-    } else {
+
+   else 
       this.ticketCheckValidity(ticket, ticketActual)
-    }
+
   }  
 
   ticketCheckValidity(ticket, ticketActual){    
@@ -418,6 +424,8 @@ export class MultiplePage {
     this.allTickets.success.forEach(element => {
 
       if(element.id_estoque_utilizavel == ticket.id_estoque_utilizavel){    
+        
+
         let dateSell = moment(element.data_log_venda).format("L");      
         element.data_log_venda = dateSell            
         element.alerta  = message
@@ -446,6 +454,8 @@ export class MultiplePage {
     this.allTickets.success.forEach(element => {
 
       if(element.id_estoque_utilizavel == ticket.id_estoque_utilizavel){  
+        
+
         let dateSell = moment(element.data_log_venda).format("L");      
         element.data_log_venda = dateSell
         element.alerta  = message
@@ -456,7 +466,7 @@ export class MultiplePage {
 
   ticketValidityInfinite(ticket){   
     console.log('ticketValidityInfinite', ticket.id_estoque_utilizavel)
-    this.useTicket(ticket)    
+    this.checkValidityOk(ticket, ticket.id_estoque_utilizavel)  
   }
 
   checkValidityOk(ticket, ticketActual){   
@@ -514,6 +524,7 @@ export class MultiplePage {
 
       if(element.id_estoque_utilizavel == ticket.id_estoque_utilizavel){    
         
+
         let dateSell = moment(element.data_log_venda).format("L");      
         element.data_log_venda = dateSell            
         element.alerta  = message
@@ -546,6 +557,7 @@ export class MultiplePage {
 
       if(element.id_estoque_utilizavel == ticket.id_estoque_utilizavel){    
         
+
         let dateSell = moment(element.data_log_venda).format("L");      
         element.data_log_venda = dateSell            
         element.alerta  = message
@@ -604,6 +616,8 @@ export class MultiplePage {
    this.allTickets.success.forEach(element => {
 
     if(element.id_estoque_utilizavel == ticket.id_estoque_utilizavel){    
+      
+
       let dateSell = moment(element.data_log_venda).format("L");      
       element.data_log_venda = dateSell
       element.alerta  = this.dataInfo.accessCountLimitPassed
@@ -624,12 +638,14 @@ export class MultiplePage {
 
   ticketAlreadUsedFinish(ticket, ticketActual){   
     console.log('ticketAlreadUsedFinish', ticketActual.id_estoque_utilizavel)
+
     let self = this
     self.totalChecksNotOk++
     
     this.allTickets.success.forEach(element => {
 
       if(element.id_estoque_utilizavel == ticketActual.id_estoque_utilizavel){     
+        
 
         let statusTicketStart = moment(element.data_log_utilizacao).format("L");   
 
@@ -657,6 +673,8 @@ export class MultiplePage {
       this.allTickets.success.forEach(element => {
 
         if(element.id_estoque_utilizavel == ticket.id_estoque_utilizavel){   
+          
+
           let dateSell = moment(element.data_log_venda).format("L");      
           element.data_log_venda = dateSell
           element.message  = self.dataInfo.alreadyOk
