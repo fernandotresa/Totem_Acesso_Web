@@ -60,20 +60,28 @@ export class HomePage {
     public navParams: NavParams,   
     public gpios: GpiosProvider,  
     public events: Events,
-    public http: HttpdProvider) {             
+    public http: HttpdProvider) { 
+      
+      
   }  
 
   ngOnDestroy() {    
+    this.unsubscribeStuff()  
+  }
+
+  unsubscribeStuff(){
     this.events.unsubscribe('totem:updated');		
     this.events.unsubscribe('socket:pageMultiple');		
     this.events.unsubscribe('socket:decrementCounter');		
     this.events.unsubscribe('socket:pageHistory');		
   }
     
-  ionViewDidLoad() {
-    this.updatedInfo = this.navParams.get('updatedInfo')
-    this.events.unsubscribe('totem:updated');
+  ionViewDidLoad() {           
+    this.reload()
+  }
 
+  reload(){
+    this.updatedInfo = this.navParams.get('updatedInfo')
     this.updating = false
 
     if(this.updatedInfo == undefined)
@@ -100,7 +108,7 @@ export class HomePage {
       this.decrementCounter()
     });
 
-    this.events.subscribe('totem:updated', (data) => {
+    this.events.subscribe('totem:updated', (data) => {      
       self.loadConfigCallback(data)
       self.events.unsubscribe('totem:updated');	
     });
@@ -209,22 +217,7 @@ export class HomePage {
       this.updating = false
       this.updatedInfo = true
     })      
-  }  
-
-  loadConfig(){       
-    let self = this
-    this.areaId = this.dataInfo.areaId   
-    
-    if(self.areaId == undefined){
-      self.uiUtils.showToast(self.dataInfo.noConfiguration)
-
-    } else {     
-      this.http.getAreaInfo(this.areaId).subscribe(data => {            
-        self.loadConfigCallback(data)            
-      });
-
-    }    
-  }
+  }    
 
   loadConfigCallback(data){
     console.log(this.dataInfo.configuringTotem, data.success[0])
@@ -234,8 +227,7 @@ export class HomePage {
       this.counter = "0"
     }
 
-    else {
-
+    else {      
       let self = this
       let element = data.success[0]
     
@@ -244,10 +236,13 @@ export class HomePage {
       self.areaId = element.fk_id_area_acesso    
       self.pontoId = element.fk_id_ponto_acesso
       self.areaName = self.title
-      self.dataInfo.tipoPontoAcesso = element.tipo_ponto_acesso
-        
+      self.dataInfo.tipoPontoAcesso = element.tipo_ponto_acesso        
       self.startTimer()
+      self.idTypeBackgrond = self.dataInfo.backgroundIdNone
       self.totemWorking()
+
+      console.log(self.title, self.idTypeBackgrond, self.isLoading)
+
       self.uiUtils.showToast(this.dataInfo.inicializedSuccessfully)
     }    
   }
@@ -284,7 +279,7 @@ export class HomePage {
   totemWorking(){
     this.inputVisible = true    
     this.isLoading = false
-    this.updating = false
+    this.updating = false        
   }
 
   totemNotWorking(){

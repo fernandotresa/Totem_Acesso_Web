@@ -5,6 +5,7 @@ import { Events } from 'ionic-angular';
 @Injectable()
 export class DataInfoProvider {
   
+  infoTotem: any;
   areaId: number =  0  
   portaId: number =  0  
   totemId: number =  0
@@ -105,6 +106,7 @@ export class DataInfoProvider {
 
   configureTotem(data){    
 
+    this.infoTotem = data
     let self = this
 
       data.success.forEach(element => {

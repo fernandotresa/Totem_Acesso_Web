@@ -40,7 +40,6 @@ export class MultiplePage {
 
       this.setIntervalFocus()
       this.subscribeStuff()
-      this.goBack()
   }
 
   ionViewDidLoad() {    
@@ -72,17 +71,20 @@ export class MultiplePage {
   }
 
   goBack(){
+    console.log('???')
+    
     let self = this
 
     setTimeout(function(){ 
 
-      if(self.searchTicket.length == 0)
-        self.navCtrl.setRoot('Home')
+      if(self.searchTicket.length == 0){
+        self.navCtrl.pop()        
+      }        
 
       else {
 
         if(this.total > 2){
-          self.navCtrl.setRoot('Home')
+          self.navCtrl.pop()
           this.total = 0
 
         } else {
@@ -110,7 +112,7 @@ export class MultiplePage {
       setTimeout(function(){ 
 
         if(self.searchTicket.length == 0 && self.searchTicketEnd.length == 0)            
-          self.navCtrl.popToRoot()
+          self.navCtrl.setRoot('Home')
           
       }, 3000);      
   }

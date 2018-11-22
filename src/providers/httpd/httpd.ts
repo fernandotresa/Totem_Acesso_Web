@@ -7,7 +7,7 @@ export class HttpdProvider {
 
   data:any = {};
   
-  address : string = 'http://192.168.0.22:8085'    
+  address : string = ''    
         
   constructor(public http: HttpClient, public dataInfo: DataInfoProvider) {
     console.log('Hello HttpdProvider Provider');
