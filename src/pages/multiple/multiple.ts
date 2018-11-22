@@ -470,12 +470,13 @@ export class MultiplePage {
   }
 
   checkValidityOk(ticket, ticketActual){   
-    console.log('checkValidityOk', ticketActual) 
+    console.log('checkValidityOk', ticketActual.id_estoque_utilizavel) 
+
     this.checkDoorRules(ticket, ticketActual)
   }
 
   checkDoorRules(ticket, ticketActual){
-    console.log('checkDoorRules', ticketActual) 
+    console.log('checkDoorRules', ticketActual.id_estoque_utilizavel) 
 
     let horas_porta_acesso = ticket.horas_porta_acesso
     let mesmo_dia_porta_acesso = ticket.mesmo_dia_porta_acesso
@@ -575,25 +576,27 @@ export class MultiplePage {
   }
 
   ticketAccessCountPass(ticket, ticketActual){
+
     console.log('ticketAccessCountPass', ticketActual) 
 
-    this.http.checkTicketUsedTotal(ticketActual).subscribe(data => {
+
+    this.http.checkTicketUsedTotal(ticketActual.id_estoque_utilizavel).subscribe(data => {
       this.ticketAccessCountPassCallback(data, ticketActual)      
     })
   }
 
   ticketAccessCountPassCallback(ticket, ticketActual){    
 
-    console.log('ticketAccessCountPassCallback', ticketActual) 
+    console.log('ticketAccessCountPassCallback', ticketActual.id_estoque_utilizavel) 
 
     if(ticket.success.length == 0)
-      this.useTicket(ticketActual)
+      this.useTicket(ticketActual.id_estoque_utilizavel)
     else 
       this.ticketAccessCountPassContinue(ticket, ticketActual)        
   }
 
   ticketAccessCountPassContinue(ticket, ticketActual){   
-    console.log('ticketAccessCountPassContinue', ticketActual)  
+    console.log('ticketAccessCountPassContinue', ticketActual.id_estoque_utilizavel)  
     
     ticket.success.forEach(element => {
 
@@ -603,10 +606,10 @@ export class MultiplePage {
        console.log(numero_liberacoes, total)
 
        if(total <= numero_liberacoes)
-          this.useTicket(ticketActual)
+          this.useTicket(ticketActual.id_estoque_utilizavel)
           
         else          
-          this.ticketAccessCountPassNotOk(ticketActual)
+          this.ticketAccessCountPassNotOk(ticketActual.id_estoque_utilizavel)
     });
   }
 

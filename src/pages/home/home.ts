@@ -22,6 +22,8 @@ export class HomePage {
   areaInfo: Observable<any>;
   ticket: Observable<any>;    
   
+  decrementingCounter: Boolean = false
+  handleClearInterval: any
   idTypeBackgrond: number = this.dataInfo.backgroundIdNone;
   ticketRead: Boolean = false
 
@@ -30,7 +32,7 @@ export class HomePage {
 
   title: string = this.dataInfo.titleGeneral
   message1: string = this.dataInfo.isLoading
-  message2: string = this.dataInfo.isLoading
+  message2: string = this.dataInfo.isLoading  
       
   areaId: number = this.dataInfo.areaId
   pontoId: number = this.dataInfo.totemId
@@ -175,23 +177,30 @@ export class HomePage {
 
   goHistory(){
     
+    this.setFocus()
     this.statusTicket = this.dataInfo.already
-    this.idTypeBackgrond = this.dataInfo.backgroundIdSearch
+    this.idTypeBackgrond = this.dataInfo.backgroundIdSearch    
+    this.ticketRead = false
+    let self = this    
 
-    let self = this
-    setTimeout(function(){ 
+    clearInterval(this.handleClearInterval)
 
+    this.handleClearInterval = setTimeout(function(){ 
+      
       self.idTypeBackgrond = self.dataInfo.backgroundIdNone
       self.searchTicket = ''
       self.searching = false    
+      self.setFocus()
 
     }, 6000);
+
   }
 
   showHistory(){
 
     if(this.idTypeBackgrond !== this.dataInfo.backgroundIdSearch){
         this.goHistory()
+
     } else {
       this.idTypeBackgrond = this.dataInfo.backgroundIdNone
     }   
@@ -200,12 +209,14 @@ export class HomePage {
   decrementCounter(){
     this.updating = true
     this.updatedInfo = false
+    this.decrementingCounter = true
 
     this.http.decrementAreaCounter(this.dataInfo.areaId)
     .subscribe( () => {      
 
       this.updating = false
       this.updatedInfo = true
+      this.decrementingCounter = false
     })      
   }
 
@@ -385,17 +396,20 @@ export class HomePage {
     this.showError(this.dataInfo.accessDenied, this.dataInfo.ticketNotSoldedMsg, ticket)
   }
 
-  checkTicketAreaAccessDenied(ticket, data){
-    let pontos = ""
-
-    data.forEach(element => {
-      pontos += " - " + element.nome_ponto_acesso 
-    });    
-
+  checkTicketAreaAccessDenied(ticket, data){   
+    let pontos = ""        
     let msg = this.dataInfo.ticketNotAllowed 
 
-    if(this.idTypeBackgrond === this.dataInfo.backgroundIdSearch)
+    if(this.idTypeBackgrond >= this.dataInfo.backgroundIdSearch){
+
+      data.forEach(element => {
+        pontos += " - " + element.nome_ponto_acesso 
+      });
+
       msg = this.dataInfo.ticketNotAllowed + this.dataInfo.titleTicketAllowedAccessPoints + pontos
+    }
+      
+    console.log(msg)
       
 
     this.showError(this.dataInfo.accessDenied, msg, ticket)
@@ -442,8 +456,6 @@ export class HomePage {
 
   ticketAlreadUsedFinish(ticket){   
     
-    console.log(ticket)
-
     let data = ticket.success[0].result[0]
     let id_estoque_utilizavel = data.id_estoque_utilizavel
     let nome_ponto_acesso = data.nome_ponto_acesso
@@ -455,8 +467,6 @@ export class HomePage {
 
   useTicket(ticket){        
     
-    console.log(this.idTypeBackgrond)
-
     if(this.idTypeBackgrond === this.dataInfo.backgroundIdSearch){    
       this.searchOkContinue(ticket)    
 
@@ -473,14 +483,16 @@ export class HomePage {
   }
 
   searchOkContinue(ticket){
-    console.log("Procurando mais informações sobre ingresso:", ticket
-    )
+    console.log("Procurando mais informações sobre ingresso:", ticket)
+
     this.http.checkTicketQuick(ticket).subscribe(data =>{
         this.searchOkCallback(data)
     })      
   }
 
   searchOkCallback(ticket){
+
+    console.log(ticket)
     
     this.ticketRead = true
     this.idTypeBackgrond = this.dataInfo.backgroundIdSearchOk                   
@@ -502,7 +514,7 @@ export class HomePage {
 
     });
 
-    this.historyText3 = pontos    
+    this.historyText3 = pontos        
     this.backHome()   
   }
   
