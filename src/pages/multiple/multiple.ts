@@ -70,9 +70,7 @@ export class MultiplePage {
     });
   }
 
-  goBack(){
-    console.log('???')
-    
+  goBack(){    
     let self = this
 
     setTimeout(function(){ 

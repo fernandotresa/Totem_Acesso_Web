@@ -7,6 +7,7 @@ import { UiUtilsProvider } from '../../providers/ui-utils/ui-utils'
 import { Observable } from 'rxjs/Observable';
 import { Searchbar } from 'ionic-angular';
 import moment from 'moment';
+import 'moment/locale/pt-br';
 import { GpiosProvider } from '../../providers/gpios/gpios';
 
 @Component({
@@ -62,6 +63,7 @@ export class HomePage {
     public events: Events,
     public http: HttpdProvider) { 
       
+      moment.locale('pt-BR');
       
   }  
 
@@ -354,7 +356,7 @@ export class HomePage {
       this.checkTicketAreaAccessDenied(ticketTmp, data.success[0].result)
 
     else if(data.success[0].callback == 5)
-      this.ticketValidityNotSame(data)
+      this.ticketValidityNotSame(ticketTmp, data)
 
     else if(data.success[0].callback == 6)
       this.ticketValidityTimeNotOk(data)
@@ -390,18 +392,23 @@ export class HomePage {
       pontos += " - " + element.nome_ponto_acesso 
     });    
 
-    let msg = this.dataInfo.ticketNotAllowed + this.dataInfo.titleTicketAllowedAccessPoints + pontos
+    let msg = this.dataInfo.ticketNotAllowed 
+
+    if(this.idTypeBackgrond === this.dataInfo.backgroundIdSearch)
+      msg = this.dataInfo.ticketNotAllowed + this.dataInfo.titleTicketAllowedAccessPoints + pontos
+      
+
     this.showError(this.dataInfo.accessDenied, msg, ticket)
   }    
  
-  ticketValidityNotSame(ticket){       
+  ticketValidityNotSame(ticketTmp, ticket){       
     let data = ticket.success[0].result
 
-    this.history = this.dataInfo.ticketRead + data.id_estoque_utilizavel
-    this.statusTicketStart = moment(data.data_log_venda).format("L")      
-    let message = this.dataInfo.ticketExpired + moment(data.data_log_venda).format("L")    
+    this.history = this.dataInfo.ticketRead + ticketTmp
+    this.statusTicketStart = moment(data.data_log_venda).format("LL")      
+    let message = this.dataInfo.ticketExpired + moment(data.data_log_venda).format("LL")    
 
-    this.showError(this.dataInfo.accessDenied, message, data.id_estoque_utilizavel)            
+    this.showError(this.dataInfo.accessDenied, message, ticketTmp)            
   }
 
   ticketValidityTimeNotOk(ticket){    
@@ -409,7 +416,7 @@ export class HomePage {
     let id_estoque_utilizavel = data.id_estoque_utilizavel
     let tempo_validade = data.tempo_validade    
     
-    let message = 'Limite: ' + moment(data.data_log_venda).hours(tempo_validade).format("L");        
+    let message = 'Limite: ' + moment(data.data_log_venda).hours(tempo_validade).format("LL");        
     this.showError(this.dataInfo.accessDenied, message, id_estoque_utilizavel)        
   }
   
@@ -421,12 +428,11 @@ export class HomePage {
     this.showError(this.dataInfo.accessDenied, message, id_estoque_utilizavel)    
   }
 
-  ticketAccessSameDayNotOk(ticket){   
-    console.log(ticket)  
+  ticketAccessSameDayNotOk(ticket){       
     let data = ticket.success[0].result[0]
     let id_estoque_utilizavel = data.id_estoque_utilizavel
 
-    let message = 'Limite: ' + moment(data.data_log_venda).format("L");
+    let message = 'Limite: ' + moment(data.data_log_venda).format("LL");
     this.showError(this.dataInfo.accessDenied, message, id_estoque_utilizavel)    
   }
 
@@ -442,13 +448,15 @@ export class HomePage {
     let id_estoque_utilizavel = data.id_estoque_utilizavel
     let nome_ponto_acesso = data.nome_ponto_acesso
 
-    this.statusTicketStart = moment(data.data_log_utilizacao).format("L");      ;
+    this.statusTicketStart = moment(data.data_log_utilizacao).format("LL");      ;
     let message = this.dataInfo.ticketAlreadyUsed + ' - ' + nome_ponto_acesso + '- ' + this.statusTicketStart
     this.showError(this.dataInfo.accessDenied, message, id_estoque_utilizavel)    
   }
 
   useTicket(ticket){        
     
+    console.log(this.idTypeBackgrond)
+
     if(this.idTypeBackgrond === this.dataInfo.backgroundIdSearch){    
       this.searchOkContinue(ticket)    
 
@@ -459,7 +467,7 @@ export class HomePage {
       let self = this
 
       this.http.useTicket(ticket).subscribe( data => {
-        self.useTicketEnd(data)              
+        self.useTicketEnd(data, ticket)              
       })
     }    
   }
@@ -488,7 +496,7 @@ export class HomePage {
       let validity = element.fk_id_validade
 
       if(validity <= 2)
-        this.historyText2 = moment(element.data_log_venda).format("L")    
+        this.historyText2 = moment(element.data_log_venda).format("LL")    
        
       pontos += " - " + element.nome_ponto_acesso 
 
@@ -498,27 +506,27 @@ export class HomePage {
     this.backHome()   
   }
   
-  useTicketEnd(ticket){    
-
-    let self = this
+  useTicketEnd(data, ticket){    
+    
     let productType = ''
     let productSubType = ''
     this.ticketRead = true
+    this.history = this.dataInfo.ticketRead + ticket
 
-    ticket.success.forEach(element => {
+    data.success.forEach(element => {
       productType = element.nome_produto_peq
       productSubType = element.nome_subtipo_produto
     });
     
     let msg = productType + " - " + productSubType
 
-    self.statusTicket = self.dataInfo.ticketOk
-    self.idTypeBackgrond = self.dataInfo.backgroundIdGreen    
-    self.message1 = self.dataInfo.welcomeMsg              
-    self.message2 = msg
-    self.incrementCounter()
-    self.showGpioSuccess()
-    self.backHome()
+    this.statusTicket = this.dataInfo.ticketOk
+    this.idTypeBackgrond = this.dataInfo.backgroundIdGreen    
+    this.message1 = this.dataInfo.welcomeMsg              
+    this.message2 = msg
+    this.incrementCounter()
+    this.showGpioSuccess()
+    this.backHome()
   }
 
   setMultiple(){      
