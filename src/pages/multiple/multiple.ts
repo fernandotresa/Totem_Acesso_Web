@@ -37,38 +37,15 @@ export class MultiplePage {
     public navParams: NavParams,  
     public events: Events,
     public http: HttpdProvider) {      
-
-      this.setIntervalFocus()
-      this.subscribeStuff()
+            
   }
 
   ionViewDidLoad() {    
-    this.goBack()
-    this.setFocus()
+    this.goBack()    
     this.totemWorking()
-  }
-
-  ngOnDestroy() {    
-    this.events.unsubscribe('socket:pageMultiple');		
-    this.events.unsubscribe('socket:decrementCounter');		
-    this.events.unsubscribe('socket:pageHistory');		
-  }
-
-  subscribeStuff(){
-    let self = this
-    
-    this.events.subscribe('socket:pageMultiple', () => {
-      self.goBack()
-    });
-
-    this.events.subscribe('socket:pageHistory', () => {
-      self.goBack()
-    });
-
-    this.events.subscribe('socket:decrementCounter', () => {
-      self.goBack()
-    });
-  }
+    this.setFocus()
+    this.setIntervalFocus()      
+  }    
 
   goBack(){    
     let self = this
@@ -76,19 +53,8 @@ export class MultiplePage {
     setTimeout(function(){ 
 
       if(self.searchTicket.length == 0){
-        self.navCtrl.pop()        
-      }        
-
-      else {
-
-        if(this.total > 2){
-          self.navCtrl.pop()
-          this.total = 0
-
-        } else {
-          this.total++
-        }                
-      }      
+        self.navCtrl.popToRoot()
+      }                 
       
     }, 5000); 
   }
@@ -101,7 +67,7 @@ export class MultiplePage {
         if(self.searchTicket.length < 8)
             self.setFocus();        
       
-      }, 3000);      
+      }, 1000);      
   }
 
   setTimeoutBack(){
@@ -136,7 +102,7 @@ export class MultiplePage {
           self.uiUtils.showToast(self.dataInfo.titleProcessFinished)
       }
         
-    }, 5000);      
+    }, 3000);      
        
   }
 
@@ -160,9 +126,6 @@ export class MultiplePage {
 
         self.http.checkMultipleTickets(self.searchTicket, self.searchTicketEnd)
         .subscribe( data => {  
-
-          console.log(data)          
-
         self.searchMultipleCallback(data)                
       })       
     }
@@ -206,7 +169,7 @@ export class MultiplePage {
 
   setFocus(){
     if(this.searchbar)
-      this.searchbar.setFocus();          
+      this.searchbar.setFocus();
   }
 
   setFocusEnd(){   
@@ -269,11 +232,11 @@ export class MultiplePage {
 
     if(ticket.data_log_venda == undefined)
       this.ticketNotSold(ticket.id_estoque_utilizavel)
-    else {
-
-      this.http.checkTicketExistMultiple(ticket.id_estoque_utilizavel).subscribe(data => {                
-        this.checkTicketExist(data, ticket)    
-      }) 
+    else {     
+      
+      this.http.checkTicketSold(ticket.id_estoque_utilizavel).subscribe( data => {
+        this.checkSold(data)                    
+      })                  
     }
   }
 
@@ -353,12 +316,11 @@ export class MultiplePage {
 
     this.allTickets.success.forEach(element => {
 
-      if(element.id_estoque_utilizavel == ticket){  
-        
-
+      if(element.id_estoque_utilizavel == ticket){          
         let dateSell = moment(element.data_log_venda).format("L");      
-        element.data_log_venda = dateSell            
-        element.alerta  = self.dataInfo.accessDenied
+        element.data_log_venda = dateSell     
+
+        element.alerta  = self.dataInfo.accessDenied + ' - ' + self.dataInfo.ticketNotAllowed
         element.MODIFICADO  = true        
       }
     });
@@ -380,7 +342,6 @@ export class MultiplePage {
 
    else 
       this.ticketCheckValidity(ticket, ticketActual)
-
   }  
 
   ticketCheckValidity(ticket, ticketActual){    
@@ -412,18 +373,18 @@ export class MultiplePage {
     if(isAfter)
       this.checkValidityOk(ticket, ticketActual)
      else 
-      this.ticketValidityTimeNotOk(ticketActual)           
+      this.ticketValidityTimeNotOk(ticketActual.id_estoque_utilizavel)           
   }
 
   ticketValidityTimeNotOk(ticket){    
     let self = this
     self.totalChecksNotOk++
     let tempo_validade = ticket.tempo_validade    
-    let message = 'Limite: ' + moment(ticket.data_log_venda).hours(tempo_validade).format("L");        
+    let message = this.dataInfo.titleTicketInvalid + moment(ticket.data_log_venda).hours(tempo_validade).format("L");        
     
     this.allTickets.success.forEach(element => {
 
-      if(element.id_estoque_utilizavel == ticket.id_estoque_utilizavel){    
+      if(element.id_estoque_utilizavel == ticket){    
         
 
         let dateSell = moment(element.data_log_venda).format("L");      
@@ -449,7 +410,7 @@ export class MultiplePage {
   ticketValidityNotSame(ticket){    
     let self = this
     self.totalChecksNotOk++
-    let message = 'Limite: ' + moment(ticket.data_log_venda).format("L")    
+    let message = this.dataInfo.titleTicketInvalid + moment(ticket.data_log_venda).format("L")    
 
     this.allTickets.success.forEach(element => {
 
@@ -471,7 +432,6 @@ export class MultiplePage {
 
   checkValidityOk(ticket, ticketActual){   
     console.log('checkValidityOk', ticketActual.id_estoque_utilizavel) 
-
     this.checkDoorRules(ticket, ticketActual)
   }
 
@@ -503,7 +463,7 @@ export class MultiplePage {
 
   ticketAccessTimeDoor(ticket, ticketActual){
 
-    console.log('ticketAccessTimeDoor', ticketActual) 
+    console.log('ticketAccessTimeDoor', ticketActual.id_estoque_utilizavel) 
 
     let until =  moment(ticket.data_log_venda).add(ticket.horas_porta_acesso, 'hours').format();
     let now = moment().format()        
@@ -511,7 +471,7 @@ export class MultiplePage {
     let isAfter = moment(until).isAfter(now);
 
     if(isAfter){
-      this.useTicket(ticketActual)
+      this.useTicket(ticketActual.id_estoque_utilizavel)
 
     } else {
       this.ticketAccessTimeDoorNotOk(ticket)      
@@ -521,7 +481,7 @@ export class MultiplePage {
   ticketAccessTimeDoorNotOk(ticket){    
     let self = this
     self.totalChecksNotOk++
-    let message = 'Limite: ' + moment(ticket.data_log_venda).add(ticket.horas_porta_acesso, 'hours').format("LT");
+    let message = this.dataInfo.titleTicketInvalid + moment(ticket.data_log_venda).add(ticket.horas_porta_acesso, 'hours').format("LT");
     
     this.allTickets.success.forEach(element => {
 
@@ -536,14 +496,14 @@ export class MultiplePage {
   }
 
   ticketAccessSameDay(ticket, ticketActual){
-    console.log('ticketAccessSameDay', ticketActual) 
+    console.log('ticketAccessSameDay', ticketActual.id_estoque_utilizavel) 
 
     let until =  moment(ticket.data_log_venda).format();
     let now = moment().format()                  
     let isSame = moment(until).isSame(now, 'day');    
     
     if(isSame)
-      this.useTicket(ticketActual)
+      this.useTicket(ticketActual.id_estoque_utilizavel)
       
     else 
       this.ticketAccessSameDayNotOk(ticket)
@@ -553,7 +513,7 @@ export class MultiplePage {
   ticketAccessSameDayNotOk(ticket){
     let self = this
     self.totalChecksNotOk++
-    let message = 'Limite: ' + moment(ticket.data_log_venda).format("LT");
+    let message = this.dataInfo.titleTicketInvalid + moment(ticket.data_log_venda).format("LT");
     
     this.allTickets.success.forEach(element => {
 
@@ -570,15 +530,14 @@ export class MultiplePage {
   ticketAccessOnlyone(ticket, ticketActual){
     console.log('ticketAccessOnlyone', ticketActual) 
 
-    this.http.checkTicketUsed(ticketActual).subscribe(data => {
-      this.ticketAccessOnlyOneCallback(data, ticketActual)      
+    this.http.checkTicketUsed(ticketActual.id_estoque_utilizavel).subscribe(data => {
+      this.ticketAccessOnlyOneCallback(data, ticketActual.id_estoque_utilizavel)      
     })
   }
 
   ticketAccessCountPass(ticket, ticketActual){
 
     console.log('ticketAccessCountPass', ticketActual) 
-
 
     this.http.checkTicketUsedTotal(ticketActual.id_estoque_utilizavel).subscribe(data => {
       this.ticketAccessCountPassCallback(data, ticketActual)      
@@ -602,8 +561,6 @@ export class MultiplePage {
 
        let numero_liberacoes = element.numero_liberacoes        
        let total = element.TOTAL       
-
-       console.log(numero_liberacoes, total)
 
        if(total <= numero_liberacoes)
           this.useTicket(ticketActual.id_estoque_utilizavel)
@@ -679,8 +636,7 @@ export class MultiplePage {
 
     this.http.useTicketMultiple(ticket).subscribe( () => {
       
-      console.log('Ticket usado', ticket)   
-
+      console.log('Ticket usado', ticket)         
       self.totalChecksOk++
 
       this.allTickets.success.forEach(element => {

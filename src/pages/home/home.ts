@@ -70,7 +70,7 @@ export class HomePage {
   }  
 
   ngOnDestroy() {    
-    this.unsubscribeStuff()  
+    //this.unsubscribeStuff()  
   }
 
   unsubscribeStuff(){
@@ -430,7 +430,7 @@ export class HomePage {
     let id_estoque_utilizavel = data.id_estoque_utilizavel
     let tempo_validade = data.tempo_validade    
     
-    let message = 'Limite: ' + moment(data.data_log_venda).hours(tempo_validade).format("LL");        
+    let message = this.dataInfo.titleTicketInvalid + moment(data.data_log_venda).hours(tempo_validade).format("LL");        
     this.showError(this.dataInfo.accessDenied, message, id_estoque_utilizavel)        
   }
   
@@ -438,7 +438,7 @@ export class HomePage {
     let data = ticket.success[0].result[0]
     let id_estoque_utilizavel = data.id_estoque_utilizavel
 
-    let message = 'Limite: ' + moment(data.data_log_venda).add(data.horas_porta_acesso, 'hours').format("LT");
+    let message = this.dataInfo.titleTicketInvalid + moment(data.data_log_venda).add(data.horas_porta_acesso, 'hours').format("LT");
     this.showError(this.dataInfo.accessDenied, message, id_estoque_utilizavel)    
   }
 
@@ -446,7 +446,7 @@ export class HomePage {
     let data = ticket.success[0].result[0]
     let id_estoque_utilizavel = data.id_estoque_utilizavel
 
-    let message = 'Limite: ' + moment(data.data_log_venda).format("LL");
+    let message = this.dataInfo.titleTicketInvalid + moment(data.data_log_venda).format("LL");
     this.showError(this.dataInfo.accessDenied, message, id_estoque_utilizavel)    
   }
 
@@ -541,8 +541,8 @@ export class HomePage {
     this.backHome()
   }
 
-  setMultiple(){      
-      this.navCtrl.push('Multiple')
+  setMultiple(){          
+      this.navCtrl.push('Multiple')      
   }      
 
 }
