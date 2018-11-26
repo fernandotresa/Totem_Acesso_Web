@@ -85,6 +85,7 @@ export class HomePage {
   }
 
   reload(){
+    this.searchTicket = ''
     this.updatedInfo = this.navParams.get('updatedInfo')
     this.updating = false
 
@@ -407,26 +408,25 @@ export class HomePage {
       });
 
       msg = this.dataInfo.ticketNotAllowed + this.dataInfo.titleTicketAllowedAccessPoints + pontos
-    }
-      
-    console.log(msg)
-      
+    }            
 
     this.showError(this.dataInfo.accessDenied, msg, ticket)
   }    
  
   ticketValidityNotSame(ticketTmp, ticket){       
-    let data = ticket.success[0].result
+
+    let data = ticket.success[0].result[0]
+    let datalogvenda = data.data_log_venda
 
     this.history = this.dataInfo.ticketRead + ticketTmp
-    this.statusTicketStart = moment(data.data_log_venda).format("LL")      
-    let message = this.dataInfo.ticketExpired + moment(data.data_log_venda).format("LL")    
+    this.statusTicketStart = moment(datalogvenda).format("LL")      
+    let message = this.dataInfo.ticketExpired + this.statusTicketStart
 
     this.showError(this.dataInfo.accessDenied, message, ticketTmp)            
   }
 
   ticketValidityTimeNotOk(ticket){    
-    let data = ticket.success[0].result
+    let data = ticket.success[0].result.result[0]
     let id_estoque_utilizavel = data.id_estoque_utilizavel
     let tempo_validade = data.tempo_validade    
     

@@ -41,6 +41,8 @@ export class MultiplePage {
   }
 
   ionViewDidLoad() {    
+    this.searchTicket = ''
+    this.searchTicketEnd = ''
     this.goBack()    
     this.totemWorking()
     this.setFocus()
