@@ -385,6 +385,9 @@ export class HomePage {
     else if(data.success[0].callback == 11)
       this.ticketAccessCountPassNotOk(data)    
 
+    else if(data.success[0].callback == 12)
+      this.ticketAccessTimeDoorNotOkNotUsedContinue(data)
+
     else if(data.success[0].callback == 100)
       this.useTicket(ticketTmp)
   }
@@ -435,10 +438,22 @@ export class HomePage {
   }
   
   ticketAccessTimeDoorNotOk(ticket){      
-    let data = ticket.success[0].result[0]
-    let id_estoque_utilizavel = data.id_estoque_utilizavel
+    let data = ticket.success[0].result[0]  
+    let id_estoque_utilizavel = data.id_estoque_utilizavel    
+    let message = this.dataInfo.titleTicketInvalid + moment(data.data_log_venda).add(data.horas_porta_acesso, 'hours').format("LLL");
 
-    let message = this.dataInfo.titleTicketInvalid + moment(data.data_log_venda).add(data.horas_porta_acesso, 'hours').format("LT");
+    this.showError(this.dataInfo.accessDenied, message, id_estoque_utilizavel)    
+  }
+
+  ticketAccessTimeDoorNotOkNotUsedContinue(ticket){      
+    let data = ticket.success[0].result[0]
+    console.log(data)
+
+    let id_estoque_utilizavel = data.id_estoque_utilizavel
+    let data_log_utilizacao = data.data_log_utilizacao
+    
+    let message = this.dataInfo.ticketAlreadyUsed + moment(data_log_utilizacao).format("LLL");             
+        
     this.showError(this.dataInfo.accessDenied, message, id_estoque_utilizavel)    
   }
 
@@ -463,7 +478,7 @@ export class HomePage {
     this.statusTicketStart = moment(data.data_log_utilizacao).format("LL");      ;
     let message = this.dataInfo.ticketAlreadyUsed + ' - ' + nome_ponto_acesso + '- ' + this.statusTicketStart
     this.showError(this.dataInfo.accessDenied, message, id_estoque_utilizavel)    
-  }
+  }  
 
   useTicket(ticket){        
     

@@ -388,7 +388,6 @@ export class MultiplePage {
 
       if(element.id_estoque_utilizavel == ticket){    
         
-
         let dateSell = moment(element.data_log_venda).format("L");      
         element.data_log_venda = dateSell            
         element.alerta  = message
@@ -473,17 +472,36 @@ export class MultiplePage {
     let isAfter = moment(until).isAfter(now);
 
     if(isAfter){
-      this.useTicket(ticketActual.id_estoque_utilizavel)
+
+      this.http.checkTicketUsedSimple(ticketActual.id_estoque_utilizavel).subscribe(data => {           
+        this.ticketAccessTimeDoorContinue(data, ticketActual)      
+      })      
 
     } else {
+
       this.ticketAccessTimeDoorNotOk(ticket)      
     }
   }
 
+  ticketAccessTimeDoorContinue(ticket, ticketActual){
+
+    console.log('ticketAccessTimeDoorContinue', ticketActual.id_estoque_utilizavel) 
+
+    if(ticket.success.length == 0)
+      this.useTicket(ticketActual.id_estoque_utilizavel)
+
+    else {
+        this.ticketAccessTimeDoorNotOkUsed(ticket.success[0])      
+
+    }
+  }
+
   ticketAccessTimeDoorNotOk(ticket){    
+    console.log('ticketAccessTimeDoorNotOk')
+
     let self = this
     self.totalChecksNotOk++
-    let message = this.dataInfo.titleTicketInvalid + moment(ticket.data_log_venda).add(ticket.horas_porta_acesso, 'hours').format("LT");
+    let message = this.dataInfo.ticketOld + ' - ' + moment(ticket.data_log_venda).add(ticket.horas_porta_acesso, 'hours').format("L");
     
     this.allTickets.success.forEach(element => {
 
@@ -496,6 +514,26 @@ export class MultiplePage {
       }
     });
   }
+
+  ticketAccessTimeDoorNotOkUsed(ticket){    
+    console.log('ticketAccessTimeDoorNotOkUsed')
+
+    let self = this
+    self.totalChecksNotOk++
+    let message = this.dataInfo.ticketAlreadyUsed + ' - ' + moment(ticket.data_log_venda).add(ticket.horas_porta_acesso, 'hours').format("L");
+    
+    this.allTickets.success.forEach(element => {
+
+      if(element.id_estoque_utilizavel == ticket.fk_id_estoque_utilizavel){    
+
+        let dateSell = moment(element.data_log_venda).format("L");      
+        element.data_log_venda = dateSell            
+        element.alerta  = message
+        element.MODIFICADO  = true        
+      }
+    });
+  }
+
 
   ticketAccessSameDay(ticket, ticketActual){
     console.log('ticketAccessSameDay', ticketActual.id_estoque_utilizavel) 
@@ -564,7 +602,7 @@ export class MultiplePage {
        let numero_liberacoes = element.numero_liberacoes        
        let total = element.TOTAL       
 
-       if(total <= numero_liberacoes)
+       if(total < numero_liberacoes)
           this.useTicket(ticketActual.id_estoque_utilizavel)
           
         else          
