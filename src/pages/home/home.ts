@@ -86,6 +86,9 @@ export class HomePage {
 
   reload(){
     this.searchTicket = ''
+    this.history = ''
+    this.dataInfo.ticketRead = this.dataInfo.ticketReadDefault
+    
     this.updatedInfo = this.navParams.get('updatedInfo')
     this.updating = false
 
@@ -446,9 +449,7 @@ export class HomePage {
   }
 
   ticketAccessTimeDoorNotOkNotUsedContinue(ticket){      
-    let data = ticket.success[0].result[0]
-    console.log(data)
-
+    let data = ticket.success[0].result[0]  
     let id_estoque_utilizavel = data.id_estoque_utilizavel
     let data_log_utilizacao = data.data_log_utilizacao
     
@@ -461,7 +462,7 @@ export class HomePage {
     let data = ticket.success[0].result[0]
     let id_estoque_utilizavel = data.id_estoque_utilizavel
 
-    let message = this.dataInfo.titleTicketInvalid + moment(data.data_log_venda).format("LL");
+    let message = this.dataInfo.titleTicketInvalid + moment(data.data_log_venda).format("LLL");
     this.showError(this.dataInfo.accessDenied, message, id_estoque_utilizavel)    
   }
 

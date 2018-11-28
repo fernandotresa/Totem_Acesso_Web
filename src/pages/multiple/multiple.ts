@@ -501,7 +501,7 @@ export class MultiplePage {
 
     let self = this
     self.totalChecksNotOk++
-    let message = this.dataInfo.ticketOld + ' - ' + moment(ticket.data_log_venda).add(ticket.horas_porta_acesso, 'hours').format("L");
+    let message = this.dataInfo.titleTicketInvalid + ' - ' + moment(ticket.data_log_venda).add(ticket.horas_porta_acesso, 'hours').format("LLL");
     
     this.allTickets.success.forEach(element => {
 
