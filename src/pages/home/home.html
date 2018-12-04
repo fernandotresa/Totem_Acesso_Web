@@ -23,11 +23,11 @@
         <ion-row>
             
             <ion-col *ngIf="idTypeBackgrond == dataInfo.backgroundIdNone">
-                <h3 text-right class="title">  {{title}} </h3>                                
+                <h3 text-right class="title">{{title}}</h3>                                
             </ion-col>
 
             <ion-col class="box-header-gray" *ngIf="idTypeBackgrond !== dataInfo.backgroundIdNone">                
-                <h3 text-right class="titleHistory" *ngIf="idTypeBackgrond !== dataInfo.backgroundIdSearch">  {{history}} </h3>                       
+                <h3 text-right class="titleHistory" *ngIf="idTypeBackgrond !== dataInfo.backgroundIdSearch">{{history}}</h3>                       
                 <h3 text-right class="titleHistory" *ngIf="idTypeBackgrond >= dataInfo.backgroundIdSearch && !ticketRead">  {{dataInfo.historyGeneral}} </h3>
              </ion-col>
 
@@ -35,8 +35,8 @@
 
         <ion-row>
             <div class="box-message" *ngIf="idTypeBackgrond == dataInfo.backgroundIdGreen">
-                <h1 text-right class="ticket-type-font"> {{message1}} </h1>     
-                <h2 text-right class="ticket-type-msg"> {{message2}} </h2>     
+                <h1 text-right class="ticket-type-font">{{message1}}</h1>     
+                <h2 text-right class="ticket-type-msg">{{message2}}</h2>     
             </div>
 
             <div class="box-message-red" *ngIf="idTypeBackgrond == dataInfo.backgroundIdRed">

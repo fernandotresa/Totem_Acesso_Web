@@ -65,8 +65,7 @@ export class HomePage {
     public events: Events,
     public http: HttpdProvider) { 
       
-      moment.locale('pt-BR');
-      
+      moment.locale('pt-BR');      
   }  
 
   ngOnDestroy() {    
@@ -321,7 +320,10 @@ export class HomePage {
 
     this.isLoading = false
     this.ticketRead = true            
+    
+    this.dataInfo.ticketRead = this.dataInfo.ticketReadDefault
     this.history = this.dataInfo.ticketRead + ticket
+    console.log(this.history)
     
     if(this.idTypeBackgrond === this.dataInfo.backgroundIdSearch){                      
       this.idTypeBackgrond = this.dataInfo.backgroundIdSearchNotOk                   
@@ -539,6 +541,7 @@ export class HomePage {
     let productType = ''
     let productSubType = ''
     this.ticketRead = true
+    this.dataInfo.ticketRead = this.dataInfo.ticketReadDefault  
     this.history = this.dataInfo.ticketRead + ticket
 
     data.success.forEach(element => {
