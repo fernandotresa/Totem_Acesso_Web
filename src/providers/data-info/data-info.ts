@@ -9,6 +9,7 @@ export class DataInfoProvider {
   areaId: number =  0  
   portaId: number =  0  
   totemId: number =  0
+  totemSaida: number = 0
   addressServer: string = "http://localhost:8085"
   tipoPontoAcesso: number = 1;
   timeMessage: number = 3000
@@ -47,6 +48,7 @@ export class DataInfoProvider {
   titleDateSaleNotExist: string = "'Ticket inexistente'"
   titleProcessFinished: string = "Processo finalizado"
   welcomeMsg: string = "Seja bem vindo!"
+  goodByeMsg: string = "Volte sempre!"  
   pleaseWait: string = "Favor aguarde"
   atention: string = "Atenção"   
   ticketReadDefault: string = "Ingresso lido: "   
@@ -111,10 +113,13 @@ export class DataInfoProvider {
     let self = this
 
       data.success.forEach(element => {
+        console.log(element)
+
         self.titleGeneral = element.nome_ponto_acesso
         self.totemId = element.fk_id_ponto_acesso
         self.areaId = element.fk_id_area_acesso
         self.portaId = element.id_porta_acesso        
+        self.totemSaida = element.saida
       });          
 
     this.events.publish('totem:updated', data);    

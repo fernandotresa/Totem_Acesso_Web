@@ -236,7 +236,6 @@ export class HomePage {
   }    
 
   loadConfigCallback(data){
-    console.log(this.dataInfo.configuringTotem, data.success[0])
 
     if(data.length == 0){
       this.title = this.dataInfo.ipNotFound
@@ -256,9 +255,6 @@ export class HomePage {
       self.startTimer()
       self.idTypeBackgrond = self.dataInfo.backgroundIdNone
       self.totemWorking()
-
-      console.log(self.title, self.idTypeBackgrond, self.isLoading)
-
       self.uiUtils.showToast(this.dataInfo.inicializedSuccessfully)
     }    
   }
@@ -323,7 +319,6 @@ export class HomePage {
     
     this.dataInfo.ticketRead = this.dataInfo.ticketReadDefault
     this.history = this.dataInfo.ticketRead + ticket
-    console.log(this.history)
     
     if(this.idTypeBackgrond === this.dataInfo.backgroundIdSearch){                      
       this.idTypeBackgrond = this.dataInfo.backgroundIdSearchNotOk                   
@@ -345,17 +340,50 @@ export class HomePage {
     if(this.searchTicket !== ""){
 
       let str = this.searchTicket.substring(0,8)
-      console.log(this.dataInfo.searchingTicket, str, this.dataInfo.ticketSize, str.length)
+      console.log(this.dataInfo.searchingTicket, str)
 
       this.totemNotWorking()      
-
-      this.http.checkTicketExist(str).subscribe( data => {
-
-        this.seachOneTicketCallback(data, str)
-        this.totemWorking()
-      }) 
+      
+      if(this.dataInfo.totemSaida === 0)
+        this.searchTicketIn(str)
+      else 
+        this.searchTicketOut(str)
+      
     }                     
   }  
+
+
+  searchTicketIn(str: string){
+
+    this.http.checkTicketExist(str).subscribe( data => {
+
+      this.seachOneTicketCallback(data, str)
+      this.totemWorking()
+    }) 
+  }
+
+
+  searchTicketOut(str: string){
+
+    console.log("Saíndo: ", str)
+
+    this.http.checkTicketOut(str).subscribe( data => {      
+      this.searchTicketOutCallback(data)    
+    }) 
+  }
+
+  searchTicketOutCallback(data){        
+
+    this.statusTicket = this.dataInfo.ticketOk
+    this.idTypeBackgrond = this.dataInfo.backgroundIdGreen    
+    this.message1 = this.dataInfo.goodByeMsg              
+    this.message2 = ""
+    this.decrementCounter()
+    this.showGpioSuccess()
+    this.backHome()
+
+    console.log(data)
+  }
 
   seachOneTicketCallback(data, ticketTmp){
     console.log(data.success[0].callback, ticketTmp)
@@ -489,8 +517,6 @@ export class HomePage {
       this.searchOkContinue(ticket)    
 
     } else {                  
-
-      console.log(this.dataInfo.usingTicket, ticket)
 
       let self = this
 
