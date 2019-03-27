@@ -381,8 +381,6 @@ export class HomePage {
     this.decrementCounter()
     this.showGpioSuccess()
     this.backHome()
-
-    console.log(data)
   }
 
   seachOneTicketCallback(data, ticketTmp){
