@@ -585,7 +585,33 @@ export class HomePage {
   }
 
   setMultiple(){          
-      this.navCtrl.push('Multiple')      
+    this.navCtrl.push('Multiple')      
   }      
+
+  openGateIn(){
+    this.http.systemCommand(1, 1, this.dataInfo.receptorOne)
+    .subscribe( () => {
+      
+      this.uiUtils.showAlert(this.dataInfo.sucess, this.dataInfo.titleCommandSuccess).present()
+      .then( () => {
+        this.goPDVi()
+      })
+    })
+  }
+
+  openGateOut(){
+    this.http.systemCommand(1, 1, this.dataInfo.receptorTwo)
+    .subscribe( () => {
+      
+      this.uiUtils.showAlert(this.dataInfo.sucess, this.dataInfo.titleCommandSuccess).present()
+      .then( () => {
+        this.goPDVi()
+      })
+    })
+  }
+
+  goPDVi(){
+    this.http.goPDVi()
+  }
 
 }

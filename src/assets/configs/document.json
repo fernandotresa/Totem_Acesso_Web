@@ -1,5 +1,10 @@
 {
-  "addressServer": "http://localhost:8085",
+  "addressServer": "http://localhost:8086",
+  
+  "receptorOneEnabled": 1,
+  "receptorTwoEnabled": 1,
+  "receptorOneId": 1,
+  "receptorTwoId": 2,
   "timeMessage": 1500,
   "timeMessageHistory": 15000,
   "maxTicketsMultiple": 100

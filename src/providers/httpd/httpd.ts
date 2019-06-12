@@ -4,15 +4,15 @@ import { DataInfoProvider } from '../../providers/data-info/data-info'
 
 @Injectable()
 export class HttpdProvider {
-
-  data:any = {};
   
-  address : string = ''    
+  address : string = ''
+  totemId: number = 1    
         
   constructor(public http: HttpClient, public dataInfo: DataInfoProvider) {
     console.log('Hello HttpdProvider Provider');
 
     this.address = this.dataInfo.addressServer
+    console.log("Endereço do servidor:", this.address)
     
     this.getTotemInfo().subscribe(data => {    
       this.dataInfo.configureTotem(data)
@@ -156,6 +156,26 @@ export class HttpdProvider {
     let myData = JSON.stringify({id: this.dataInfo.totemId});
     const headers = new HttpHeaders({'Content-Type':'application/json'});
     return this.http.post(this.address  + "/activeGpioError", myData, {headers: headers})
+  }
+
+  /**
+   * COMANDOS RECEPTOR
+   */
+ 
+  systemCommand(command_: number, idUser_: number, ipPonto_: string){   
+    let myData = JSON.stringify({id: this.totemId, idUser: idUser_, cmd: command_, ipPonto: ipPonto_});
+    const headers = new HttpHeaders({'Content-Type':'application/json'});
+    return this.http.post(this.address  + "/systemCommand", myData, {headers: headers})
+  }
+
+  /**
+   * COMANDOS TOTEM DE ACESSO
+   */
+
+  goPDVi(){
+    let myData = JSON.stringify({id: 1});
+    const headers = new HttpHeaders({'Content-Type':'application/json'});
+    return this.http.post(this.address  + "/goPDVi", myData, {headers: headers})
   }
  
 }

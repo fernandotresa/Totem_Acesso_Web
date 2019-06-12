@@ -93,23 +93,36 @@
                     
                     <ion-fab>
                         <button ion-fab color="light" icon-only (click)="decrementCounter()" [disabled]="!inputVisible">
-                            <ion-icon *ngIf="decrementingCounter" name='remove-circle' color="secondary" class="ion-spin-animation"></ion-icon>
-                            
+                            <ion-icon *ngIf="decrementingCounter" name='remove-circle' color="secondary" class="ion-spin-animation"></ion-icon>                            
                             <ion-icon *ngIf="! decrementingCounter" name='remove-circle' color="danger"></ion-icon>
                         </button>
                     </ion-fab>  
                 </ion-col>  
 
+                <ion-col>  
+                    <ion-fab>
+                        <button ion-fab color="light" icon-only (click)="openGateIn()" *ngIf="dataInfo.receptorOneEnabled === 1">
+                            <ion-icon name='arrow-up' color="secondary"></ion-icon>
+                        </button>
+                    </ion-fab>  
+                </ion-col> 
+
+                <ion-col>  
+                    <ion-fab>
+                        <button ion-fab color="light" icon-only (click)="openGateOut()" *ngIf="dataInfo.receptorTwoEnabled === 1">
+                            <ion-icon name='arrow-down' color="primary"></ion-icon>
+                        </button>
+                    </ion-fab>  
+                </ion-col> 
+
             </div>
 
-            </ion-col>
+            </ion-col>           
 
-            <ion-col col-8>  
-                                
+            <ion-col col-8>                                                                     
                 <div class="logo-bottom">
                     <img src="assets/imgs/logo3a.png"/>
                 </div>
-
             </ion-col>
 
         </ion-row>          

@@ -10,11 +10,17 @@ export class DataInfoProvider {
   portaId: number =  0  
   totemId: number =  0
   totemSaida: number = 0
+
   addressServer: string = "http://localhost:8085"
   tipoPontoAcesso: number = 1;
   timeMessage: number = 3000
   timeMessageHistory: number = 6000
   maxTicketsMultiple: number = 100
+
+  receptorOneEnabled: number = 0
+  receptorTwoEnabled: number = 0
+  receptorOne: string
+  receptorTwo: string
   
   backgroundIdGreen: number = 1
   backgroundIdRed: number = 2
@@ -58,6 +64,7 @@ export class DataInfoProvider {
   ticketEnd: string = "Ingresso final"  
   send: string = "Enviar"      
   sucess: string = "Sucesso"
+  titleCommandSuccess: string = "Comando enviado com sucesso!"
   erro: string = "Erro"
   noConfiguration: string = "Nenhuma configuraçao disponivel"  
   noResults: string = "Nenhum resultado"
@@ -102,9 +109,18 @@ export class DataInfoProvider {
     this.timeMessageHistory =  this.configurationService.getValue<number>("timeMessageHistory");
     this.maxTicketsMultiple =  this.configurationService.getValue<number>("maxTicketsMultiple");
 
-    console.log('Endereço do servidor:', this.addressServer)
-    console.log('Tempo da mensagem:', this.timeMessage)
-    console.log('Tempo da mensagem no histórico:', this.timeMessageHistory)
+    this.receptorOneEnabled =  this.configurationService.getValue<number>("receptorOneEnabled");
+    this.receptorTwoEnabled =  this.configurationService.getValue<number>("receptorTwoEnabled");
+    this.receptorOne =  this.configurationService.getValue<string>("receptorOneId");
+    this.receptorTwo =  this.configurationService.getValue<string>("receptorTwoId");
+
+    console.log('Endereço do servidor: ', this.addressServer)
+    console.log('Tempo da mensagem: ', this.timeMessage)
+    console.log('Tempo da mensagem no histórico: ', this.timeMessageHistory)
+    console.log('Receptor 1 ativo: ', this.receptorOneEnabled)    
+    console.log('Receptor 2 ativo: ', this.receptorTwoEnabled)    
+    console.log('Receptor 1: ', this.receptorOne)    
+    console.log('Receptor 2: ', this.receptorTwo)
   }  
 
   configureTotem(data){    

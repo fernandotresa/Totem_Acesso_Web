@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Socket } from 'ng-socket-io';
+//import { Socket } from 'ng-socket-io';
 import { Observable } from 'rxjs/Observable';
 import { Events } from 'ionic-angular';
 import { UiUtilsProvider } from '../../providers/ui-utils/ui-utils'
@@ -18,11 +18,11 @@ export class GpiosProvider{
   timeOutGpio: Boolean = true;
   timeOut: number = 1000
 
-  constructor(private socket: Socket, 
+  constructor(//private socket: Socket, 
     public uiUtils: UiUtilsProvider,   
     public events: Events) {    
 
-    this.startGPIOs()
+    //this.startGPIOs()
   }
 
   ngOnDestroy(){
@@ -38,9 +38,10 @@ export class GpiosProvider{
   startGPIOs(){ 
     console.log('Iniciando gpios', new Date())    
     
-    this.gpioPageMultiple = this.getGpioPageMultiple()
+    /*this.gpioPageMultiple = this.getGpioPageMultiple()
     this.gpioPageHistory = this.getGpioPageHistory()
-    this.gpioDecrementCounter = this.getGpioDecrementCounter()    
+    this.gpioDecrementCounter = this.getGpioDecrementCounter()   */ 
+
 
     this.startGpioPageMultiple()
     this.startGpioPageHistory()
@@ -115,30 +116,30 @@ export class GpiosProvider{
   }
 
   getGpioPageMultiple() {
-    let observable = new Observable(observer => {
+    /*let observable = new Observable(observer => {
       this.socket.on('gpioPageMultiple', (data) => {
         observer.next(data);
       });
     })
-    return observable;
+    return observable;*/
   }
 
   getGpioPageHistory() {
-    let observable = new Observable(observer => {
+   /* let observable = new Observable(observer => {
       this.socket.on('gpioPageHistory', (data) => {
         observer.next(data);
       });
     })
-    return observable;
+    return observable;*/
   }
 
   getGpioDecrementCounter() {
-    let observable = new Observable(observer => {
+    /*let observable = new Observable(observer => {
       this.socket.on('gpioDecrementCounter', (data) => {
         observer.next(data);
       });
     })
-    return observable;
+    return observable;*/
   }
 
 

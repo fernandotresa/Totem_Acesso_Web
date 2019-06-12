@@ -15,7 +15,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { AngularFireModule } from 'angularfire2';
 import { AngularFireDatabaseModule } from 'angularfire2/database';
 import { ConfigurationService } from "ionic-configuration-service";
-import { SocketIoModule, SocketIoConfig } from 'ng-socket-io';
+//import { SocketIoModule, SocketIoConfig } from 'ng-socket-io';
 import { MultiplePage } from '../pages/multiple/multiple';
 import { GpiosProvider } from '../providers/gpios/gpios';
 
@@ -23,7 +23,7 @@ export function loadConfiguration(configurationService: ConfigurationService): (
   return () => configurationService.load("assets/configs/document.json");
 }
 
-const config: SocketIoConfig = { url: 'http://raspberrypi:8085', options: {} };
+//const config: SocketIoConfig = { url: 'http://raspberrypi:8085', options: {} };
 
 export const firebaseConfig = {
   apiKey: "AIzaSyDhZ2TQlXhn6x-E3qWBUQqd-GQ8D2uw69o",
@@ -50,7 +50,7 @@ export const firebaseConfig = {
         { component: MultiplePage, name: 'Multiple'}        
       ]}),
 
-    SocketIoModule.forRoot(config)
+  //  SocketIoModule.forRoot(config)
   ],
   exports: [
     MultiplePageModule
