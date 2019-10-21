@@ -1,0 +1,122 @@
+// ------------------------------------ //
+// Global variables                     //
+// ------------------------------------ //
+
+
+// ------------------------------------ //
+// Hide scroll bar in the side menu     //
+// ------------------------------------ //
+ion-menu ion-content .scroll-content::-webkit-scrollbar { 
+   
+}
+
+.lst-menu {
+    background-color: transparent;
+    color: white;
+}
+
+.tim-vs-datroi{
+	background: $tim !important; /* For browsers that do not support gradients */
+	background: -webkit-linear-gradient(left top, $tim, $datroi) !important; /* For Safari 5.1 to 6.0 */
+	background: -o-linear-gradient(bottom right, $tim, $datroi) !important; /* For Opera 11.1 to 12.0 */
+	background: -moz-linear-gradient(bottom right, $tim, $datroi) !important; /* For Firefox 3.6 to 15 */
+	background: linear-gradient(to bottom right, $tim, $datroi) !important; /* Standard syntax */
+}
+
+.info-user{
+    display: flex;
+    position: relative;
+    align-items: center;
+    color: #fff !important;
+    .wrapper-avt{
+        border-radius: 50%;
+        height: 60px;
+        width: 60px;
+        overflow: hidden;
+        border: 3px solid $grey-1;
+    }
+    .user-setting{
+        position: absolute;
+        top: 10px;
+        right: 0px;
+    }
+    .bg-img{
+        position: absolute;
+        z-index: -1;
+        top: 0;
+        bottom: 0;
+        right: 0;
+        left: 0;
+        overflow: hidden;
+        img{
+            width: 100%;
+        }
+    }
+}
+
+.mgb-30{
+    margin-bottom: 30px !important;
+}
+
+.pdt-50{
+    padding-top: 50px !important;
+}
+
+.pdb-20{
+    padding-bottom: 20px !important;
+}
+
+.black-opct{
+    background: $black-opct !important;
+}
+
+.text-grey-1{
+    color: $grey-1 !important;
+    .p, span, i, a, div, ion-icon, b, small, strong{
+        color: $grey-1 !important;
+    }
+    input::placeholder{
+        color: $grey-1 !important;
+    }
+}
+
+.mgl-15{
+    margin-left: 15px !important;
+}
+
+.mgr-10{
+    margin-right: 10px !important;
+}
+
+.fs-20{
+    font-size: 20px !important;
+    // line-height: 26px !important;
+}
+
+.fw-600{
+    font-weight: 600 !important;
+}
+
+.mg-0{
+    margin: 0px !important;
+}
+
+.text-white{
+    color: $white !important;
+    .p, span, i, a, div, ion-icon, b, small, strong{
+        color: $white !important;
+    }
+    input::placeholder{
+        color: $white !important;
+    }
+}
+
+.pd-0{
+    padding: 0px !important;
+}
+
+.text-left{
+    text-align: left;
+}
+
+

@@ -1,0 +1,47 @@
+
+<div class="info-user mgb-30 pdt-50 pdb-20 black-opct">
+    <button ion-button clear only-icon small class="user-setting text-grey-1"><ion-icon name="ios-settings"></ion-icon></button>
+    <div class="bg-img"><img src="assets/imgs/menu-bg.png" alt=""></div>
+    <div class="wrapper-avt mgl-15 mgr-10">
+        <img src="{{displayPic}}" alt="">
+    </div>
+    <div class="main-info">
+        <h2 class="user-name fs-20 fw-600 mg-0 text-white">{{displayName}}</h2>
+        <button ion-button clear small class="pd-0 mg-0 text-left text-grey-1">{{displayEmail}}</button>
+    </div>
+</div>
+
+<ion-list no-margin no-lines class="lst-menu">
+
+    <ng-template ngFor let-option [ngForOf]="collapsableItems" let-i="index">
+        
+        <ng-template [ngIf]="!option.suboptionsCount">
+            <ion-item class="lst-menu" [ngClass]="menuSettings?.showSelectedOption && option.selected ? menuSettings.selectedOptionClass : null" (tap)="select(option)" tappable>
+                <ion-icon *ngIf="option.iconName" [name]="option.iconName" item-left></ion-icon>
+                {{ option.displayText }} <ion-badge item-right *ngIf="option.badge | async as badgeNo">{{ badgeNo }}</ion-badge>
+            </ion-item>
+        </ng-template>
+
+        <ng-template [ngIf]="option.suboptionsCount">
+
+            <ion-list no-margin class="accordion-menu">
+
+                <ion-item class="lst-menu" [ngClass]="menuSettings?.showSelectedOption && option.selected ? menuSettings.selectedOptionClass : null" (tap)="toggleItemOptions(option)" tappable>
+                    <ion-icon [class.rotate]="option.expanded" class="header-icon" [name]="option.iconName || menuSettings.arrowIcon" item-left></ion-icon>
+                    {{ option.displayText }}
+                </ion-item>
+
+                <div [style.height]="option.expanded ? ((optionHeight + 1) * option.suboptionsCount) + 'px' : '0px'" class="options">
+                    <ng-template ngFor let-item [ngForOf]="option.subOptions">
+                        <ion-item class="lst-menu" [style.padding-left]="subOptionIndentation + 'px'" [class.no-icon]="menuSettings?.indentSubOptionsWithoutIcons && !item.iconName" [ngClass]="menuSettings?.showSelectedOption && item.selected ? menuSettings.selectedOptionClass : null" tappable (tap)="select(item)">
+                            <ion-icon *ngIf="item.iconName" [name]="item.iconName" item-left></ion-icon>
+                            {{ item.displayText }}  <ion-badge item-right *ngIf="item.badge | async as badgeNo">{{ badgeNo }}</ion-badge>
+                        </ion-item>
+                    </ng-template>
+                </div>
+            </ion-list>
+
+        </ng-template>
+
+    </ng-template>
+ </ion-list>

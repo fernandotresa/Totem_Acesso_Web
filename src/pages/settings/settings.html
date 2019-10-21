@@ -1,0 +1,68 @@
+
+<ion-header>
+
+  <ion-navbar>
+    <ion-title>Configurações</ion-title>
+  </ion-navbar>
+
+</ion-header>
+
+
+<ion-content padding>
+
+  <ion-list>
+
+    <ion-list-header color="primary">
+      Configurações modo funcionamento
+    </ion-list-header>
+    
+    <ion-item>
+      <ion-label>Lista branca</ion-label>
+      <ion-checkbox [(ngModel)]="ativaListaBranca" (ionChange)="unselectAll('ativaListaBranca')"></ion-checkbox>
+    </ion-item>
+    
+    <ion-item>
+      <ion-label>Rede online</ion-label>
+      <ion-checkbox [(ngModel)]="ativaRedeOnline"  (ionChange)="unselectAll('ativaRedeOnline')"></ion-checkbox>
+    </ion-item>
+
+    <ion-item>
+      <ion-label>Rede HotSpot</ion-label>
+      <ion-checkbox [(ngModel)]="ativaHotspot"  (ionChange)="unselectAll('ativaHotspot')"></ion-checkbox>
+    </ion-item>
+    
+    <ion-item>
+      <ion-label>Sincronização USB</ion-label>
+      <ion-checkbox [(ngModel)]="ativaSincronizacaoUsb"  (ionChange)="unselectAll('ativaSincronizacaoUsb')"></ion-checkbox>
+    </ion-item>
+
+    <button ion-button full (click)="saveConfiguration()" color="secondary">Salvar configurações</button>    
+
+
+    <ion-list-header color="primary">
+        Configurações Lista Branca
+      </ion-list-header>
+    
+      <ion-item>      
+        <ion-row>
+
+          <ion-col>
+              <button ion-button full (click)="startMemoryList()">Baixar nova lista Branca do servidor</button>    
+          </ion-col>
+
+          <ion-col>
+              <button ion-button full (click)="getMemoryList()">Verificar lista atual</button>    
+          </ion-col>
+
+
+
+        </ion-row>
+        
+
+      </ion-item>
+
+</ion-list>
+  
+
+
+</ion-content>

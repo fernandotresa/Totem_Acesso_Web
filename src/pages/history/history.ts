@@ -6,13 +6,14 @@ import { DataInfoProvider } from '../../providers/data-info/data-info'
 import { UiUtilsProvider } from '../../providers/ui-utils/ui-utils'
 import moment from 'moment';
 
-@IonicPage()
 
+@IonicPage()
 @Component({
-  selector: 'page-multiple',
-  templateUrl: 'multiple.html',
+  selector: 'page-history',
+  templateUrl: 'history.html',
 })
-export class MultiplePage {
+export class HistoryPage {
+
   @ViewChild('searchbar') searchbar;
   @ViewChild('inputEnd') inputEnd;
 
@@ -669,28 +670,8 @@ export class MultiplePage {
 
   useTicket(ticket){
 
-    console.log('Utilizando ticket: ', ticket, this.areaId)
-    
-    this.dataInfo.ticketRead = this.dataInfo.ticketRead + ticket
-
-    let self = this
-
-    this.http.useTicketMultiple(ticket).subscribe( () => {
-      
-      console.log('Ticket usado', ticket)         
-      self.totalChecksOk++
-
-      this.allTickets.success.forEach(element => {
-
-        if(element.id_estoque_utilizavel == ticket){             
-
-          let dateSell = moment(element.data_log_venda).format("L");      
-          element.data_log_venda = dateSell
-          element.message  = self.dataInfo.alreadyOk
-          element.MODIFICADO  = true          
-        }
-      });
-    })
+    console.log('Utilizando ticket: ', ticket, this.areaId)  
+    this.dataInfo.ticketRead = this.dataInfo.ticketRead + ticket    
   }
 
 }

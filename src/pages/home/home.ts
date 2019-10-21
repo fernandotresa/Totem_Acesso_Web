@@ -3,12 +3,14 @@ import { NavController, NavParams, Events } from 'ionic-angular';
 import { HttpdProvider } from '../../providers/httpd/httpd';
 import { DatabaseProvider } from '../../providers/database/database';
 import { DataInfoProvider } from '../../providers/data-info/data-info'
+import { ListaBrancaProvider } from '../../providers/lista-branca/lista-branca'
 import { UiUtilsProvider } from '../../providers/ui-utils/ui-utils'
 import { Observable } from 'rxjs/Observable';
 import { Searchbar } from 'ionic-angular';
 import moment from 'moment';
 import 'moment/locale/pt-br';
 import { GpiosProvider } from '../../providers/gpios/gpios';
+import { AudioUtilsProvider } from '../../providers/audio-utils/audio-utils';
 
 @Component({
   selector: 'page-home',
@@ -39,7 +41,7 @@ export class HomePage {
   areaName: string;
   updatedInfo: Boolean = false
   updating: Boolean = false
-  inputVisible: Boolean = true
+  inputVisible: Boolean = true  
   isLoading: Boolean = true
 
   counter: string = this.dataInfo.isLoading
@@ -52,7 +54,7 @@ export class HomePage {
   historyText2: string = this.dataInfo.accessPoints
   historyText3: string = this.dataInfo.usedDay
 
-  searchTicket: string = '';  
+  searchTicket: string = '';    
   searching: any = false;  
   
   constructor(
@@ -63,9 +65,13 @@ export class HomePage {
     public navParams: NavParams,   
     public gpios: GpiosProvider,  
     public events: Events,
+    public audioUtils: AudioUtilsProvider,
+    public listaBranca: ListaBrancaProvider,
     public http: HttpdProvider) { 
       
-      moment.locale('pt-BR');      
+      moment.locale('pt-BR');  
+      this.audioUtils.preload('success', 'assets/audio/success.mp3');    
+      this.audioUtils.preload('error', 'assets/audio/error.mp3');    
   }  
 
   ngOnDestroy() {    
@@ -301,12 +307,17 @@ export class HomePage {
   }
 
   showGpioError(){
+    this.audioUtils.play('error');
+
+
     this.http.activeGpioError().subscribe(data => {
       console.log("showGpioError")
     })
   }
 
   showGpioSuccess(){
+    this.audioUtils.play('success');
+
     this.http.activeGpioSuccess().subscribe(data => {
       console.log("showGpioSuccess")
     })

@@ -1,0 +1,192 @@
+page-qrcode {
+    .clearfix {
+        overflow: auto;        
+    }
+
+    .title{
+        display: flex !important;
+        justify-content: center !important;
+        align-items: center !important;
+        height: 100%;
+        font-family: 'Arial';
+        font-weight: bold;
+        font-size: 46pt;
+    }
+
+    .titleHistory {
+        color: white;
+        display: flex !important;
+        justify-content: center !important;
+        align-items: center !important;
+        font-family: 'Arial' ;
+        font-weight: bold;
+        font-size: 32pt;
+        margin-bottom: 20px;
+    }
+
+    .header-conter {
+        display: flex !important;
+        justify-content: flex-end !important;        
+        height: 100%;
+        font-family: 'Arial';
+        font-weight: bold;
+        font-size: 36pt;
+    }
+
+    .box-message {
+        background-color: green;
+        width: 100%;
+        height: 200px;
+    }
+
+    .box-message-history {
+        background-color: transparent;
+        width: 100%;
+        height: 200px;
+    }
+    
+    .box-message-red {            
+        background-color: red;
+        width: 100%;
+        height: 200px;
+    }
+
+    .box-message-green {            
+        background-color: green;
+        width: 100%;
+        height: 100%;
+    }
+
+    .box-message-gray {        
+        background-color: rgb(220,220,220);
+        width: 100%;
+        height: 300px;        
+    }
+        
+    .box-header-gray {
+        background-color: gray;
+     }
+
+    .box-header-green {  
+        margin-top: 20px;      
+        background-color: darkgreen;        
+        width: 100%;
+        height: 80px;   
+        display: flex !important;
+        justify-content: center !important;
+        align-items: center !important;    
+    }
+
+    .box-header-red {          
+        margin-top: 20px;      
+        background-color: red;        
+        width: 100%;
+        height: 80px;   
+        display: flex !important;
+        justify-content: center !important;
+        align-items: center !important;    
+    }
+
+    .box-header-text {
+        color: black;
+        display: flex !important;
+        justify-content: center !important;
+        align-items: center !important;        
+        font-family: 'Arial';        
+        font-size: 20pt;
+    }
+
+    .box-header-ticket-status {
+        color: white;
+        
+        display: flex !important;
+        justify-content: center !important;
+        align-items: center !important;
+        font-family: 'Arial';
+        font-weight: bold;
+        font-size: 20pt;
+    }
+
+    .ticket-type-history {
+        display: flex !important;
+        justify-content: center !important;
+        align-items: center !important;
+        color: black;
+        font-size: 40pt;
+    }
+
+    .ticket-type-font {
+        margin-top: 40px;
+        display: flex !important;
+        justify-content: center !important;
+        align-items: center !important;
+        color: white;
+        font-size: 40pt;
+    }
+
+    .ticket-type-msg {        
+        margin-top: 20px;
+        display: flex !important;
+        justify-content: center !important;
+        align-items: center !important;
+        color: white;
+        font-size: 30pt;
+    }
+
+    .ticket-type-submsg {        
+        margin-top: 20px;
+        display: flex !important;
+        justify-content: center !important;
+        align-items: center !important;
+        color: white;
+        font-size: 15pt;
+    }
+
+    .options {
+        width: 400px;
+        margin: 5px;
+        display: flex !important;
+        justify-content: left !important;
+        align-items: left !important;
+        color: white;
+    }
+
+    .logo-bottom {                
+        display: flex !important;
+        justify-content: flex-end !important;        
+        align-items: right !important;
+        color: white;
+    }
+
+    ion-spinner * {
+        width: 32px;
+        height: 32px;
+        stroke: #444;
+        fill: #222;
+        display: block;
+        position: fixed;
+        overflow: show;
+        margin: auto;
+        top: 0;
+        left: 0;
+        bottom: 0;
+        right: 0;        
+      }
+
+      .ion-spin-animation { -webkit-animation: spin 1s infinite linear; -moz-animation: spin 1s infinite linear; -o-animation: spin 1s infinite linear; animation: spin 1s infinite linear; }
+
+        @-moz-keyframes spin { 0% { -moz-transform: rotate(0deg); }
+            100% { -moz-transform: rotate(359deg); } }
+        @-webkit-keyframes spin { 0% { -webkit-transform: rotate(0deg); }
+            100% { -webkit-transform: rotate(359deg); } }
+        @-o-keyframes spin { 0% { -o-transform: rotate(0deg); }
+            100% { -o-transform: rotate(359deg); } }
+        @-ms-keyframes spin { 0% { -ms-transform: rotate(0deg); }
+            100% { -ms-transform: rotate(359deg); } }
+        @keyframes spin { 0% { transform: rotate(0deg); }
+            100% { transform: rotate(359deg); } }
+        .ion-load-a.ion-spin-animation { -webkit-animation-timing-function: steps(8, start); -moz-animation-timing-function: steps(8, start); animation-timing-function: steps(8, start); }
+        
+    
+
+}

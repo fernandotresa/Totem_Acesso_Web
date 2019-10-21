@@ -1,23 +1,36 @@
 import { BrowserModule } from '@angular/platform-browser';
-import { ErrorHandler, NgModule, APP_INITIALIZER } from '@angular/core';
+import { ErrorHandler, NgModule, APP_INITIALIZER, Injector } from '@angular/core';
 import { IonicApp, IonicErrorHandler, IonicModule } from 'ionic-angular';
 import { MyApp } from './app.component';
 import { HomePage } from '../pages/home/home';
+import { HistoryPageModule } from '../pages/history/history.module';
 import { MultiplePageModule } from '../pages/multiple/multiple.module';
+import { MemoryListPageModule } from '../pages/memory-list/memory-list.module';
 import { HttpdProvider } from '../providers/httpd/httpd';
+import { SettingsPageModule } from '../pages/settings/settings.module';
+import { IonicStorageModule } from '@ionic/storage';
+
+
 import { DataInfoProvider } from '../providers/data-info/data-info';
 import { DatabaseProvider } from '../providers/database/database';
-import { SmartAudioProvider } from '../providers/smart-audio/smart-audio';
 import { NativeStorage } from '@ionic-native/native-storage';
 import { UiUtilsProvider } from '../providers/ui-utils/ui-utils';
 import { HttpClientModule } from '@angular/common/http';
+import { BarcodeScanner } from '@ionic-native/barcode-scanner/ngx';
 
 import { AngularFireModule } from 'angularfire2';
 import { AngularFireDatabaseModule } from 'angularfire2/database';
 import { ConfigurationService } from "ionic-configuration-service";
-//import { SocketIoModule, SocketIoConfig } from 'ng-socket-io';
+//import { SocketIoModule, SocketIoConfig } from 'ng-socket-io';Só colocar no estoque
 import { MultiplePage } from '../pages/multiple/multiple';
+import { QrcodePageModule } from '../pages/qrcode/qrcode.module';
 import { GpiosProvider } from '../providers/gpios/gpios';
+
+import { NativeAudio } from '@ionic-native/native-audio';
+
+import { AudioUtilsProvider } from '../providers/audio-utils/audio-utils';
+import { SideMenuContentComponent } from '../shared/side-menu-content/side-menu-content.component';
+import { ListaBrancaProvider } from '../providers/lista-branca/lista-branca';
 
 export function loadConfiguration(configurationService: ConfigurationService): () => Promise<void> {
   return () => configurationService.load("assets/configs/document.json");
@@ -37,13 +50,16 @@ export const firebaseConfig = {
 @NgModule({
   declarations: [
     MyApp,
-    HomePage        
+    HomePage, 
+    SideMenuContentComponent
   ],
+  
   imports: [
     BrowserModule,
     HttpClientModule,
     AngularFireModule.initializeApp(firebaseConfig),
     AngularFireDatabaseModule,
+    IonicStorageModule.forRoot(),
     IonicModule.forRoot(MyApp, {}, {
       links: [
         { component: HomePage, name: 'Home'},
@@ -53,20 +69,25 @@ export const firebaseConfig = {
   //  SocketIoModule.forRoot(config)
   ],
   exports: [
-    MultiplePageModule
+    MultiplePageModule,
+    HistoryPageModule,
+    QrcodePageModule,
+    SettingsPageModule,
+    MemoryListPageModule
   ],
   bootstrap: [IonicApp],
   entryComponents: [
     MyApp,
-    HomePage    
+    HomePage,
   ],
   providers: [        
     NativeStorage,
+    NativeAudio,
     {provide: ErrorHandler, useClass: IonicErrorHandler},
     HttpdProvider,
+    BarcodeScanner,
     DataInfoProvider,
     DatabaseProvider,
-    SmartAudioProvider,
     UiUtilsProvider,
     AngularFireModule,
     ConfigurationService,
@@ -76,7 +97,16 @@ export const firebaseConfig = {
       deps: [ConfigurationService],
       multi: true
     },
-    GpiosProvider
+    GpiosProvider,
+    AudioUtilsProvider,
+    ListaBrancaProvider
   ]
 })
-export class AppModule {}
+
+export class AppModule {
+  static injector: Injector;
+
+  constructor(injector: Injector) {
+    AppModule.injector = injector;
+  }
+}

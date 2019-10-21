@@ -1,1 +1,9 @@
-<ion-nav [root]="rootPage"></ion-nav>
+<ion-menu persistent="true" [content]="content" (ionClose)="collapseMenuOptions()">
+   
+    <ion-content class="tim-vs-datroi">  
+
+      <side-menu-content [settings]="sideMenuSettings" [options]="options" (change)="onOptionSelected($event)"></side-menu-content>  
+    </ion-content>
+  </ion-menu>
+  
+  <ion-nav #myNav [root]="rootPage" #content swipeBackEnabled="false"></ion-nav>

@@ -177,5 +177,15 @@ export class HttpdProvider {
     const headers = new HttpHeaders({'Content-Type':'application/json'});
     return this.http.post(this.address  + "/goPDVi", myData, {headers: headers})
   }
+
+  /**
+   * LISTA BRANCA
+   */
+
+  getListaBranca(){    
+    let myData = JSON.stringify({id: this.dataInfo.totemId, idArea: this.dataInfo.areaId, idPorta: this.dataInfo.portaId});
+    const headers = new HttpHeaders({'Content-Type':'application/json'});
+    return this.http.post(this.address  + "/getListaBranca", myData, {headers: headers})
+  }
  
 }
