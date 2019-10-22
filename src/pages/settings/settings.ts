@@ -3,6 +3,9 @@ import { IonicPage, NavController, NavParams } from 'ionic-angular';
 import { ListaBrancaProvider } from '../../providers/lista-branca/lista-branca'
 import { UiUtilsProvider } from '../../providers/ui-utils/ui-utils'
 import { Storage } from '@ionic/storage';
+import { MemoryListPage } from '../../pages/memory-list/memory-list';
+import { DataInfoProvider } from '../../providers/data-info/data-info'
+import { Events } from 'ionic-angular';
 
 
 @IonicPage()
@@ -10,7 +13,7 @@ import { Storage } from '@ionic/storage';
   selector: 'page-settings',
   templateUrl: 'settings.html',
 })
-export class SettingsPage {
+export class SettingsPage {ticket    
 
   ativaListaBranca: Boolean = false
   ativaRedeOnline: Boolean = false
@@ -20,12 +23,24 @@ export class SettingsPage {
   constructor(public navCtrl: NavController, 
     public listaBranca: ListaBrancaProvider,
     public uiUtils: UiUtilsProvider,     
+    public dataInfo: DataInfoProvider,
     public storage: Storage,
+    public events: Events,
     public navParams: NavParams) {
   }
 
   ionViewDidLoad() {
-    console.log('ionViewDidLoad SettingsPage');
+    
+    this.events.subscribe('listaBrancaConfig', () => {
+      this.listaBrancaConfigIsOk()
+    });
+  }
+
+  listaBrancaConfigIsOk(){
+    this.ativaListaBranca = this.dataInfo.ativaListaBranca
+    this.ativaRedeOnline = this.dataInfo.ativaRedeOnline
+    this.ativaHotspot = this.dataInfo.ativaHotspot
+    this.ativaSincronizacaoUsb = this.dataInfo.ativaSincronizacaoUsb
   }
 
   saveConfiguration(){
@@ -34,7 +49,13 @@ export class SettingsPage {
       this.storage.set('ativaHotspot', this.ativaHotspot)
       this.storage.set('ativaSincronizacaoUsb', this.ativaSincronizacaoUsb)
 
+      this.dataInfo.ativaListaBranca = this.ativaListaBranca
+      this.dataInfo.ativaRedeOnline = this.ativaRedeOnline
+      this.dataInfo.ativaHotspot = this.ativaHotspot
+      this.dataInfo.ativaSincronizacaoUsb = this.ativaSincronizacaoUsb
+
       this.uiUtils.showAlert('Sucesso', 'Configurações gravadas com sucesso')
+      .present()
   }
 
   unselectAll(mode: string){
@@ -64,9 +85,7 @@ export class SettingsPage {
       this.ativaListaBranca = false
       this.ativaRedeOnline = false
       this.ativaHotspot = false      
-    }
-    
-    
+    }        
   }
 
   startMemoryList(){
@@ -76,11 +95,7 @@ export class SettingsPage {
 
 
   getMemoryList(){
-    this.listaBranca.getListBrancaStorage()
-    .then( data => {
-
-      console.log(data)
-    })
+    this.navCtrl.push(MemoryListPage)
     
   }
 

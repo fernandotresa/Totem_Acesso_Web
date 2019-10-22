@@ -6,6 +6,7 @@ import { HomePage } from '../pages/home/home';
 import { HistoryPageModule } from '../pages/history/history.module';
 import { MultiplePageModule } from '../pages/multiple/multiple.module';
 import { MemoryListPageModule } from '../pages/memory-list/memory-list.module';
+
 import { HttpdProvider } from '../providers/httpd/httpd';
 import { SettingsPageModule } from '../pages/settings/settings.module';
 import { IonicStorageModule } from '@ionic/storage';

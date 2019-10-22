@@ -27,12 +27,7 @@ export class MyApp {
 		selectedOptionClass: 'active-side-menu-option'		
   };
 
-
-
-
-  rootPage:any = SettingsPage;
-
-  
+  rootPage:any = HomePage;
 
   constructor(platform: Platform, 
     private menuCtrl: MenuController) {

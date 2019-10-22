@@ -103,7 +103,13 @@ export class DataInfoProvider {
   totalChecksMultipleOk: string = 'Válidos: '
   totalChecksMultipleNotOk: string = 'Inválidos: '
 
+  ativaListaBranca: any
+  ativaRedeOnline: any
+  ativaHotspot: any
+  ativaSincronizacaoUsb: any
+
   constructor(private configurationService: ConfigurationService, public events: Events) {        
+
     this.addressServer =  this.configurationService.getValue<string>("addressServer");
     this.timeMessage =  this.configurationService.getValue<number>("timeMessage");
     this.timeMessageHistory =  this.configurationService.getValue<number>("timeMessageHistory");
@@ -114,13 +120,13 @@ export class DataInfoProvider {
     this.receptorOne =  this.configurationService.getValue<string>("receptorOneId");
     this.receptorTwo =  this.configurationService.getValue<string>("receptorTwoId");
 
-    console.log('Endereço do servidor: ', this.addressServer)
+    /*console.log('Endereço do servidor: ', this.addressServer)
     console.log('Tempo da mensagem: ', this.timeMessage)
     console.log('Tempo da mensagem no histórico: ', this.timeMessageHistory)
     console.log('Receptor 1 ativo: ', this.receptorOneEnabled)    
     console.log('Receptor 2 ativo: ', this.receptorTwoEnabled)    
     console.log('Receptor 1: ', this.receptorOne)    
-    console.log('Receptor 2: ', this.receptorTwo)
+    console.log('Receptor 2: ', this.receptorTwo)*/
   }  
 
   configureTotem(data){    
@@ -129,7 +135,6 @@ export class DataInfoProvider {
     let self = this
 
       data.success.forEach(element => {
-        console.log(element)
 
         self.titleGeneral = element.nome_ponto_acesso
         self.totemId = element.fk_id_ponto_acesso

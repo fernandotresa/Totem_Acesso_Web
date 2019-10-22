@@ -72,6 +72,10 @@ export class HomePage {
       moment.locale('pt-BR');  
       this.audioUtils.preload('success', 'assets/audio/success.mp3');    
       this.audioUtils.preload('error', 'assets/audio/error.mp3');    
+
+      this.events.subscribe('listaBrancaConfig', () => {
+        //this.modeOperation()
+      });
   }  
 
   ngOnDestroy() {    
@@ -86,7 +90,17 @@ export class HomePage {
   }
     
   ionViewDidLoad() {           
-    this.reload()
+    this.reload()    
+
+    this.searchTicket = '19520001'
+    this.searchOneTicket()
+  }
+
+  modeOperation(){    
+    console.log('ativaListaBranca', this.dataInfo.ativaListaBranca)
+    console.log('ativaRedeOnline', this.dataInfo.ativaRedeOnline)
+    console.log('ativaHotspot', this.dataInfo.ativaHotspot)
+    console.log('ativaSincronizacaoUsb', this.dataInfo.ativaSincronizacaoUsb)    
   }
 
   reload(){
@@ -108,7 +122,7 @@ export class HomePage {
 
   subscribeStuff(){
     let self = this
-    
+       
     this.events.subscribe('socket:pageMultiple', () => {
       this.setMultiple()
     });
@@ -309,13 +323,13 @@ export class HomePage {
   showGpioError(){
     this.audioUtils.play('error');
 
-
     this.http.activeGpioError().subscribe(data => {
       console.log("showGpioError")
     })
   }
 
   showGpioSuccess(){
+
     this.audioUtils.play('success');
 
     this.http.activeGpioSuccess().subscribe(data => {
@@ -348,21 +362,35 @@ export class HomePage {
 
   searchOneTicket(){      
 
+
     if(this.searchTicket !== ""){
 
-      let str = this.searchTicket.substring(0,8)
-      console.log(this.dataInfo.searchingTicket, str)
-
-      this.totemNotWorking()      
-      
-      if(this.dataInfo.totemSaida === 0)
-        this.searchTicketIn(str)
-      else 
-        this.searchTicketOut(str)
-      
+        if(this.dataInfo.ativaRedeOnline){
+          this.searchOneNetwork()
+        }
+        else {
+          this.searchOneListaBranca()
+        }
     }                     
   }  
 
+  searchOneListaBranca(){
+    let str = this.searchTicket.substring(0,8)
+    this.listaBranca.searchOneTicket(str)
+  }
+
+  searchOneNetwork(){
+    let str = this.searchTicket.substring(0,8)
+
+    console.log('Procurando pela rede: ', str, this.dataInfo.totemSaida)
+
+    this.totemNotWorking()      
+    
+    if(this.dataInfo.totemSaida === 0)
+      this.searchTicketIn(str)
+    else 
+      this.searchTicketOut(str)
+  }
 
   searchTicketIn(str: string){
 
@@ -394,8 +422,7 @@ export class HomePage {
     this.backHome()
   }
 
-  seachOneTicketCallback(data, ticketTmp){
-    console.log(data.success[0].callback, ticketTmp)
+  seachOneTicketCallback(data, ticketTmp){    
     
     if(data.success[0].callback == 1)
       this.ticketNotExist(ticketTmp)

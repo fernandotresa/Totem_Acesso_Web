@@ -228,6 +228,7 @@ export class HistoryPage {
       self.searchOneTicket(element)      
     });        
 
+
     this.setTimeoutTicketsVerify()
   }
 
@@ -670,8 +671,15 @@ export class HistoryPage {
 
   useTicket(ticket){
 
-    console.log('Utilizando ticket: ', ticket, this.areaId)  
-    this.dataInfo.ticketRead = this.dataInfo.ticketRead + ticket    
+    this.allTickets.success.forEach(element => {
+
+      if(element.id_estoque_utilizavel == ticket){            
+        let dateSell = moment(element.data_log_venda).format("L");            
+        element.data_log_venda = dateSell
+        element.MODIFICADO  = true        
+      }
+    });
+
   }
 
 }

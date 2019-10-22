@@ -48,6 +48,8 @@ export class AudioUtilsProvider {
 
   play(key: string): void {
 
+    console.log(key)
+    
     let soundToPlay = this.sounds.find((sound) => {
       return sound.key === key;
     });
