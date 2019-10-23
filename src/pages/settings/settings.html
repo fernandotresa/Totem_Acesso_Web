@@ -43,18 +43,37 @@
         Configurações Lista Branca
       </ion-list-header>
     
-      <ion-item>      
+      <ion-item>   
+
         <ion-row>
 
-          <ion-col>
-              <button ion-button full (click)="startMemoryList()">Baixar nova lista Branca do servidor</button>    
+            <ion-col>
+                <button ion-button full (click)="startMemoryList()">Baixar Nova lista - servidor</button>    
+            </ion-col>
+
+            <ion-col>
+                <button ion-button full (click)="getMemoryList()">Verificar lista atual - Rede</button>    
+            </ion-col>
+
+            <ion-col>
+              <button ion-button full (click)="getMemoryListMem()">Verificar lista atual - Mem</button>    
           </ion-col>
 
-          <ion-col>
-              <button ion-button full (click)="getMemoryList()">Verificar lista atual</button>    
+        </ion-row>
+
+        <ion-row>
+
+            <ion-col>
+                <button ion-button full (click)="removeAll()" color="danger">Apagar Mem</button>    
+            </ion-col>
+
+            <ion-col>
+                <button ion-button full (click)="getMemoryList()">Exportar</button>    
+            </ion-col>
+
+            <ion-col>
+              <button ion-button full (click)="getMemoryListMem()">Importar</button>    
           </ion-col>
-
-
 
         </ion-row>
         

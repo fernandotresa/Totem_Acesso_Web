@@ -18,6 +18,7 @@ export class MemoryListPage {
   inputVisible: Boolean = true
   isLoading: Boolean = true  
 
+  isMemoryList: Boolean = false
   ticketsArray: any = []
 
   totalChecks: number = 0
@@ -37,18 +38,37 @@ export class MemoryListPage {
   }
 
   ionViewDidLoad() {        
+
+    this.isMemoryList = this.navParams.get('isMemoryList')
+    this.allTickets = this.navParams.get('allTickets')
+
     this.totemWorking()    
 
-    this.listaBranca.getListBrancaStorage()
-    .then( data => {
-      
-      this.allTickets = data
-      console.log(data)
-      this.searchMultipleTickets()
-    })
+    console.log(this.isMemoryList, this.allTickets)
+
+    if(this.isMemoryList)
+        this.showMemoryList()      
+      else
+        this.searchMultipleTicketsNetwork()    
   }    
 
-  
+  showMemoryList(){
+    
+    
+    this.totalChecks = this.allTickets.length
+
+    this.allTickets.forEach(element => {
+      console.log(element)
+
+      element.nome_ponto_acesso = this.dataInfo.titleGeneral
+      element.MODIFICADO  = true        
+    });
+
+    this.setTimeoutTicketsVerify()    
+    this.isLoading = false
+
+  }
+    
   setTimeoutTicketsVerify(){
 
     let self = this
@@ -80,7 +100,7 @@ export class MemoryListPage {
     this.totalChecksOk = 0
   }
 
-  searchMultipleTickets(){
+  searchMultipleTicketsNetwork(){
     
     let self = this  
     this.clearChecks()  
@@ -92,7 +112,7 @@ export class MemoryListPage {
         self.uiUtils.showToast(this.dataInfo.startVerification)
         self.isLoading = true
 
-        self.searchMultipleCallback(this.allTickets)                       
+        self.searchMultipleCallback()                       
     }
             
     }).catch(error => {
@@ -113,23 +133,20 @@ export class MemoryListPage {
   }  
 
   checkInputs(){
-    return new Promise<boolean>((resolve, reject) => { 
-      
-      resolve(true); 
-      
+    return new Promise<boolean>((resolve, reject) => {       
+      resolve(true);       
     });    
   }
 
-  searchMultipleCallback(ticket){    
+  searchMultipleCallback(){    
 
-    this.allTickets = ticket    
-    this.totalChecks = ticket.length
+    this.totalChecks = this.allTickets.length
 
     if(this.allTickets.length == 0)
       this.searchCallbackNone()    
 
     else 
-      this.searchCallbackContinue(ticket) 
+      this.searchCallbackContinue() 
   }
 
 
@@ -138,10 +155,10 @@ export class MemoryListPage {
       this.isLoading = false
   }
 
-  searchCallbackContinue(ticket){
+  searchCallbackContinue(){
     let self = this    
    
-    ticket.forEach(element => {
+    this.allTickets.forEach(element => {
       self.searchOneTicket(element)      
     });        
 
@@ -156,6 +173,7 @@ export class MemoryListPage {
     else {     
       
       this.http.checkTicketSold(ticket.id_estoque_utilizavel).subscribe( data => {
+
         this.checkSold(data)                    
       })                  
     }
@@ -206,7 +224,7 @@ export class MemoryListPage {
 
   checkSold(ticket){    
     
-    ticket.forEach(element => {
+    ticket.success.forEach(element => {
 
       if(element.data_log_venda == undefined)
         this.ticketNotSold(element.id_estoque_utilizavel)

@@ -15,6 +15,9 @@ import { Events } from 'ionic-angular';
 })
 export class SettingsPage {ticket    
 
+  allTickets: any  = [];
+  memoryList: any
+
   ativaListaBranca: Boolean = false
   ativaRedeOnline: Boolean = false
   ativaHotspot: Boolean = false
@@ -26,7 +29,7 @@ export class SettingsPage {ticket
     public dataInfo: DataInfoProvider,
     public storage: Storage,
     public events: Events,
-    public navParams: NavParams) {
+    public navParams: NavParams) {      
   }
 
   ionViewDidLoad() {
@@ -34,8 +37,14 @@ export class SettingsPage {ticket
     this.events.subscribe('listaBrancaConfig', () => {
       this.listaBrancaConfigIsOk()
     });
-  }
 
+    this.events.subscribe('lista-branca', data => {
+      this.allTickets = data
+    });    
+
+    this.listaBrancaConfigIsOk()
+  }
+    
   listaBrancaConfigIsOk(){
     this.ativaListaBranca = this.dataInfo.ativaListaBranca
     this.ativaRedeOnline = this.dataInfo.ativaRedeOnline
@@ -89,14 +98,40 @@ export class SettingsPage {ticket
   }
 
   startMemoryList(){
-    this.listaBranca.startInterface()
+    this.events.publish('update-lista-branca', true)
     this.uiUtils.showToast('Atualizado com sucesso')
   }
 
 
-  getMemoryList(){
-    this.navCtrl.push(MemoryListPage)
-    
+  getMemoryList(){    
+    this.navCtrl.push(MemoryListPage, {isMemoryList: false, allTickets: this.listaBranca.allTickets})    
+  }
+
+  getMemoryListMem(){
+    this.navCtrl.push(MemoryListPage, {isMemoryList: true, allTickets: this.listaBranca.allTickets})    
+  }
+
+  removeAll(){
+    this.uiUtils.showConfirm('Atenção', 'Deseja realmente limpar a lista?')
+
+    .then(res => {
+
+      if(res){
+        this.removeAllContinue()
+        this.uiUtils.showAlert('Sucesso', 'Lista removida com sucesso')
+      }
+    })
+  }
+
+  removeAllContinue(){     
+
+    this.storage.forEach((value, key, index) => {
+        
+      if(value && value.id_estoque_utilizavel){
+        this.storage.remove(key)
+      } 
+    })    
+
   }
 
 }

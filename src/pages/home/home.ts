@@ -75,6 +75,8 @@ export class HomePage {
 
       this.events.subscribe('listaBrancaConfig', () => {
         //this.modeOperation()
+        console.log('listaConfig')
+        this.subscribeListaBranca()
       });
   }  
 
@@ -91,9 +93,16 @@ export class HomePage {
     
   ionViewDidLoad() {           
     this.reload()    
+    this.dev()  
+  }
 
-    this.searchTicket = '19520001'
-    this.searchOneTicket()
+  dev(){
+
+    let self = this
+    setTimeout(() => {
+      self.searchTicket = '19520001'
+      self.searchOneTicket()
+    }, 1000)
   }
 
   modeOperation(){    
@@ -101,6 +110,19 @@ export class HomePage {
     console.log('ativaRedeOnline', this.dataInfo.ativaRedeOnline)
     console.log('ativaHotspot', this.dataInfo.ativaHotspot)
     console.log('ativaSincronizacaoUsb', this.dataInfo.ativaSincronizacaoUsb)    
+  }
+
+  subscribeListaBranca(){
+
+    this.events.subscribe('lista-branca-callback', data => {
+        this.listaBrancaAcessoNegado(data)    
+    });
+  }
+
+  listaBrancaAcessoNegado(data){
+      console.log(data)
+
+      this.seachOneTicketCallback(data, data.result)
   }
 
   reload(){
@@ -276,6 +298,7 @@ export class HomePage {
       self.idTypeBackgrond = self.dataInfo.backgroundIdNone
       self.totemWorking()
       self.uiUtils.showToast(this.dataInfo.inicializedSuccessfully)
+      self.dataInfo.totemId = element.id_ponto_acesso
     }    
   }
   
@@ -356,6 +379,8 @@ export class HomePage {
       this.message2 = str2
     }
 
+    console.log(str1, str2, ticket)
+
     this.showGpioError()
     this.backHome()    
   }
@@ -424,6 +449,8 @@ export class HomePage {
 
   seachOneTicketCallback(data, ticketTmp){    
     
+    console.log('Callback recebido:', data.success)
+
     if(data.success[0].callback == 1)
       this.ticketNotExist(ticketTmp)
 

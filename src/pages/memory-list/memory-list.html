@@ -1,6 +1,8 @@
 <ion-header>
     <ion-navbar text-center no-border-bottom color="primary">        
       <ion-title> Lista Branca </ion-title>     
+      <p *ngIf="! isMemoryList" style="color: white;">Verificando pela rede</p>
+      <p *ngIf="isMemoryList" style="color: white;">Verificando pela Memoria</p>      
     </ion-navbar>  
   </ion-header>
 
@@ -13,9 +15,10 @@
 
   <ion-grid *ngIf="! isLoading">
     <ion-row wrap>
+        
       <ion-col width-33 *ngFor="let command of allTickets">        
           
-        <ion-card>
+        <ion-card *ngIf="command.id_estoque_utilizavel">
             
             <ion-card-header style="border-top: 3px solid green; border-bottom: 3px solid green; margin-bottom: 5px;" *ngIf="command.message">
                 <h5 style="color: green;"> Ingresso: {{ command.id_estoque_utilizavel}}  </h5>                                                
@@ -32,7 +35,8 @@
                 <p *ngIf="command.message">Informação: {{ command.message}} </p>
             </ion-card-content>
 
-        </ion-card>        
+        </ion-card>              
+
       </ion-col>
     </ion-row>
   </ion-grid>

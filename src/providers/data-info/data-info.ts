@@ -136,6 +136,9 @@ export class DataInfoProvider {
 
       data.success.forEach(element => {
 
+
+        console.log(element)
+        
         self.titleGeneral = element.nome_ponto_acesso
         self.totemId = element.fk_id_ponto_acesso
         self.areaId = element.fk_id_area_acesso

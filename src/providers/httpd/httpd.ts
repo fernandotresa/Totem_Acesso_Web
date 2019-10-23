@@ -14,7 +14,7 @@ export class HttpdProvider {
     this.address = this.dataInfo.addressServer
     console.log("Endereço do servidor:", this.address)
     
-    this.getTotemInfo().subscribe(data => {    
+    this.getTotemInfo().subscribe(data => {   
       this.dataInfo.configureTotem(data)
     })
   }  

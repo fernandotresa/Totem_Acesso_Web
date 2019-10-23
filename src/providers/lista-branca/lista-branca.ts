@@ -9,6 +9,7 @@ import moment from 'moment';
 export class ListaBrancaProvider {
 
   allTickets: any = []
+  listaBranca: any
 
   constructor(
     public http: HttpdProvider, 
@@ -17,8 +18,52 @@ export class ListaBrancaProvider {
 
     public storage: Storage) {    
 
+      this.allTickets = []
       this.getOptionListaBranca()
+
+      this.events.subscribe('totem:updated', (data) => {              
+        this.startInterface()
+      });            
+
+      this.events.subscribe('update-lista-branca', (data) => {      
+        this.atualizaLista()
+      });            
   }
+
+  startInterface(){
+
+    this.getListBrancaStorage()
+
+    .then( data => {      
+
+      this.allTickets = data
+      this.events.publish('lista-branca', data)
+    })    
+  }
+
+  getListBrancaStorage(){
+
+    return new Promise<any>((resolve) => { 
+
+      let tickets = []
+      
+      this.storage.keys().then(data => {
+
+        this.storage.forEach((value, key, index) => {                  
+                          
+          if(value && value.id_estoque_utilizavel){
+            tickets.push(value)
+          } 
+  
+          if (index === data.length -1){
+            resolve(tickets)
+          }
+        })                    
+      })
+            
+    });
+  }
+
 
   getOptionListaBranca(){
     this.storage.get('ativaListaBranca')
@@ -52,10 +97,11 @@ export class ListaBrancaProvider {
         this.events.publish('listaBrancaConfig', true)
     })
   }
-
-  startInterface(){
-
+  
+  atualizaLista()
+  {
     this.http.getListaBranca()
+
     .subscribe(data => {
 
       this.getListaBrancaCallback(data)
@@ -64,7 +110,6 @@ export class ListaBrancaProvider {
 
   getListaBrancaCallback(data){
 
-    let lista = []
     let listaEstoque = []
 
     data.success.forEach(element => {    
@@ -72,39 +117,23 @@ export class ListaBrancaProvider {
       if(listaEstoque.indexOf(element.id_estoque_utilizavel) < 0){
 
         listaEstoque.push(element.id_estoque_utilizavel)
-        lista.push(element)      
+        this.storage.set(String(element.id_estoque_utilizavel), element)    
 
-      }
+      }      
     });
-
-    this.storage.set('listabranca', lista)    
   }
-
-  getListBrancaStorage(){
-
+  
+  checkTicketExistMemory(ticket){
+    
     return new Promise<any>((resolve) => { 
 
-      this.storage.get('listabranca')
-      .then(data => {
+      this.allTickets.forEach(element => {                
 
-        resolve(data)
-      })
-    });
-  }
-
-  checkTicketExistMemory(ticket){
-
-    return new Promise<any>((resolve, reject) => { 
-
-      this.storage.get(ticket)
-      .then(data => {
-
-        data? resolve() : reject()
-
-      })
-      .catch(() => {        
-        reject(ticket)
-      })
+        if(Number(ticket) === element.id_estoque_utilizavel){     
+          resolve(element)
+        }
+          
+      });
     });
   }
 
@@ -113,50 +142,73 @@ export class ListaBrancaProvider {
 
     return new Promise<any>((resolve, reject) => { 
 
-      this.allTickets.forEach(element => {
+      if(this.allTickets && this.allTickets.length > 0){
 
-        let id_estoque_utilizavel = element.id_estoque_utilizavel
+        this.allTickets.forEach(element => {
 
-        if(id_estoque_utilizavel === Number(ticket)){
-          resolve(element)
-        }          
-
-      });
-      
-      reject()
+          let id_estoque_utilizavel = element.id_estoque_utilizavel          
+  
+          if(id_estoque_utilizavel === Number(ticket)){
+            resolve(element)
+          }          
+  
+        });              
+      }
+      else       
+      resolve("Inexistente")
 
     });
   }
 
-  searchOneTicket(ticket){
-
-    console.log('Procurando pela lista branca: ', ticket)
-
-    this.getListBrancaStorage()
-    .then( data => {
-      
-      this.allTickets = data
-      this.searchOneTicketContinue(ticket)            
-    })
+  buildCallback(data){
+    let coitainer = {success: data}        
+    this.events.publish('lista-branca-callback', coitainer)
   }
 
-  searchOneTicketContinue(ticket){
+
+  searchOneTicket(ticket){
     
-    console.log(this.allTickets)
     console.log('Verificando se temos o ticket na memoria ', ticket)
 
-
     this.checkTicketExistMemory(ticket)
-    .then(() => {
 
-      console.log('Temos o ticket na memoria')
+    .then(() => {            
+      this.searchOneTicketCallback(ticket)       
     })
+    
     .catch(() => {
 
       console.log('Não temos o ticket na memoria')
       this.checkDoorRules(ticket)
 
     })
+  }
+
+  searchOneTicketCallback(ticket){
+
+    this.getTicketInfo(ticket)
+
+    .then(data => {  
+
+      if(data === "Inexistente"){
+        console.log("Atenção: Não foi possivel localizar o bilhete na memoria. Favor verificar se o mesmo foi importado")
+
+      }
+      else {
+        let unica_porta_acesso = data.unica_porta_acesso
+        let utilizado = data.utilizado
+
+        if(unica_porta_acesso === 1 && utilizado === 1){
+          let callback = [{"callback": 10, "result": ticket}]
+          this.buildCallback(callback)
+        }
+        else {
+        
+          this.checkDoorRules(ticket)
+        }      
+      }
+      
+    })  
   }
 
   checkDoorRules(ticket){
@@ -202,12 +254,15 @@ export class ListaBrancaProvider {
     let isAfter = moment(until).isAfter(now);
 
     if(isAfter){
+
       let callback = [{"callback": 12, "result": data}]
-      this.events.publish('acesso-negado', callback)
+      this.buildCallback(callback)    
     }
     else 
       this.useTicket(data)
   }
+
+  
 
   ticketAccessSameDay(data){
 
@@ -224,25 +279,14 @@ export class ListaBrancaProvider {
     } else {
 
       let callback = [{"callback": 9, "result": data}]
-      this.events.publish('acesso-negado', callback)
-      
+      this.events.publish('lista-branca-callback', callback)
+
     }
   }
 
   ticketAccessOnlyone(data){
 
-    this.checkTicketExistMemory(data.id_estoque_utilizavel)
-    .then(() => {
-
-      let callback = [{"callback": 10, "result": data}]
-      this.events.publish('acesso-negado', callback)
-
-    })
-    .catch(() => {
-
-      this.useTicket(data)
-
-    })    
+    this.useTicket(data)
   }
 
   ticketAccessCountPass(data){
@@ -251,8 +295,38 @@ export class ListaBrancaProvider {
 
 
 
-  useTicket(ticket){
+  useTicket(ticket){            
 
+    this.removeTicket(ticket)
+    .then(() => {
+
+      this.allTickets.forEach(element => {        
+
+        if(element.id_estoque_utilizavel === ticket.id_estoque_utilizavel){
+            element.utilizado = 1
+            element.dataHoraUtilizado = moment().format()
+  
+            console.log('Substituido:', element.id_estoque_utilizavel, element.utilizado)
+            this.storage.set(String(ticket.id_estoque_utilizavel), element)
+        }
+      });        
+    })    
   }
+
+  removeTicket(ticket){
+
+    return new Promise<any>((resolve) => { 
+
+      this.storage.get('listaBranca')
+      .then(data => {
+
+
+
+      })
+      resolve()
+    });    
+  }
+
+
 
 }
