@@ -3,7 +3,7 @@ import { HttpdProvider } from '../../providers/httpd/httpd';
 import { DataInfoProvider } from '../../providers/data-info/data-info'
 import { Events } from 'ionic-angular';
 import { Storage } from '@ionic/storage';
-import moment from 'moment';
+import * as moment from 'moment';
 
 @Injectable()
 export class ListaBrancaProvider {
@@ -121,6 +121,8 @@ export class ListaBrancaProvider {
 
       }      
     });
+
+    console.log(listaEstoque)
   }
   
   checkTicketExistMemory(ticket){
@@ -173,13 +175,14 @@ export class ListaBrancaProvider {
     this.checkTicketExistMemory(ticket)
 
     .then(() => {            
+
       this.searchOneTicketCallback(ticket)       
     })
     
     .catch(() => {
 
       console.log('Não temos o ticket na memoria')
-      this.checkDoorRules(ticket)
+      //this.checkTicketValidity(ticket)
 
     })
   }
@@ -190,60 +193,142 @@ export class ListaBrancaProvider {
 
     .then(data => {  
 
-      if(data === "Inexistente"){
-        console.log("Atenção: Não foi possivel localizar o bilhete na memoria. Favor verificar se o mesmo foi importado")
-
-      }
-      else {
-        let unica_porta_acesso = data.unica_porta_acesso
-        let utilizado = data.utilizado
-
-        if(unica_porta_acesso === 1 && utilizado === 1){
-          let callback = [{"callback": 10, "result": ticket}]
-          this.buildCallback(callback)
-        }
-        else {
-        
-          this.checkDoorRules(ticket)
-        }      
-      }
+      if(data === "Inexistente")
+        console.log("Atenção: Não foi possivel localizar o bilhete na memoria. Favor verificar se o mesmo foi importado")      
+      else 
+        this.searchTicketContinue(data)            
       
     })  
   }
 
+  searchTicketContinue(data){
+    let ticket = data.id_estoque_utilizavel
+    let unica_porta_acesso = data.unica_porta_acesso
+    let horas_porta_acesso = data.horas_porta_acesso
+    
+    let utilizado = data.utilizado
+    let unicaPortaUtilizado = unica_porta_acesso === 1 && utilizado === 1
+    let horasPortaUtilizado = horas_porta_acesso >= 1 && utilizado === 1
+
+    console.log(unica_porta_acesso, horas_porta_acesso, utilizado)
+      
+    if(unicaPortaUtilizado || horasPortaUtilizado){
+
+      console.log('Já utilizado:', ticket)
+
+      let callback = [{"callback": 10, "result": ticket}]
+      this.buildCallback(callback)
+    }
+    else {
+    
+      this.checkTicketValidity(data)
+    }
+  }
+
+  checkTicketValidity(ticket){
+
+    console.log(ticket)
+
+    let idTotem = this.dataInfo.totemId
+    let ticketstr = ticket.id_estoque_utilizavel   
+    let mesmo_dia_validade = ticket.mesmo_dia_validade
+    let infinito_validade = ticket.infinito_validade        
+
+    console.log('Totem: '+ idTotem + ' - Verificando ticket validade: ' + ticketstr)
+    
+    if(mesmo_dia_validade == 1)
+        this.ticketValiditySameDay(ticket)
+
+    else if(infinito_validade == 1)
+      this.ticketValidityInfinite(ticket)
+    
+    else 
+      this.ticketValidityTime(ticket)
+}
+
+  ticketValiditySameDay(ticket){
+
+    let idTotem = this.dataInfo.totemId
+    let ticketstr = ticket.id_estoque_utilizavel   
+    let data_log_venda = ticket.data_log_venda
+
+    let now = moment().format()       
+
+    let isSame = moment(data_log_venda).isSame(now, 'day')    
+    console.log('Totem: '+ idTotem + ' - Verificando ticket validade mesmo dia: ' + ticketstr)    
+
+    if(isSame)
+        this.checkDoorRules(ticket)    
+
+    else {
+        let callback = [{"callback": 5, "result": ticket}]
+        this.buildCallback(callback)
+    }
+}
+
+  ticketValidityInfinite(ticket){
+    
+    let idTotem = this.dataInfo.totemId
+    let ticketstr = ticket.id_estoque_utilizavel   
+
+    console.log('Totem: '+ idTotem + ' - Verificando ticket validade infinita: ' + ticketstr)
+
+    this.checkDoorRules(ticket)
+ }
+
+ticketValidityTime(ticket){
+
+    let idTotem = this.dataInfo.totemId      
+    let id_estoque_utilizavel = ticket.id_estoque_utilizavel
+    let tempo_validade = ticket.tempo_validade
+    let statusTicketStart = moment(ticket.data_log_venda).format("L")   
+
+    console.log('Data da venda:', ticket.data_log_venda)
+
+    let until =  moment().hours(tempo_validade).format();
+
+    let now = moment().format()        
+    let isAfter = moment(until).isAfter(now);
+
+    console.log('Totem: '+ idTotem + ' - Verificando ticket validade tempo: ' + id_estoque_utilizavel + ' '+ statusTicketStart)
+
+    if(isAfter)
+        this.checkDoorRules(ticket)    
+
+    else {
+        let callback = [{"callback": 6, "result": ticket}]
+        this.buildCallback(callback)
+    }
+}
+
+
   checkDoorRules(ticket){
 
-    this.getTicketInfo(ticket)
+    let horas_porta_acesso = ticket.horas_porta_acesso
+    let mesmo_dia_porta_acesso = ticket.mesmo_dia_porta_acesso
+    let unica_porta_acesso = ticket.unica_porta_acesso
+    let numero_liberacoes = ticket.numero_liberacoes
 
-    .then(data => {  
+    console.log('horas_porta_acesso', horas_porta_acesso)
+    console.log('mesmo_dia_porta_acesso', mesmo_dia_porta_acesso)
+    console.log('unica_porta_acesso', unica_porta_acesso)
+    console.log('numero_liberacoes', numero_liberacoes)
 
-      let horas_porta_acesso = data.horas_porta_acesso
-      let mesmo_dia_porta_acesso = data.mesmo_dia_porta_acesso
-      let unica_porta_acesso = data.unica_porta_acesso
-      let numero_liberacoes = data.numero_liberacoes
-
-      console.log('horas_porta_acesso', horas_porta_acesso)
-      console.log('mesmo_dia_porta_acesso', mesmo_dia_porta_acesso)
-      console.log('unica_porta_acesso', unica_porta_acesso)
-      console.log('numero_liberacoes', numero_liberacoes)
-
-      if(horas_porta_acesso > 0){
-        this.ticketAccessTimeDoor(data)
-      }
-      else if(mesmo_dia_porta_acesso > 0){
-        this.ticketAccessSameDay(data)
-      }
-      else if(unica_porta_acesso > 0){
-        this.ticketAccessOnlyone(data)
-      }
-      else if(numero_liberacoes > 0){
-        this.ticketAccessCountPass(data)
-      }    
-      else {      
-        console.log('Regra não localizada')
-      }
-      
-    })    
+    if(horas_porta_acesso > 0){
+      this.ticketAccessTimeDoor(ticket)
+    }
+    else if(mesmo_dia_porta_acesso > 0){
+      this.ticketAccessSameDay(ticket)
+    }
+    else if(unica_porta_acesso > 0){
+      this.ticketAccessOnlyone(ticket)
+    }
+    else if(numero_liberacoes > 0){
+      this.ticketAccessCountPass(ticket)
+    }    
+    else {      
+      console.log('Regra não localizada')
+    }  
   }
 
   ticketAccessTimeDoor(data){
@@ -262,7 +347,6 @@ export class ListaBrancaProvider {
       this.useTicket(data)
   }
 
-  
 
   ticketAccessSameDay(data){
 
@@ -297,33 +381,54 @@ export class ListaBrancaProvider {
 
   useTicket(ticket){            
 
-    this.removeTicket(ticket)
+    this.incrementUseTicket(ticket)
     .then(() => {
+
+      
+      this.useTicketEnd(ticket)
+    })    
+  }
+
+  useTicketEnd(ticket){
+    let callback = [{"callback": 100, "result": ticket.id_estoque_utilizavel}]
+    this.buildCallback(callback)    
+  }
+
+  incrementUseTicket(ticket){
+
+    console.log('Incrementando: ', ticket)
+
+    return new Promise<any>((resolve) => { 
 
       this.allTickets.forEach(element => {        
 
         if(element.id_estoque_utilizavel === ticket.id_estoque_utilizavel){
             element.utilizado = 1
-            element.dataHoraUtilizado = moment().format()
-  
-            console.log('Substituido:', element.id_estoque_utilizavel, element.utilizado)
+
+            if(! element.utilizacoes){
+              element.utilizacoes = []
+            }
+            
+            element.utilizacoes.push(moment().format())
+
             this.storage.set(String(ticket.id_estoque_utilizavel), element)
+            resolve()
         }
-      });        
-    })    
+      });               
+    });    
   }
 
   removeTicket(ticket){
 
+    console.log(ticket)
+
     return new Promise<any>((resolve) => { 
 
-      this.storage.get('listaBranca')
+      this.storage.remove(String(ticket.id_estoque_utilizavel))
       .then(data => {
-
-
-
+        resolve()
       })
-      resolve()
+      
     });    
   }
 

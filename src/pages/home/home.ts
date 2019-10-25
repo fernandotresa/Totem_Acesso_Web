@@ -115,14 +115,14 @@ export class HomePage {
   subscribeListaBranca(){
 
     this.events.subscribe('lista-branca-callback', data => {
-        this.listaBrancaAcessoNegado(data)    
+        this.listaBrancaAcessoCallback(data)            
     });
   }
 
-  listaBrancaAcessoNegado(data){
-      console.log(data)
+  listaBrancaAcessoCallback(data){
+      console.log(data.success[0].result)
 
-      this.seachOneTicketCallback(data, data.result)
+      this.seachOneTicketCallback(data, data.success[0].result)
   }
 
   reload(){
@@ -583,6 +583,8 @@ export class HomePage {
 
       let self = this
 
+      console.log('Utilizando ticket', ticket)
+
       this.http.useTicket(ticket).subscribe( data => {
         self.useTicketEnd(data, ticket)              
       })
@@ -627,6 +629,7 @@ export class HomePage {
   
   useTicketEnd(data, ticket){    
     
+
     let productType = ''
     let productSubType = ''
     this.ticketRead = true
@@ -639,6 +642,7 @@ export class HomePage {
     });
     
     let msg = productType + " - " + productSubType
+    console.log(msg)
 
     this.statusTicket = this.dataInfo.ticketOk
     this.idTypeBackgrond = this.dataInfo.backgroundIdGreen    
