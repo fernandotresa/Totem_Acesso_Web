@@ -134,6 +134,12 @@ export class HttpdProvider {
     return this.http.post(this.address  + "/useTicket", myData, {headers: headers})
   }
 
+  useTicketMemory(value_){
+    let myData = JSON.stringify({id: this.dataInfo.totemId, ticket: value_, idArea: this.dataInfo.areaId, idPorta: this.dataInfo.portaId});
+    const headers = new HttpHeaders({'Content-Type':'application/json'});
+    return this.http.post(this.address  + "/useTicketMemory", myData, {headers: headers})
+  }
+
   useTicketMultiple(value_){
     let myData = JSON.stringify({id: this.dataInfo.totemId, ticket: value_, idArea: this.dataInfo.areaId, idPorta: this.dataInfo.portaId});
     const headers = new HttpHeaders({'Content-Type':'application/json'});

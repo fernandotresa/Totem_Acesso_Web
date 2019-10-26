@@ -121,8 +121,10 @@ export class ListaBrancaProvider {
 
       }      
     });
+  }
 
-    console.log(listaEstoque)
+  getAllTickets(){
+    return this.allTickets
   }
   
   getTicketInfo(ticket){
@@ -342,16 +344,28 @@ ticketValidityTime(ticket){
 
   ticketAccessCountPass(data){
 
-    let idTotem = this.dataInfo.totemId      
-    console.log('Totem: '+ idTotem + ' - Verificando contador de utilizações: ' + data.id_estoque_utilizavel)
+    let idTotem = this.dataInfo.totemId
+    let numero_liberacoes = data.numero_liberacoes
+      
+    console.log('Totem: '+ idTotem + ' - Verificando contador de utilizações: ' + data.id_estoque_utilizavel + '. Número de liberações permitidas: ' + numero_liberacoes)
   
     if(! data.utilizacoes){
-
-      console.log('Sem nenhuma utilização')
       this.useTicket(data)
 
     } else {
-      console.log(data.utilizacoes)
+      
+      let utilizacoes = data.utilizacoes
+
+      if(utilizacoes.length > numero_liberacoes){
+
+        let callback = [{"callback": 11, "result": [data]}]      
+        this.buildCallback(callback)
+
+      }
+      else {
+        this.useTicket(data)
+        
+      }
     }    
   }
 

@@ -17,17 +17,18 @@ import { DatabaseProvider } from '../providers/database/database';
 import { NativeStorage } from '@ionic-native/native-storage';
 import { UiUtilsProvider } from '../providers/ui-utils/ui-utils';
 import { HttpClientModule } from '@angular/common/http';
-import { BarcodeScanner } from '@ionic-native/barcode-scanner/ngx';
 
 import { AngularFireModule } from 'angularfire2';
 import { AngularFireDatabaseModule } from 'angularfire2/database';
 import { ConfigurationService } from "ionic-configuration-service";
 //import { SocketIoModule, SocketIoConfig } from 'ng-socket-io';Só colocar no estoque
 import { MultiplePage } from '../pages/multiple/multiple';
-import { QrcodePageModule } from '../pages/qrcode/qrcode.module';
 import { GpiosProvider } from '../providers/gpios/gpios';
 
 import { NativeAudio } from '@ionic-native/native-audio';
+
+import { File } from '@ionic-native/file';
+import { BarcodeScanner } from '@ionic-native/barcode-scanner';
 
 import { AudioUtilsProvider } from '../providers/audio-utils/audio-utils';
 import { SideMenuContentComponent } from '../shared/side-menu-content/side-menu-content.component';
@@ -72,7 +73,6 @@ export const firebaseConfig = {
   exports: [
     MultiplePageModule,
     HistoryPageModule,
-    QrcodePageModule,
     SettingsPageModule,
     MemoryListPageModule
   ],
@@ -84,9 +84,9 @@ export const firebaseConfig = {
   providers: [        
     NativeStorage,
     NativeAudio,
+    File,
     {provide: ErrorHandler, useClass: IonicErrorHandler},
-    HttpdProvider,
-    BarcodeScanner,
+    HttpdProvider,    
     DataInfoProvider,
     DatabaseProvider,
     UiUtilsProvider,

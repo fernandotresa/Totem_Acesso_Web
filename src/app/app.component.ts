@@ -2,7 +2,6 @@ import { Component, ViewChild } from '@angular/core';
 import { Platform, Nav, MenuController } from 'ionic-angular';
 
 import { HomePage } from '../pages/home/home';
-import { QrcodePage } from '../pages/qrcode/qrcode';
 import { HistoryPage } from '../pages/history/history';
 import { SettingsPage } from '../pages/settings/settings';
 import { MultiplePage } from '../pages/multiple/multiple';
@@ -27,10 +26,8 @@ export class MyApp {
 		selectedOptionClass: 'active-side-menu-option'		
   };
 
-  //rootPage:any = SettingsPage;
-  rootPage:any = HomePage;
-  
-
+  rootPage:any = SettingsPage;
+  //rootPage:any = HomePage;  
 
   constructor(platform: Platform, 
     private menuCtrl: MenuController) {
@@ -65,25 +62,12 @@ export class MyApp {
         component: HistoryPage
       });       
     
-      this.options.push({
-        iconName: 'md-qr-scanner',
-        displayText: 'QR Code',
-        component: QrcodePage,  
-      });	
-  
+    
       this.options.push({
         iconName: 'card',
         displayText: 'Configurações',
         component: SettingsPage,					
-      });	
-    
-      this.options.push({
-        iconName: 'log-out',
-        displayText: 'Sair',
-        custom: {
-          isLogout: true
-        }			
-      });
+      });	        
     }
     
     public collapseMenuOptions(): void {

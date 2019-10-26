@@ -44,7 +44,7 @@ export class MemoryListPage {
 
     this.totemWorking()    
 
-    console.log(this.isMemoryList, this.allTickets)
+    console.log(this.allTickets)
 
     if(this.isMemoryList)
         this.showMemoryList()      
@@ -54,14 +54,35 @@ export class MemoryListPage {
 
   showMemoryList(){
     
-    
+  
     this.totalChecks = this.allTickets.length
 
     this.allTickets.forEach(element => {
-      console.log(element)
-
+      
       element.nome_ponto_acesso = this.dataInfo.titleGeneral
-      element.MODIFICADO  = true        
+      element.MODIFICADO  = true    
+      element.message = "Configurado na lista branca"
+
+      element.data_log_venda =  moment(element.data_log_venda).format("DD/MM/YYYY hh:mm:ss");
+
+      console.log(element.id_estoque_utilizavel, element.data_log_venda)
+      let ut = []
+    
+      
+      if(element.utilizacoes){
+
+        element.utilizacoes.forEach(data => {
+          
+          let dataUtilizacao =  moment(data).format("DD/MM/YYYY hh:mm:ss");
+          let msg = dataUtilizacao + "\n"
+          ut.push(msg)          
+
+        });
+
+        element.utilizacoes = ut
+
+      }
+      
     });
 
     this.setTimeoutTicketsVerify()    

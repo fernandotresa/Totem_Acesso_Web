@@ -26,12 +26,12 @@
       <ion-checkbox [(ngModel)]="ativaRedeOnline"  (ionChange)="unselectAll('ativaRedeOnline')"></ion-checkbox>
     </ion-item>
 
-    <ion-item>
+    <ion-item *ngIf="false">
       <ion-label>Rede HotSpot</ion-label>
       <ion-checkbox [(ngModel)]="ativaHotspot"  (ionChange)="unselectAll('ativaHotspot')"></ion-checkbox>
     </ion-item>
     
-    <ion-item>
+    <ion-item  *ngIf="false">
       <ion-label>Sincronização USB</ion-label>
       <ion-checkbox [(ngModel)]="ativaSincronizacaoUsb"  (ionChange)="unselectAll('ativaSincronizacaoUsb')"></ion-checkbox>
     </ion-item>
@@ -46,42 +46,17 @@
       <ion-item>   
 
         <ion-row>
-
-            <ion-col>
-                <button ion-button full (click)="startMemoryList()">Baixar Nova lista - servidor</button>    
-            </ion-col>
-
-            <ion-col>
-                <button ion-button full (click)="getMemoryList()">Verificar lista atual - Rede</button>    
-            </ion-col>
-
-            <ion-col>
-              <button ion-button full (click)="getMemoryListMem()">Verificar lista atual - Mem</button>    
-          </ion-col>
-
+          <button ion-button full (click)="startMemoryList()">Baixar Nova lista - servidor</button>    
+          <button ion-button full (click)="getMemoryList()">Verificar lista atual - Rede</button>    
+          <button ion-button full (click)="getMemoryListMem()">Verificar lista atual - Mem</button>    
+          <button ion-button full (click)="removeAll()" color="danger">Apagar Memória</button>    
+          <button ion-button full (click)="sincronize()" color="secondary">Sincronizar dados</button>    
+          <button ion-button full (click)="exportMemory()" *ngIf="false">Exportar</button>    
+          <button ion-button full (click)="importMemory()" *ngIf="false">Importar</button>    
         </ion-row>
-
-        <ion-row>
-
-            <ion-col>
-                <button ion-button full (click)="removeAll()" color="danger">Apagar Mem</button>    
-            </ion-col>
-
-            <ion-col>
-                <button ion-button full (click)="getMemoryList()">Exportar</button>    
-            </ion-col>
-
-            <ion-col>
-              <button ion-button full (click)="getMemoryListMem()">Importar</button>    
-          </ion-col>
-
-        </ion-row>
-        
-
+       
       </ion-item>
 
 </ion-list>
-  
-
 
 </ion-content>

@@ -29,10 +29,11 @@
             </ion-card-header>
 
             <ion-card-content>
-                <p *ngIf="command.data_log_venda"> Data venda: {{ command.data_log_venda}} </p>
-                <p *ngIf="command.nome_ponto_acesso"> Ponto utilização: {{ command.nome_ponto_acesso}} </p>         
-                <p *ngIf="command.alerta">Atenção: {{ command.alerta}} </p>
-                <p *ngIf="command.message">Informação: {{ command.message}} </p>
+                <p *ngIf="command.data_log_venda"><b>Data venda:</b> {{ command.data_log_venda}} </p>
+                <p *ngIf="command.nome_ponto_acesso"><b> Ponto utilização:</b> {{ command.nome_ponto_acesso}} </p>         
+                <p *ngIf="command.alerta"><b>Atenção:</b> {{ command.alerta}} </p>
+                <p *ngIf="command.message"><b>Informação:</b> {{ command.message}} </p>
+                <p *ngIf="command.utilizacoes"><b>Utilizações:</b> {{ command.utilizacoes}} </p>
             </ion-card-content>
 
         </ion-card>              

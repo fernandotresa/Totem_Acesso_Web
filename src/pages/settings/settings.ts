@@ -6,7 +6,8 @@ import { Storage } from '@ionic/storage';
 import { MemoryListPage } from '../../pages/memory-list/memory-list';
 import { DataInfoProvider } from '../../providers/data-info/data-info'
 import { Events } from 'ionic-angular';
-
+import { HttpdProvider } from '../../providers/httpd/httpd';
+//import { File } from '@ionic-native/file';
 
 @IonicPage()
 @Component({
@@ -28,6 +29,8 @@ export class SettingsPage {ticket
     public uiUtils: UiUtilsProvider,     
     public dataInfo: DataInfoProvider,
     public storage: Storage,
+    //private file: File,
+    public http: HttpdProvider,
     public events: Events,
     public navParams: NavParams) {      
   }
@@ -98,10 +101,17 @@ export class SettingsPage {ticket
   }
 
   startMemoryList(){
-    this.events.publish('update-lista-branca', true)
-    this.uiUtils.showToast('Atualizado com sucesso')
-  }
 
+    this.uiUtils.showConfirm('Atenção', 'Deseja baixar a lista? Os dados atuais serão atualizados pelos valores obtidos no banco de dados')
+
+    .then(res => {
+
+      if(res){
+        this.events.publish('update-lista-branca', true)
+        this.uiUtils.showToast('Atualizado com sucesso')
+      }
+    })    
+  }
 
   getMemoryList(){    
     this.navCtrl.push(MemoryListPage, {isMemoryList: false, allTickets: this.listaBranca.allTickets})    
@@ -133,5 +143,72 @@ export class SettingsPage {ticket
     })    
 
   }
+
+  sincronize(){
+
+    this.uiUtils.showConfirm('Atenção', 'Deseja sincronizar os dados?')
+
+    .then(res => {
+
+      if(res){
+        this.sincronizeContinue()
+      }
+    })
+  }
+
+
+  sincronizeContinue(){
+    let data = this.listaBranca.getAllTickets()
+    data.forEach(element => {
+
+      if(element.utilizacoes){
+          this.useTicket(element)
+      }
+    });
+  }
+
+  useTicket(element){
+    
+    this.http.useTicketMemory(element)
+    .subscribe(data => {
+
+      console.log('Bilhete sincronizado com sucesso: ', element.id_estoque_utilizavel)
+
+      element.utilizado = 0
+      element.utilizacoes = []
+
+      this.storage.set(String(element.id_estoque_utilizavel), element)
+    })
+  }
+
+  getTicketsTxt(){
+    return String(this.allTickets)
+  }
+
+  exportMemory(){
+    this.uiUtils.showConfirm('Atenção', 'Deseja exportar os dados?')
+
+    .then(res => {
+
+      if(res){
+        //this.events.publish('update-lista-branca', true)
+        this.uiUtils.showAlert('Ops', 'Em desenvolvimento').present()
+      }
+    })
+  }
+
+  importMemory(){
+    this.uiUtils.showConfirm('Atenção', 'Deseja importar os dados?')
+
+    .then(res => {
+
+      if(res){
+        //this.events.publish('update-lista-branca', true)
+        this.uiUtils.showAlert('Ops', 'Em desenvolvimento').present()
+      }
+    })
+  }
+
+
 
 }

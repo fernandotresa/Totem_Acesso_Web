@@ -87,7 +87,7 @@ export class HomePage {
     
   ionViewDidLoad() {           
     this.reload()    
-    this.dev()  
+   // this.dev()  
   }
 
   dev(){
@@ -156,13 +156,10 @@ export class HomePage {
   }
 
   listaBrancaAcessoCallback(data){    
-
-    console.log(data)
     this.seachOneTicketCallback(data, data.success[0].result[0].id_estoque_utilizavel)
-  }
-
-  
-
+    this.totemWorking()
+  }  
+ 
   startTimer(){
     let self = this
 
@@ -205,8 +202,7 @@ export class HomePage {
   }
 
   backWithMessage(){
-    let self = this
-
+    let self = this    
     let time = this.dataInfo.timeMessage    
 
     if(this.idTypeBackgrond === this.dataInfo.backgroundIdSearchNotOk || 
@@ -382,7 +378,10 @@ export class HomePage {
     console.log(str1, str2, ticket)
 
     this.showGpioError()
-    this.backHome()    
+    
+    setTimeout(() => {
+      this.backHome()    
+    }, this.dataInfo.timeMessage)
   }
 
   searchOneTicket(){      
@@ -406,9 +405,6 @@ export class HomePage {
 
   searchOneNetwork(){
     let str = this.searchTicket.substring(0,8)
-
-    console.log('Procurando pela rede: ', str, this.dataInfo.totemSaida)
-
     this.totemNotWorking()      
     
     if(this.dataInfo.totemSaida === 0)
@@ -428,8 +424,6 @@ export class HomePage {
 
 
   searchTicketOut(str: string){
-
-    console.log("Saíndo: ", str)
 
     this.http.checkTicketOut(str).subscribe( data => {      
       this.searchTicketOutCallback(data)    
@@ -484,8 +478,15 @@ export class HomePage {
     else if(data.success[0].callback == 12)
       this.ticketAccessTimeDoorNotOkNotUsedContinue(data)
 
-    else if(data.success[0].callback == 100)
-      this.useTicket(ticketTmp)
+    else if(data.success[0].callback == 100){
+
+      if(this.dataInfo.ativaRedeOnline)
+        this.useTicket(ticketTmp)
+
+      else
+        this.useTicketEnd(data, ticketTmp)
+    }
+      
   }
   
   ticketNotExist(ticket){   
@@ -512,10 +513,7 @@ export class HomePage {
     this.showError(this.dataInfo.accessDenied, msg, ticket)
   }    
  
-  ticketValidityNotSame(ticketTmp, ticket){       
-
-    console.log(ticket)
-    
+  ticketValidityNotSame(ticketTmp, ticket){           
     let data = ticket.success[0].result[0]    
     let datalogvenda = data.data_log_venda
 
@@ -601,10 +599,7 @@ export class HomePage {
     })      
   }
 
-  searchOkCallback(ticket){
-
-    console.log(ticket)
-    
+  searchOkCallback(ticket){    
     this.ticketRead = true
     this.idTypeBackgrond = this.dataInfo.backgroundIdSearchOk                   
     this.historyText1 = this.dataInfo.ticketOk
@@ -613,8 +608,6 @@ export class HomePage {
     let pontos = "";
 
     ticket.success.forEach(element => {
-
-      console.log(element)
 
       let validity = element.fk_id_validade
 
@@ -631,20 +624,28 @@ export class HomePage {
   
   useTicketEnd(data, ticket){    
     
-
     let productType = ''
     let productSubType = ''
     this.ticketRead = true
     this.dataInfo.ticketRead = this.dataInfo.ticketReadDefault  
     this.history = this.dataInfo.ticketRead + ticket
 
-    data.success.forEach(element => {
-      productType = element.nome_produto_peq
-      productSubType = element.nome_subtipo_produto
+    data.success.forEach(element => {      
+
+      if(this.dataInfo.ativaRedeOnline){
+
+        productType = element.nome_produto_peq
+        productSubType = element.nome_subtipo_produto
+        
+      } else {
+
+        productType = element.result[0].nome_produto_peq
+        productSubType =  element.result[0].nome_subtipo_produto
+      }
+      
     });
     
     let msg = productType + " - " + productSubType
-    console.log(msg)
 
     this.statusTicket = this.dataInfo.ticketOk
     this.idTypeBackgrond = this.dataInfo.backgroundIdGreen    
@@ -652,7 +653,10 @@ export class HomePage {
     this.message2 = msg
     this.incrementCounter()
     this.showGpioSuccess()
-    this.backHome()
+
+    setTimeout(() => {
+      this.backHome()    
+    }, this.dataInfo.timeMessage)
   }
 
   setMultiple(){          
