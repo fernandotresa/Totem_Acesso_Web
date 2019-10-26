@@ -136,8 +136,7 @@ export class DataInfoProvider {
 
       data.success.forEach(element => {
 
-
-        console.log(element)
+        console.log('Informações do banco de dados sobre o ponto: ', element)
         
         self.titleGeneral = element.nome_ponto_acesso
         self.totemId = element.fk_id_ponto_acesso

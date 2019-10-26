@@ -71,13 +71,7 @@ export class HomePage {
       
       moment.locale('pt-BR');  
       this.audioUtils.preload('success', 'assets/audio/success.mp3');    
-      this.audioUtils.preload('error', 'assets/audio/error.mp3');    
-
-      this.events.subscribe('listaBrancaConfig', () => {
-        //this.modeOperation()
-        console.log('listaConfig')
-        this.subscribeListaBranca()
-      });
+      this.audioUtils.preload('error', 'assets/audio/error.mp3');          
   }  
 
   ngOnDestroy() {    
@@ -112,19 +106,6 @@ export class HomePage {
     console.log('ativaSincronizacaoUsb', this.dataInfo.ativaSincronizacaoUsb)    
   }
 
-  subscribeListaBranca(){
-
-    this.events.subscribe('lista-branca-callback', data => {
-        this.listaBrancaAcessoCallback(data)            
-    });
-  }
-
-  listaBrancaAcessoCallback(data){
-      console.log(data.success[0].result)
-
-      this.seachOneTicketCallback(data, data.success[0].result)
-  }
-
   reload(){
     this.searchTicket = ''
     this.history = ''
@@ -144,6 +125,10 @@ export class HomePage {
 
   subscribeStuff(){
     let self = this
+
+    this.events.subscribe('listaBrancaConfig', () => {      
+      this.subscribeListaBranca()
+    });
        
     this.events.subscribe('socket:pageMultiple', () => {
       this.setMultiple()
@@ -162,6 +147,21 @@ export class HomePage {
       self.events.unsubscribe('totem:updated');	
     });
   }
+
+  subscribeListaBranca(){
+
+    this.events.subscribe('lista-branca-callback', data => {
+        this.listaBrancaAcessoCallback(data)            
+    });
+  }
+
+  listaBrancaAcessoCallback(data){    
+
+    console.log(data)
+    this.seachOneTicketCallback(data, data.success[0].result[0].id_estoque_utilizavel)
+  }
+
+  
 
   startTimer(){
     let self = this
@@ -447,10 +447,10 @@ export class HomePage {
     this.backHome()
   }
 
-  seachOneTicketCallback(data, ticketTmp){    
-    
-    console.log('Callback recebido:', data.success)
+  seachOneTicketCallback(data, ticketTmp){            
 
+    console.log('Callback recebido: ', data.success[0].callback)
+    
     if(data.success[0].callback == 1)
       this.ticketNotExist(ticketTmp)
 
@@ -514,7 +514,9 @@ export class HomePage {
  
   ticketValidityNotSame(ticketTmp, ticket){       
 
-    let data = ticket.success[0].result[0]
+    console.log(ticket)
+    
+    let data = ticket.success[0].result[0]    
     let datalogvenda = data.data_log_venda
 
     this.history = this.dataInfo.ticketRead + ticketTmp
@@ -546,7 +548,7 @@ export class HomePage {
     let id_estoque_utilizavel = data.id_estoque_utilizavel
     let data_log_utilizacao = data.data_log_utilizacao
     
-    let message = this.dataInfo.ticketAlreadyUsed + moment(data_log_utilizacao).format("LLL");             
+    let message = 'Tempo máximo de uso excedido: ' + moment(data_log_utilizacao).format("LLL");             
         
     this.showError(this.dataInfo.accessDenied, message, id_estoque_utilizavel)    
   }

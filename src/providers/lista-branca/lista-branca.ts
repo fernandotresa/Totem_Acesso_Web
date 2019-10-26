@@ -125,21 +125,6 @@ export class ListaBrancaProvider {
     console.log(listaEstoque)
   }
   
-  checkTicketExistMemory(ticket){
-    
-    return new Promise<any>((resolve) => { 
-
-      this.allTickets.forEach(element => {                
-
-        if(Number(ticket) === element.id_estoque_utilizavel){     
-          resolve(element)
-        }
-          
-      });
-    });
-  }
-
-
   getTicketInfo(ticket){
 
     return new Promise<any>((resolve, reject) => { 
@@ -156,67 +141,44 @@ export class ListaBrancaProvider {
   
         });              
       }
-      else       
+      
       resolve("Inexistente")
-
     });
   }
 
   buildCallback(data){
-    let coitainer = {success: data}        
+    let coitainer = {success: data}     
     this.events.publish('lista-branca-callback', coitainer)
   }
 
 
   searchOneTicket(ticket){
     
-    console.log('Verificando se temos o ticket na memoria ', ticket)
-
-    this.checkTicketExistMemory(ticket)
-
-    .then(() => {            
-
-      this.searchOneTicketCallback(ticket)       
-    })
-    
-    .catch(() => {
-
-      console.log('Não temos o ticket na memoria')
-      //this.checkTicketValidity(ticket)
-
-    })
-  }
-
-  searchOneTicketCallback(ticket){
+    let idTotem = this.dataInfo.totemId
+    console.log('Totem: '+ idTotem + ' - Procurando informações do bilhete: ', ticket)
 
     this.getTicketInfo(ticket)
 
-    .then(data => {  
-
-      if(data === "Inexistente")
-        console.log("Atenção: Não foi possivel localizar o bilhete na memoria. Favor verificar se o mesmo foi importado")      
-      else 
-        this.searchTicketContinue(data)            
-      
-    })  
-  }
+    .then(data => {       
+      this.searchTicketContinue(data)        
+    })       
+  }  
 
   searchTicketContinue(data){
-    let ticket = data.id_estoque_utilizavel
+    
+    let idTotem = this.dataInfo.totemId
     let unica_porta_acesso = data.unica_porta_acesso
     let horas_porta_acesso = data.horas_porta_acesso
     
     let utilizado = data.utilizado
     let unicaPortaUtilizado = unica_porta_acesso === 1 && utilizado === 1
     let horasPortaUtilizado = horas_porta_acesso >= 1 && utilizado === 1
-
-    console.log(unica_porta_acesso, horas_porta_acesso, utilizado)
       
-    if(unicaPortaUtilizado || horasPortaUtilizado){
-
-      console.log('Já utilizado:', ticket)
-
-      let callback = [{"callback": 10, "result": ticket}]
+    if(unicaPortaUtilizado || horasPortaUtilizado){      
+    
+      console.log('Totem: '+ idTotem + ' - Ticket já foi utilizado e regra só permite 1 entrada: ' + data.id_estoque_utilizavel)
+      
+      let callback = [{"callback": 10, "result": [data]}]      
       this.buildCallback(callback)
     }
     else {
@@ -226,8 +188,6 @@ export class ListaBrancaProvider {
   }
 
   checkTicketValidity(ticket){
-
-    console.log(ticket)
 
     let idTotem = this.dataInfo.totemId
     let ticketstr = ticket.id_estoque_utilizavel   
@@ -261,7 +221,7 @@ export class ListaBrancaProvider {
         this.checkDoorRules(ticket)    
 
     else {
-        let callback = [{"callback": 5, "result": ticket}]
+        let callback = [{"callback": 5, "result": [ticket]}]
         this.buildCallback(callback)
     }
 }
@@ -281,22 +241,18 @@ ticketValidityTime(ticket){
     let idTotem = this.dataInfo.totemId      
     let id_estoque_utilizavel = ticket.id_estoque_utilizavel
     let tempo_validade = ticket.tempo_validade
-    let statusTicketStart = moment(ticket.data_log_venda).format("L")   
-
-    console.log('Data da venda:', ticket.data_log_venda)
-
     let until =  moment().hours(tempo_validade).format();
 
     let now = moment().format()        
     let isAfter = moment(until).isAfter(now);
 
-    console.log('Totem: '+ idTotem + ' - Verificando ticket validade tempo: ' + id_estoque_utilizavel + ' '+ statusTicketStart)
+    console.log('Totem: '+ idTotem + ' - Verificando ticket validade tempo: ' + id_estoque_utilizavel + '. Agora é antes do tempo máximo? ' + isAfter)
 
     if(isAfter)
         this.checkDoorRules(ticket)    
 
     else {
-        let callback = [{"callback": 6, "result": ticket}]
+        let callback = [{"callback": 6, "result": [ticket]}]
         this.buildCallback(callback)
     }
 }
@@ -304,15 +260,18 @@ ticketValidityTime(ticket){
 
   checkDoorRules(ticket){
 
+    let idTotem = this.dataInfo.totemId      
     let horas_porta_acesso = ticket.horas_porta_acesso
     let mesmo_dia_porta_acesso = ticket.mesmo_dia_porta_acesso
     let unica_porta_acesso = ticket.unica_porta_acesso
     let numero_liberacoes = ticket.numero_liberacoes
 
-    console.log('horas_porta_acesso', horas_porta_acesso)
-    console.log('mesmo_dia_porta_acesso', mesmo_dia_porta_acesso)
-    console.log('unica_porta_acesso', unica_porta_acesso)
-    console.log('numero_liberacoes', numero_liberacoes)
+    console.log('Totem: '+ idTotem + ' - Configurações das regras de porta: ')
+    console.log('Totem: '+ idTotem + ' - Horas Porta: ', horas_porta_acesso)    
+    console.log('Totem: '+ idTotem + ' - Mesmo dia: ', mesmo_dia_porta_acesso)
+    console.log('Totem: '+ idTotem + ' - Unica Porta: ', unica_porta_acesso)
+    console.log('Totem: '+ idTotem + ' - Número de liberações: ', numero_liberacoes)
+    
 
     if(horas_porta_acesso > 0){
       this.ticketAccessTimeDoor(ticket)
@@ -333,14 +292,16 @@ ticketValidityTime(ticket){
 
   ticketAccessTimeDoor(data){
 
+    let idTotem = this.dataInfo.totemId      
     let until =  moment(data.data_log_venda).add(data.horas_porta_acesso, 'hours').format();
     let now = moment().format()        
     
-    let isAfter = moment(until).isAfter(now);
+    let isAfter = moment(now).isAfter(until);
+    console.log('Totem: '+ idTotem + ' - Verificando ticket validade tempo: ' + data.id_estoque_utilizavel + '. Agora é antes do tempo máximo? ' + isAfter)
 
     if(isAfter){
 
-      let callback = [{"callback": 12, "result": data}]
+      let callback = [{"callback": 12, "result": [data]}]
       this.buildCallback(callback)    
     }
     else 
@@ -350,19 +311,22 @@ ticketValidityTime(ticket){
 
   ticketAccessSameDay(data){
 
+    let idTotem = this.dataInfo.totemId      
     let ticket = data.id_estoque_utilizavel       
 
     let until =  moment(ticket.data_log_venda).format();
     let now = moment().format()                  
     let isSame = moment(until).isSame(now, 'day');    
 
-    if(isSame){
+    console.log('Totem: '+ idTotem + ' - Verificando utilização no mesmo dia: ' + data.id_estoque_utilizavel)
 
+    if(isSame){
       this.useTicket(data)
 
     } else {
 
-      let callback = [{"callback": 9, "result": data}]
+
+      let callback = [{"callback": 9, "result": [data]}]
       this.events.publish('lista-branca-callback', callback)
 
     }
@@ -370,13 +334,26 @@ ticketValidityTime(ticket){
 
   ticketAccessOnlyone(data){
 
+    let idTotem = this.dataInfo.totemId      
+    console.log('Totem: '+ idTotem + ' - Verificando acesso único: ' + data.id_estoque_utilizavel)
+
     this.useTicket(data)
   }
 
   ticketAccessCountPass(data){
 
-  }
+    let idTotem = this.dataInfo.totemId      
+    console.log('Totem: '+ idTotem + ' - Verificando contador de utilizações: ' + data.id_estoque_utilizavel)
+  
+    if(! data.utilizacoes){
 
+      console.log('Sem nenhuma utilização')
+      this.useTicket(data)
+
+    } else {
+      console.log(data.utilizacoes)
+    }    
+  }
 
 
   useTicket(ticket){            
@@ -384,19 +361,18 @@ ticketValidityTime(ticket){
     this.incrementUseTicket(ticket)
     .then(() => {
 
-      
       this.useTicketEnd(ticket)
     })    
   }
 
   useTicketEnd(ticket){
-    let callback = [{"callback": 100, "result": ticket.id_estoque_utilizavel}]
+    let callback = [{"callback": 100, "result": [ticket]}]
     this.buildCallback(callback)    
   }
 
   incrementUseTicket(ticket){
 
-    console.log('Incrementando: ', ticket)
+    console.log('Adicionando nova entrada de utilização do bilhete: ', ticket.id_estoque_utilizavel)
 
     return new Promise<any>((resolve) => { 
 
