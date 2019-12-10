@@ -174,7 +174,7 @@ export class HomePage {
             self.setFocus();
           }            
     
-    }, 5000);      
+    }, 10000);      
   } 
 
   setFocus(){

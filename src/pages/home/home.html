@@ -75,7 +75,7 @@
               
                 <ion-col>  
                     <ion-fab>
-                        <button ion-fab color="light" icon-only (click)="showHistory()" [disabled]="!inputVisible">
+                        <button ion-fab color="light" icon-only (click)="showHistory()" [disabled]="!inputVisible" tooltip="Procurar" positionV="top" arrow>
                             <ion-icon name='search' color="dark"></ion-icon>
                         </button>
                     </ion-fab>  
@@ -83,7 +83,7 @@
 
                 <ion-col>  
                     <ion-fab>
-                        <button ion-fab color="light" icon-only (click)="setMultiple()"  [disabled]="!inputVisible">
+                        <button ion-fab color="light" icon-only (click)="setMultiple()"  [disabled]="!inputVisible" tooltip="Multiplo" positionV="top" arrow>
                             <ion-icon name='flash' color="{{multipleColor}}"></ion-icon>
                         </button>
                     </ion-fab>  
@@ -92,7 +92,8 @@
                 <ion-col>  
                     
                     <ion-fab>
-                        <button ion-fab color="light" icon-only (click)="decrementCounter()" [disabled]="!inputVisible">
+                        <button ion-fab color="light" icon-only (click)="decrementCounter()" [disabled]="!inputVisible" tooltip="Decrementar ou incrementar" positionV="top" arrow>
+
                             <ion-icon *ngIf="decrementingCounter" name='remove-circle' color="secondary" class="ion-spin-animation"></ion-icon>                            
                             <ion-icon *ngIf="! decrementingCounter" name='remove-circle' color="danger"></ion-icon>
                         </button>
@@ -101,7 +102,7 @@
 
                 <ion-col>  
                     <ion-fab>
-                        <button ion-fab color="light" icon-only (click)="openGateIn()" *ngIf="dataInfo.receptorOneEnabled === 1">
+                        <button ion-fab color="light" icon-only (click)="openGateIn()" *ngIf="dataInfo.receptorOneEnabled === 1" tooltip="Abrir receptor" positionV="top" arrow>
                             <ion-icon name='arrow-up' color="secondary"></ion-icon>
                         </button>
                     </ion-fab>  
@@ -109,7 +110,8 @@
 
                 <ion-col>  
                     <ion-fab>
-                        <button ion-fab color="light" icon-only (click)="openGateOut()" *ngIf="dataInfo.receptorTwoEnabled === 1">
+
+                        <button ion-fab color="light" icon-only (click)="openGateOut()" *ngIf="dataInfo.receptorTwoEnabled === 1" tooltip="Abrir receptor saída" positionV="top" arrow>
                             <ion-icon name='arrow-down' color="primary"></ion-icon>
                         </button>
                     </ion-fab>  

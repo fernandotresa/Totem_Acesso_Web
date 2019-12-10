@@ -11,6 +11,7 @@ export class DataInfoProvider {
   totemId: number =  0
   totemSaida: number = 0
 
+  //addressServer: string = "http://localhost:8085"
   addressServer: string = "http://localhost:8085"
   tipoPontoAcesso: number = 1;
   timeMessage: number = 3000

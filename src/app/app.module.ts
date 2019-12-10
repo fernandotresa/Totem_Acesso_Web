@@ -34,6 +34,10 @@ import { AudioUtilsProvider } from '../providers/audio-utils/audio-utils';
 import { SideMenuContentComponent } from '../shared/side-menu-content/side-menu-content.component';
 import { ListaBrancaProvider } from '../providers/lista-branca/lista-branca';
 
+import { TooltipsModule } from 'ionic-tooltips';
+
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+
 export function loadConfiguration(configurationService: ConfigurationService): () => Promise<void> {
   return () => configurationService.load("assets/configs/document.json");
 }
@@ -62,6 +66,9 @@ export const firebaseConfig = {
     AngularFireModule.initializeApp(firebaseConfig),
     AngularFireDatabaseModule,
     IonicStorageModule.forRoot(),
+    TooltipsModule.forRoot(),
+    BrowserAnimationsModule,
+
     IonicModule.forRoot(MyApp, {}, {
       links: [
         { component: HomePage, name: 'Home'},
