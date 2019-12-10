@@ -93,7 +93,6 @@
                     
                     <ion-fab>
                         <button ion-fab color="light" icon-only (click)="decrementCounter()" [disabled]="!inputVisible" tooltip="Decrementar ou incrementar" positionV="top" arrow>
-
                             <ion-icon *ngIf="decrementingCounter" name='remove-circle' color="secondary" class="ion-spin-animation"></ion-icon>                            
                             <ion-icon *ngIf="! decrementingCounter" name='remove-circle' color="danger"></ion-icon>
                         </button>

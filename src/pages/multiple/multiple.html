@@ -16,7 +16,7 @@
         <ion-input type="number" (keyup.enter)="checkTicketStart()" [(ngModel)]="searchTicket" #searchbar></ion-input>
     </ion-item>  
 
-    <ion-item no-lines><ion-label stacked> {{dataInfo.ticketStart}} </ion-label>
+    <ion-item no-lines><ion-label stacked> {{dataInfo.ticketEnd}} </ion-label>
       <ion-input type="number" (keyup.enter)="checkTicketEnd()" [(ngModel)]="searchTicketEnd" #inputEnd></ion-input>
     </ion-item>  
 
@@ -66,15 +66,17 @@
             
                 <ion-col>  
                     <ion-fab>
-                        <button ion-fab color="primary" (click)="showHistory()" [disabled]="!inputVisible">
-                            <h3 class="fs-15 fw-600">{{totalChecks}}</h3>                    
+                        <button ion-fab color="primary" [disabled]="!inputVisible" tooltip="Total verificados" positionV="top" arrow>
+                            
+                            <h3 class="fs-15 fw-600">{{totalChecks}}</h3>    
+
                         </button>
                     </ion-fab>  
                 </ion-col> 
 
                 <ion-col>  
                     <ion-fab>
-                        <button ion-fab color="secondary" (click)="setMultiple()"  [disabled]="!inputVisible">                            
+                        <button ion-fab color="secondary" [disabled]="!inputVisible" tooltip="Total OK" positionV="top" arrow>
                             <h3 class="fs-15 fw-600 mgb-10">{{totalChecksOk}}</h3>
                         </button>
                     </ion-fab>  
@@ -82,7 +84,7 @@
         
                 <ion-col>  
                     <ion-fab>
-                        <button ion-fab color="danger" (click)="decrementCounter()" [disabled]="!inputVisible">
+                        <button ion-fab color="danger" (click)="decrementCounter()" [disabled]="!inputVisible" tooltip="Total Não OK" positionV="top" arrow>
                             <h3 class="fs-15 fw-600 mgb-10">{{totalChecksNotOk}}</h3>
                         </button>
                     </ion-fab>  

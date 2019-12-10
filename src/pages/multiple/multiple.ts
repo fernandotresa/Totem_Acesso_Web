@@ -67,7 +67,7 @@ export class MultiplePage {
 
       setInterval(function(){ 
 
-        if(self.searchTicket.length < 8)
+        if(self.searchTicket.length < 7)
             self.setFocus();        
       
       }, 1000);      
@@ -151,7 +151,7 @@ export class MultiplePage {
   }
 
   checkTicketStart(){
-    if(this.searchTicket.length == 8){
+    if(this.searchTicket.length == 7){
       this.setFocusEnd()
 
     } else {
@@ -161,7 +161,7 @@ export class MultiplePage {
   }
 
   checkTicketEnd(){
-    if(this.searchTicketEnd.length == 8){      
+    if(this.searchTicketEnd.length == 7){      
       this.searchMultipleTickets()
 
     } else {
@@ -188,11 +188,11 @@ export class MultiplePage {
       if(this.searchTicket >= this.searchTicketEnd)     
         reject("this.searchTicket >= this.searchTicketEnd"); 
       
-      else if(this.searchTicket.length < 8)       
-        reject("this.searchTicket.length < 8");  
+      else if(this.searchTicket.length < 7)       
+        reject("this.searchTicket.length < 7");  
   
-      else if(this.searchTicketEnd.length < 8)
-        reject("this.searchTicket.length < 8"); 
+      else if(this.searchTicketEnd.length < 7)
+        reject("this.searchTicket.length < 7"); 
 
       else if( total > this.dataInfo.maxTicketsMultiple )
         reject("total > maxTicketsMultiple"); 

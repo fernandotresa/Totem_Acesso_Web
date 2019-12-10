@@ -1,5 +1,5 @@
 {
-  "addressServer": "http://localhost:8086",
+  "addressServer": "http://localhost:8085",
   
   "receptorOneEnabled": 1,
   "receptorTwoEnabled": 1,

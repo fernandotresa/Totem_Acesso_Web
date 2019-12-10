@@ -323,7 +323,7 @@ export class HomePage {
   }
 
   setFilteredItems(){            
-    if(this.searchTicket.length == 8 && this.inputVisible)
+    if(this.searchTicket.length == 7 && this.inputVisible)
       this.searchOneTicket() 
   } 
 
